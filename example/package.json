@@ -1,0 +1,15 @@
+{
+  "name": "example-monorepo",
+  "private": true,
+  "packageManager": "pnpm@10.28.0",
+  "scripts": {
+    "verify": "bash scripts/verify.sh",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.0",
+    "typescript": "^5.8.0",
+    "vitest": "^3.2.0"
+  }
+}

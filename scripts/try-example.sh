@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Tạo một monorepo demo chạy được ngay: example/ + toàn bộ cấu hình Claude Code.
+# Dùng: bash scripts/try-example.sh [thư-mục-đích]   (mặc định ../claude-starter-demo)
+set -euo pipefail
+
+root="$(cd "$(dirname "$0")/.." && pwd)"
+dest="${1:-$root/../claude-starter-demo}"
+
+if [ -e "$dest" ]; then
+  echo "Thư mục đã tồn tại: $dest — chọn đường dẫn khác." >&2
+  exit 1
+fi
+
+mkdir -p "$dest"
+cp -r "$root/example/." "$dest/"
+cp -r "$root/.claude" "$root/scripts" "$root/docs" "$root/CLAUDE.md" "$dest/"
+rm -f "$dest/scripts/try-example.sh"
+chmod +x "$dest/.claude/hooks/"*.sh "$dest/scripts/"*.sh
+
+cd "$dest"
+git init -q
+pnpm install --silent
+git add -A
+git -c user.name="demo" -c user.email="demo@example.com" commit -qm "Initial demo"
+
+echo "Demo sẵn sàng tại: $dest"
+echo "Thử: cd \"$dest\" && pnpm verify && claude"

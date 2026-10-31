@@ -1,0 +1,8 @@
+{
+  "name": "@app/shared",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": { "typecheck": "tsc", "test": "vitest run --passWithNoTests" },
+  "dependencies": { "zod": "^3.25.0" }
+}

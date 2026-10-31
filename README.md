@@ -22,10 +22,21 @@ SETUP.md                         # hướng dẫn cài đặt chi tiết
   commands/handoff.md            # /handoff — ghi tiến độ trước /clear
   agents/code-reviewer.md        # subagent review diff (Sonnet)
 scripts/verify.sh                # typecheck + lint + test phần bị ảnh hưởng
+scripts/try-example.sh           # dựng demo chạy được từ example/
+example/                         # monorepo mẫu tối giản
 docs/specs/_template.md          # mẫu spec cho mỗi tính năng
 ```
 
-## Bắt đầu nhanh
+## Thử ngay với monorepo mẫu
+```bash
+bash scripts/try-example.sh ~/claude-starter-demo
+cd ~/claude-starter-demo && pnpm verify && claude
+```
+Script ghép `example/` (shared + backend + web + mobile, có Zod schema và test thật) với toàn bộ cấu hình, chạy `git init` và `pnpm install`. Muốn thấy cơ chế hoạt động: đổi `title` thành `name` trong `packages/shared/src/index.ts` rồi chạy `pnpm verify` — typecheck backend báo lỗi đúng dòng, test fail, và Stop hook sẽ không cho Claude báo xong.
+
+App `web` và `mobile` trong mẫu chỉ là client TypeScript; khi dùng thật, thay bằng `create-next-app` / `create-expo-app` và giữ việc gọi API qua `@app/shared`.
+
+## Áp vào dự án có sẵn
 ```bash
 # chép vào gốc monorepo của bạn
 cp -r CLAUDE.md SETUP.md .claude scripts docs /path/to/your-monorepo/
