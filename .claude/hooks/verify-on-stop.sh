@@ -8,6 +8,12 @@ if printf '%s' "$input" | grep -q '"stop_hook_active":[[:space:]]*true'; then
   exit 0
 fi
 
+# Pha lập kế hoạch: test được viết trước nên đỏ có chủ đích.
+# /plan-feature tạo cờ này, /build-feature xóa nó.
+if [ -f .claude/.allow-red ]; then
+  exit 0
+fi
+
 # Không có thay đổi code => bỏ qua (câu hỏi, đọc code, plan...).
 if git diff --quiet HEAD -- apps packages 2>/dev/null && \
    [ -z "$(git ls-files --others --exclude-standard apps packages 2>/dev/null)" ]; then

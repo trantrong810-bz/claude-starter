@@ -9,6 +9,11 @@
       "Bash(git status)",
       "Bash(git diff:*)",
       "Bash(git log:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(touch .claude/.allow-red)",
+      "Bash(rm .claude/.allow-red)",
+      "Bash(rm -f .claude/.allow-red)",
       "Bash(docker compose ps)",
       "Bash(docker compose logs:*)"
     ],

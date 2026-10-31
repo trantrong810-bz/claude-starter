@@ -21,8 +21,11 @@ SETUP.md                         # hướng dẫn cài đặt chi tiết
   settings.json                  # permissions + đăng ký hooks
   hooks/format.sh                # Prettier sau mỗi lần sửa file
   hooks/verify-on-stop.sh        # chặn kết thúc khi verify đỏ
-  commands/new-feature.md        # /new-feature — lát dọc, duyệt plan trước
+  commands/plan-feature.md       # /plan-feature — pha 1: plan, contract, test đỏ
+  commands/build-feature.md      # /build-feature — pha 2: test xanh, web+mobile song song
   commands/handoff.md            # /handoff — ghi tiến độ trước /clear
+  commands/retro.md              # /retro — biến lỗi thành lint/hook/CLAUDE.md
+  agents/app-builder.md          # subagent làm một app (web hoặc mobile)
   agents/code-reviewer.md        # subagent review diff (Sonnet)
 scripts/verify.sh                # typecheck + lint + test phần bị ảnh hưởng
 scripts/try-example.sh           # dựng demo chạy được từ example/
@@ -51,17 +54,43 @@ cp -r CLAUDE.md SETUP.md .claude scripts docs /path/to/your-monorepo/
 cd /path/to/your-monorepo
 chmod +x .claude/hooks/*.sh scripts/*.sh
 npm pkg set scripts.verify="bash scripts/verify.sh"
-echo "CLAUDE.local.md" >> .gitignore
+printf 'CLAUDE.local.md\n.claude/.allow-red\n' >> .gitignore
 ```
 
 Sau đó mở `claude`, gõ `/hooks` để kiểm tra hook đã được nhận. Chi tiết xem [SETUP.md](SETUP.md).
 
-## Vòng làm việc
+## Quy trình
 
-`/new-feature <tên> <mô tả>` → duyệt plan → Claude làm shared → backend → web → mobile (hook tự format, chặn khi verify đỏ) → subagent `code-reviewer` → commit → `/handoff` → `/clear`.
+### Phân loại task trước
 
-## Cải tiến dần
+| Loại | Dấu hiệu                          | Cách làm                                       |
+| ---- | --------------------------------- | ---------------------------------------------- |
+| Nhỏ  | Sửa 1 chỗ, bug rõ ràng            | Làm thẳng. Stop hook là đủ kiểm soát.          |
+| Vừa  | 1–2 lớp, không đổi contract API   | Plan ngắn trong chat, duyệt, làm.              |
+| Lớn  | Đổi contract API hoặc chạm 3+ lớp | `/plan-feature` → `/build-feature` → `/retro`. |
 
-- Claude sai cùng một lỗi lần 2 → thêm 1 dòng vào CLAUDE.md.
-- Lần 3 → biến thành lint rule hoặc hook.
-- Lặp lại một prompt ~3 lần → biến thành command.
+Phần lớn việc hằng ngày là loại nhỏ và vừa — đừng ép chúng qua quy trình lớn.
+
+### Task lớn: hai pha, hai session
+
+```
+Session 1 (Opus)                         Session 2 (Sonnet)
+/plan-feature <tên> <mô tả>              /build-feature <tên>
+  → DUYỆT plan + contract  ◀── bạn         → backend: test xanh → commit
+  → shared schema + test backend đỏ        → web ┐ subagent app-builder
+  → commit → /handoff                      → mobile ┘ song song → commit
+        │                                  → code-reviewer
+        └── /clear, /model sonnet ──▶      → /retro  ◀── bạn chọn cải tiến
+```
+
+Vì sao như vậy:
+
+- **Model đúng việc, không phá cache.** Phần cần tư duy (plan, contract, test) dùng Opus; phần nhiều token (viết code) dùng Sonnet. Đổi model ở ranh giới `/clear` nên không làm mất prompt cache giữa session.
+- **Contract + test chốt trước.** Pha 2 có "trọng tài" sẵn: làm cho test xanh, không phải tự phán đoán khi nào xong.
+- **Song song khi đã độc lập.** Web và mobile chỉ phụ thuộc contract, nên chạy hai subagent cùng lúc; context chính chỉ nhận vài dòng kết quả.
+- **Commit mỗi lớp.** Điểm quay lại rõ ràng, diff nhỏ nên Stop hook chạy nhanh.
+- **Bạn chỉ cần có mặt ở 2 điểm:** duyệt plan/contract (sửa ở đây rẻ nhất) và chọn đề xuất của `/retro`.
+
+### Cải tiến dần — tự động qua `/retro`
+
+Sau mỗi task lớn, `/retro` đề xuất cách khắc phục rẻ nhất cho từng lỗi đã gặp, theo thứ tự: lint rule/hook → một dòng CLAUDE.md → command mới. Nó cũng đề xuất xóa dòng CLAUDE.md đã thừa, để file luôn ngắn.

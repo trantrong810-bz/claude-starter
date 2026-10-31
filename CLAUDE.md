@@ -23,7 +23,8 @@
 - Không sửa migration đã tồn tại; tạo migration mới.
 - Không đọc/sửa `.env*`. Biến môi trường mẫu nằm trong `.env.example`.
 - Chưa chạy `pnpm verify` thành công thì chưa coi là xong.
-- Task nhiều bước: plan và tiến độ ghi vào `docs/specs/<feature>.md`, cập nhật trước khi kết thúc session.
+- Phân loại task trước khi làm: nhỏ (1 chỗ) → làm thẳng; vừa (không đổi contract) → plan ngắn trong chat; lớn (đổi contract API) → `/plan-feature` rồi `/build-feature`.
+- Task nhiều session: plan và tiến độ ghi vào `docs/specs/<feature>.md`, cập nhật trước khi kết thúc session.
 
 ## Tài liệu (đọc khi cần, đừng đọc hết)
 
