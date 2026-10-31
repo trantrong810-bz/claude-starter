@@ -1,0 +1,25 @@
+# Changelog — claude-starter
+
+Version toàn dự án. Mỗi bản phát hành liệt kê version của từng phần; chi tiết nằm trong changelog của phần đó.
+Thay đổi không thuộc phần nào (ví dụ `tools/`, `versions.json`) ghi vào mục `Unreleased` bên dưới.
+
+## [Unreleased]
+
+## [0.1.0] - 2026-11-01
+
+Bản phát hành đầu tiên có version: bộ cấu hình Claude Code cho monorepo fullstack, quy trình hai pha đã qua một vòng chạy thử.
+
+### Added
+
+- `tools/version.mjs`: version riêng cho từng phần, changelog cho mỗi phần, phát hành bằng một lệnh.
+
+| Phần    | Version | Changelog                                                                    |
+| ------- | ------- | ---------------------------------------------------------------------------- |
+| .claude | 0.1.0   | [.claude/CHANGELOG.md](.claude/CHANGELOG.md)                                 |
+| docs    | 0.1.0   | [docs/CHANGELOG.md](docs/CHANGELOG.md)                                       |
+| scripts | 0.1.0   | [scripts/CHANGELOG.md](scripts/CHANGELOG.md)                                 |
+| example | 0.1.0   | [example/CHANGELOG.md](example/CHANGELOG.md)                                 |
+| shared  | 0.1.0   | [example/packages/shared/CHANGELOG.md](example/packages/shared/CHANGELOG.md) |
+| be      | 0.1.0   | [example/apps/backend/CHANGELOG.md](example/apps/backend/CHANGELOG.md)       |
+| fe      | 0.1.0   | [example/apps/web/CHANGELOG.md](example/apps/web/CHANGELOG.md)               |
+| mobile  | 0.1.0   | [example/apps/mobile/CHANGELOG.md](example/apps/mobile/CHANGELOG.md)         |

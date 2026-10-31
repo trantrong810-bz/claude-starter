@@ -1,0 +1,20 @@
+# Changelog
+
+Định dạng theo [Keep a Changelog](https://keepachangelog.com/vi/1.1.0/); version theo [SemVer](https://semver.org/lang/vi/).
+Ghi thay đổi vào mục `Unreleased` cùng commit; `node tools/version.mjs release` sẽ tự chuyển nó thành version mới.
+
+## [Unreleased]
+
+## [0.1.0] - 2026-11-01
+
+### Added
+
+- `settings.json`: allow lệnh an toàn (verify, test, git add/commit/switch), deny `.env`, migration cũ, `rm -rf`, force push.
+- Hook `format.sh` (PostToolUse): Prettier sau mỗi lần sửa file.
+- Hook `verify-on-stop.sh` (Stop): chặn kết thúc khi `verify` lỗi; chống lặp vô hạn; bỏ qua khi không đổi code.
+- Hook `session-context.sh` (SessionStart): báo spec đang dở và cảnh báo cờ `.allow-red`.
+- Command `/plan-feature` (pha 1, Opus): nhánh `feat/`, contract, stub, test backend đỏ.
+- Command `/build-feature` (pha 2, Sonnet): backend, client trong shared, UI; subagent chỉ khi UI lớn; review rồi hỏi trước khi merge.
+- Command `/handoff` và `/retro`.
+- Subagent `app-builder` (một app, chỉ UI) và `code-reviewer` (diff `main...HEAD`, kèm spec và kết quả verify).
+- `CLAUDE.md` mẫu: phân loại task, client API trong shared, đồng bộ sơ đồ quy trình, ghi changelog.

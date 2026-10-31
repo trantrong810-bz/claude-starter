@@ -27,6 +27,7 @@
 - Phân loại task trước khi làm: nhỏ (1 chỗ) → làm thẳng; vừa (không đổi contract) → plan ngắn trong chat; lớn (đổi contract API) → `/plan-feature` rồi `/build-feature`.
 - Task nhiều session: plan và tiến độ ghi vào `docs/specs/<feature>.md`, cập nhật trước khi kết thúc session.
 - Đổi command, hook, subagent hoặc quy tắc phân loại task trong `.claude/` → cập nhật sơ đồ Mermaid trong `docs/WORKFLOW.md` ở cùng commit.
+- Sửa file trong thư mục có `CHANGELOG.md` → thêm một dòng vào mục `Unreleased` của changelog gần nhất (Added / Changed / Fixed / Removed), cùng commit. Không tự sửa số version.
 
 ## Tài liệu (đọc khi cần, đừng đọc hết)
 

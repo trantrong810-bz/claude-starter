@@ -8,7 +8,7 @@ Tính năng: $ARGUMENTS
 1. Đọc `docs/specs/$ARGUMENTS.md`. Đó là nguồn sự thật; không lập lại plan. Nếu spec mâu thuẫn với code hiện tại, dừng và hỏi. Đảm bảo đang ở nhánh `feat/$ARGUMENTS`.
 2. Xóa `.claude/.allow-red` (từ giờ verify chạy cả test).
 3. Backend: thay stub, làm test pha 1 xanh. Không sửa test để cho qua — nếu test sai, dừng và hỏi.
-   `pnpm verify` qua → commit `feat(<tên>): backend` → đánh dấu checklist.
+   `pnpm verify` qua → ghi `Unreleased` trong changelog của phần vừa đổi → commit `feat(<tên>): backend` → đánh dấu checklist. (Áp dụng cho mọi commit bên dưới.)
 4. Client trong `packages/shared`: hàm gọi API theo contract, parse response bằng schema (không ép kiểu `as`), encode mọi tham số đưa vào URL. Viết test với `fetch` giả.
    `pnpm verify` qua → commit `feat(<tên>): client` → đánh dấu checklist.
 5. UI web và mobile — chỉ gọi client từ `@app/shared`, không viết lại logic gọi API:

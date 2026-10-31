@@ -1,0 +1,56 @@
+{
+  "project": {
+    "version": "0.1.0",
+    "changelog": "CHANGELOG.md"
+  },
+  "components": {
+    "claude": {
+      "label": ".claude",
+      "paths": [".claude/", "CLAUDE.md"],
+      "version": "0.1.0",
+      "changelog": ".claude/CHANGELOG.md"
+    },
+    "docs": {
+      "label": "docs",
+      "paths": ["docs/", "README.md", "SETUP.md"],
+      "version": "0.1.0",
+      "changelog": "docs/CHANGELOG.md"
+    },
+    "scripts": {
+      "label": "scripts",
+      "paths": ["scripts/"],
+      "version": "0.1.0",
+      "changelog": "scripts/CHANGELOG.md"
+    },
+    "example": {
+      "label": "example",
+      "paths": ["example/"],
+      "package": "example/package.json",
+      "changelog": "example/CHANGELOG.md"
+    },
+    "shared": {
+      "label": "shared",
+      "paths": ["example/packages/shared/"],
+      "package": "example/packages/shared/package.json",
+      "changelog": "example/packages/shared/CHANGELOG.md"
+    },
+    "backend": {
+      "label": "be",
+      "paths": ["example/apps/backend/"],
+      "package": "example/apps/backend/package.json",
+      "changelog": "example/apps/backend/CHANGELOG.md"
+    },
+    "web": {
+      "label": "fe",
+      "paths": ["example/apps/web/"],
+      "package": "example/apps/web/package.json",
+      "changelog": "example/apps/web/CHANGELOG.md"
+    },
+    "mobile": {
+      "label": "mobile",
+      "paths": ["example/apps/mobile/"],
+      "package": "example/apps/mobile/package.json",
+      "changelog": "example/apps/mobile/CHANGELOG.md"
+    }
+  }
+}

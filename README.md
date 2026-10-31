@@ -32,7 +32,10 @@ scripts/verify.sh                # typecheck + lint + test phần bị ảnh hư
 scripts/try-example.sh           # dựng demo chạy được từ example/
 example/                         # monorepo mẫu tối giản
 docs/specs/_template.md          # mẫu spec cho mỗi tính năng
-docs/WORKFLOW.md                 # sơ đồ Mermaid của quy trình + lớp bảo vệ
+docs/WORKFLOW.md                 # sơ đồ Mermaid: quy trình, lớp bảo vệ, phát hành
+versions.json                    # bảng phần → đường dẫn, version
+tools/version.mjs                # list / check / release (chỉ dùng trong repo kit)
+CHANGELOG.md                     # changelog toàn dự án; mỗi phần có CHANGELOG.md riêng
 ```
 
 Sơ đồ quy trình đầy đủ: [docs/WORKFLOW.md](docs/WORKFLOW.md) (GitHub hiển thị Mermaid trực tiếp).
@@ -101,3 +104,30 @@ Vì sao như vậy:
 ### Cải tiến dần — tự động qua `/retro`
 
 Sau mỗi task lớn, `/retro` đề xuất cách khắc phục rẻ nhất cho từng lỗi đã gặp, theo thứ tự: lint rule/hook → một dòng CLAUDE.md → command mới. Nó cũng đề xuất xóa dòng CLAUDE.md đã thừa, để file luôn ngắn.
+
+## Versioning
+
+Mỗi phần có version SemVer và `CHANGELOG.md` riêng; toàn dự án có version và tag `vX.Y.Z`.
+
+| Phần    | Đường dẫn                              |
+| ------- | -------------------------------------- |
+| .claude | `.claude/`, `CLAUDE.md`                |
+| docs    | `docs/`, `README.md`, `SETUP.md`       |
+| scripts | `scripts/`                             |
+| example | `example/` (cấu hình gốc của monorepo) |
+| shared  | `example/packages/shared/`             |
+| be      | `example/apps/backend/`                |
+| fe      | `example/apps/web/`                    |
+| mobile  | `example/apps/mobile/`                 |
+
+File khớp nhiều đường dẫn thuộc về đường dẫn dài nhất, nên mỗi thay đổi chỉ tính cho một phần.
+
+```bash
+node tools/version.mjs list               # version hiện tại
+node tools/version.mjs check              # phần nào đổi file mà chưa ghi changelog
+node tools/version.mjs release --dry-run  # xem trước
+node tools/version.mjs release            # bump, ghi changelog, commit, tag
+git push && git push --tags
+```
+
+Khi làm việc chỉ ghi vào mục `Unreleased`; không tự sửa số version. Mức bump suy ra từ changelog: `### Removed` hoặc `BREAKING` → major, `### Added` → minor, còn lại → patch (ở `0.x`, major hạ xuống minor). Sơ đồ: [docs/WORKFLOW.md](docs/WORKFLOW.md#phát-hành-version).

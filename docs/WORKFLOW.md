@@ -100,3 +100,25 @@ flowchart TD
 | Pha 2: code, subagent       | Sonnet | Nhiều token, đã có test làm trọng tài.                |
 | Task nhỏ và vừa             | Sonnet | Đủ cho phạm vi hẹp.                                   |
 | Đổi model                   | —      | Chỉ ngay sau `/clear`, để không làm mất prompt cache. |
+
+## Phát hành version
+
+Mỗi phần (`.claude`, docs, scripts, example, shared, be, fe, mobile) có version và changelog riêng; toàn dự án có version và tag `vX.Y.Z`. Bảng phần → đường dẫn nằm trong `versions.json`.
+
+```mermaid
+flowchart TD
+    CHANGE["Sửa file trong một phần"] --> LOG["Ghi một dòng vào Unreleased của changelog phần đó, cùng commit"]
+    LOG --> MORE{"Còn việc khác?"}
+    MORE -->|"Có"| CHANGE
+    MORE -->|"Đủ để phát hành"| CHECK["node tools/version.mjs check"]
+    CHECK -->|"Phần đổi file mà changelog trống"| LOG
+    CHECK -->|"OK"| DRY["release --dry-run: xem trước version mới"]
+    DRY --> OKQ{"Bạn duyệt"}
+    OKQ -->|"OK"| REL["release: bump từng phần theo changelog, ghi bảng vào CHANGELOG gốc, commit, tag"]
+    REL --> PUSH["git push và push tag"]
+
+    classDef human fill:#fff4d6,stroke:#c98a00,color:#000
+    class OKQ human
+```
+
+Mức bump suy ra từ mục `Unreleased`: có `### Removed` hoặc chữ `BREAKING` → major; có `### Added` → minor; còn lại → patch. Ở giai đoạn `0.x`, major được hạ xuống minor.
