@@ -26,13 +26,18 @@ SETUP.md                         # hướng dẫn cài đặt chi tiết
   commands/build-feature.md      # /build-feature — pha 2: test xanh, web+mobile song song
   commands/handoff.md            # /handoff — ghi tiến độ trước /clear
   commands/retro.md              # /retro — biến lỗi thành lint/hook/CLAUDE.md
+  commands/why.md                # /why — tra cứu quyết định và lịch sử prompt
+  hooks/prompt-log.mjs           # ghi prompt + model xử lý vào history/
   agents/app-builder.md          # subagent làm một app (web hoặc mobile)
   agents/code-reviewer.md        # subagent review diff (Sonnet)
 scripts/verify.sh                # typecheck + lint + test phần bị ảnh hưởng
 scripts/try-example.sh           # dựng demo chạy được từ example/
+scripts/adr.mjs                  # tạo, đánh mục lục, kiểm tra ADR
 example/                         # monorepo mẫu tối giản
 docs/specs/_template.md          # mẫu spec cho mỗi tính năng
-docs/WORKFLOW.md                 # sơ đồ Mermaid: quy trình, lớp bảo vệ, phát hành
+docs/WORKFLOW.md                 # sơ đồ Mermaid: quy trình, lớp bảo vệ, tra cứu, phát hành
+docs/decisions/                  # ADR — mọi quyết định có tranh cãi; R = ảnh hưởng rộng
+history/prompts/                 # log prompt (commit, ngoài versioning)
 versions.json                    # bảng phần → đường dẫn, version
 tools/version.mjs                # list / check / release (chỉ dùng trong repo kit)
 CHANGELOG.md                     # changelog toàn dự án; mỗi phần có CHANGELOG.md riêng
@@ -104,6 +109,14 @@ Vì sao như vậy:
 ### Cải tiến dần — tự động qua `/retro`
 
 Sau mỗi task lớn, `/retro` đề xuất cách khắc phục rẻ nhất cho từng lỗi đã gặp, theo thứ tự: lint rule/hook → một dòng CLAUDE.md → command mới. Nó cũng đề xuất xóa dòng CLAUDE.md đã thừa, để file luôn ngắn.
+
+## Lịch sử prompt và quyết định
+
+- **Prompt:** hook ghi mọi prompt vào `history/prompts/YYYY-MM.jsonl`: thời gian, nhánh, prompt (đã che secret), **model và effort xử lý**, subagent kèm model của chúng, và commit tạo ra. Không ghi câu trả lời. Được commit nhưng nằm ngoài versioning; `pnpm verify` chặn nếu còn chuỗi giống secret. Định dạng: [history/README.md](history/README.md).
+- **Quyết định:** mọi quyết định có tranh cãi là một ADR trong `docs/decisions/`. Quyết định ảnh hưởng rộng có `pham-vi: rong`, chữ **R** trong tên file và bảng riêng trong [mục lục](docs/decisions/README.md).
+- **Tra cứu:** `/why vì sao dùng nhánh feat?` — tìm ADR → spec → git → log prompt, trả lời kèm nguồn và model.
+
+Log prompt chứa nguyên văn những gì bạn gõ. Chỉ dùng khi repo riêng tư (xem ADR 0010); với repo công khai, đặt `CLAUDE_PROMPT_LOG=off` hoặc thêm `history/` vào `.gitignore`.
 
 ## Versioning
 

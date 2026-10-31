@@ -11,6 +11,7 @@ Tính năng: $ARGUMENTS
 2. Chỉ đọc những file liên quan. Điền Mục tiêu, Contract, Plan, Checklist. Contract gồm cả chữ ký hàm client trong `packages/shared` (web và mobile dùng chung, không tự viết). Trong Plan, ghi rõ mỗi app có phần UI đáng kể hay chỉ gọi client — quyết định này dùng ở pha 2. Nếu tính năng KHÔNG đổi contract API hoặc chỉ chạm 1 lớp, nói rõ và đề xuất làm thẳng không cần quy trình này.
 3. DỪNG để tôi duyệt plan và contract. Đây là điểm kiểm tra quan trọng nhất — nêu rõ các quyết định có thể tranh cãi.
 4. Sau khi được duyệt:
+   - Mỗi quyết định có tranh cãi đã được duyệt (mục "Quyết định có thể tranh cãi" trong Contract) → một ADR qua `node scripts/adr.mjs new`, `nguon` ghi tên spec; ghi số ADR vào Ghi chú của spec.
    - `git switch -c feat/<tên-tính-năng>` — mọi commit của tính năng nằm trên nhánh này; `main` luôn xanh.
    - Tạo file `.claude/.allow-red` (verify sẽ bỏ qua test, nhưng typecheck và lint vẫn phải qua).
    - Viết schema/types trong `packages/shared`.

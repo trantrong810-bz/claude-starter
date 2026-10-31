@@ -5,6 +5,16 @@ Ghi thay đổi vào mục `Unreleased` cùng commit; `node tools/version.mjs re
 
 ## [Unreleased]
 
+### Added
+
+- Hook `prompt-log.mjs`: ghi mọi prompt (đã che secret) vào `history/prompts/`, kèm model, effort, subagent và commit của từng lượt; tắt bằng `CLAUDE_PROMPT_LOG=off`.
+- Command `/why`: tra cứu theo thứ tự ADR → spec → git → log prompt, trích nguồn và model.
+
+### Changed
+
+- `verify-on-stop.sh`: khi không đổi code vẫn chạy `verify --quick` (quét secret, kiểm tra ADR).
+- `/plan-feature` và `/retro` tạo ADR cho quyết định có tranh cãi; `CLAUDE.md` có quy tắc ADR và `/why`.
+
 ## [0.1.0] - 2026-11-01
 
 ### Added

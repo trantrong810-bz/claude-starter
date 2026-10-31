@@ -84,6 +84,10 @@ function lastTag() {
     return null;
   }
 }
+// Đường dẫn nằm ngoài versioning (ví dụ log prompt): không thuộc phần nào, không đòi changelog.
+const isIgnored = (file) =>
+  (config.ignore ?? []).some((p) => (p.endsWith("/") ? file.startsWith(p) : file === p));
+
 function changedFiles(base) {
   const tracked = base ? lines(sh(`git diff --name-only ${base}`)) : lines(sh("git ls-files"));
   const untracked = lines(sh("git ls-files --others --exclude-standard"));
@@ -107,7 +111,11 @@ function ownerOf(file) {
 
 function analyze() {
   const base = lastTag();
-  const touched = new Set(changedFiles(base).map(ownerOf));
+  const touched = new Set(
+    changedFiles(base)
+      .filter((f) => !isIgnored(f))
+      .map(ownerOf),
+  );
   const rows = [];
   for (const [id, c] of Object.entries(config.components)) {
     const body = unreleased(c.changelog);

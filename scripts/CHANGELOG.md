@@ -5,6 +5,15 @@ Ghi thay đổi vào mục `Unreleased` cùng commit; `node tools/version.mjs re
 
 ## [Unreleased]
 
+### Added
+
+- `adr.mjs`: `new`, `index`, `check` cho ADR trong `docs/decisions/`.
+
+### Changed
+
+- `verify.sh`: thêm phần nhanh (quét secret trong `history/`, kiểm tra ADR) và cờ `--quick`.
+- `try-example.sh`: không chép ADR của kit sang dự án demo.
+
 ## [0.1.0] - 2026-11-01
 
 ### Added

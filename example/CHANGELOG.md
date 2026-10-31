@@ -5,6 +5,10 @@ Ghi thay đổi vào mục `Unreleased` cùng commit; `node tools/version.mjs re
 
 ## [Unreleased]
 
+### Changed
+
+- `.gitignore`: bỏ qua `.claude/state/`.
+
 ## [0.1.0] - 2026-11-01
 
 ### Added

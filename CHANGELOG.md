@@ -5,6 +5,11 @@ Thay đổi không thuộc phần nào (ví dụ `tools/`, `versions.json`) ghi 
 
 ## [Unreleased]
 
+### Added
+
+- `history/prompts/`: lịch sử prompt (commit lên git, ngoài versioning), điền lại cuộc trò chuyện dựng kit trên claude.ai.
+- `versions.json`: danh sách `ignore`; `tools/version.mjs` bỏ qua các đường dẫn này. `.gitignore` gốc.
+
 ## [0.1.0] - 2026-11-01
 
 Bản phát hành đầu tiên có version: bộ cấu hình Claude Code cho monorepo fullstack, quy trình hai pha đã qua một vòng chạy thử.

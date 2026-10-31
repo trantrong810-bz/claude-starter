@@ -8,6 +8,8 @@
 
 <Endpoint, request/response schema trong packages/shared. Chốt ở pha 1, không đổi ở pha 2 trừ khi được duyệt.>
 
+Quyết định có thể tranh cãi: <mỗi cái 1 dòng, kèm phương án bị loại — sau khi duyệt, mỗi cái thành một ADR>
+
 ## Plan
 
 <Thay đổi ở backend / client / web / mobile. Ghi rõ mỗi app có UI đáng kể hay chỉ gọi client.>

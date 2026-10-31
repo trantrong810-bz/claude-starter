@@ -34,7 +34,20 @@
   "hooks": {
     "SessionStart": [
       {
-        "hooks": [{ "type": "command", "command": "bash .claude/hooks/session-context.sh" }]
+        "hooks": [
+          { "type": "command", "command": "bash .claude/hooks/session-context.sh" },
+          { "type": "command", "command": "node .claude/hooks/prompt-log.mjs session-start" }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [{ "type": "command", "command": "node .claude/hooks/prompt-log.mjs prompt" }]
+      }
+    ],
+    "PostModelSwitch": [
+      {
+        "hooks": [{ "type": "command", "command": "node .claude/hooks/prompt-log.mjs model-switch" }]
       }
     ],
     "PostToolUse": [
@@ -43,9 +56,17 @@
         "hooks": [{ "type": "command", "command": "bash .claude/hooks/format.sh" }]
       }
     ],
+    "SubagentStop": [
+      {
+        "hooks": [{ "type": "command", "command": "node .claude/hooks/prompt-log.mjs subagent" }]
+      }
+    ],
     "Stop": [
       {
-        "hooks": [{ "type": "command", "command": "bash .claude/hooks/verify-on-stop.sh" }]
+        "hooks": [
+          { "type": "command", "command": "bash .claude/hooks/verify-on-stop.sh" },
+          { "type": "command", "command": "node .claude/hooks/prompt-log.mjs stop" }
+        ]
       }
     ]
   }

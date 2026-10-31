@@ -8,13 +8,15 @@ if printf '%s' "$input" | grep -q '"stop_hook_active":[[:space:]]*true'; then
   exit 0
 fi
 
-# Không có thay đổi code => bỏ qua (câu hỏi, đọc code, plan...).
+# Không đổi code (câu hỏi, đọc code, plan, chỉ log/docs) => chỉ kiểm tra nhanh:
+# quét secret trong log prompt và kiểm tra ADR. Đổi code => kiểm tra đầy đủ.
+mode=""
 if git diff --quiet HEAD -- apps packages 2>/dev/null && \
    [ -z "$(git ls-files --others --exclude-standard apps packages 2>/dev/null)" ]; then
-  exit 0
+  mode="--quick"
 fi
 
-out=$(bash scripts/verify.sh 2>&1)
+out=$(bash scripts/verify.sh $mode 2>&1)
 if [ $? -ne 0 ]; then
   echo "pnpm verify chưa qua. Sửa các lỗi sau trước khi báo xong:" >&2
   echo "$out" >&2

@@ -1,0 +1,44 @@
+{"id": "ca-20261101-01", "t": "2026-11-01T05:00:00+07:00", "src": "claude.ai", "session": "claude.ai-2026-11-01", "branch": null, "prompt": "Anthropic - Lydia Hallie đã chia sẻ gì liên quan đến cách làn việc với claude để đỡ tốn token nhất"}
+{"id": "ca-20261101-01", "type": "model", "model": "claude-opus-5-5", "effort": "unknown", "subagents": [], "ket_qua": []}
+{"id": "ca-20261101-02", "t": "2026-11-01T05:04:00+07:00", "src": "claude.ai", "session": "claude.ai-2026-11-01", "branch": null, "prompt": "Các kiến thức cần biết khi làm việc với claude code"}
+{"id": "ca-20261101-02", "type": "model", "model": "claude-opus-5-5", "effort": "unknown", "subagents": [], "ket_qua": []}
+{"id": "ca-20261101-03", "t": "2026-11-01T05:11:00+07:00", "src": "claude.ai", "session": "claude.ai-2026-11-01", "branch": null, "prompt": "Với 1 dự án fullstack backend, frontend, mobile thì nên setup từ đầu với claude như nào cho hiệu quả nhất? Môi trường dev duy nhất là máy pc cá nhân"}
+{"id": "ca-20261101-03", "type": "model", "model": "claude-opus-5-5", "effort": "unknown", "subagents": [], "ket_qua": ["ADR-0001"]}
+{"id": "ca-20261101-04", "t": "2026-11-01T05:16:00+07:00", "src": "claude.ai", "session": "claude.ai-2026-11-01", "branch": null, "prompt": "Tiếp tục tư duy thêm về cách setup sao cho hiệu quả nhất"}
+{"id": "ca-20261101-04", "type": "model", "model": "claude-opus-5-5", "effort": "unknown", "subagents": [], "ket_qua": ["ADR-0002", "ADR-0006"]}
+{"id": "ca-20261101-05", "t": "2026-11-01T05:19:00+07:00", "src": "claude.ai", "session": "claude.ai-2026-11-01", "branch": null, "prompt": "Tiếp tục cải tiến"}
+{"id": "ca-20261101-05", "type": "model", "model": "claude-opus-5-5", "effort": "unknown", "subagents": [], "ket_qua": []}
+{"id": "ca-20261101-06", "t": "2026-11-01T05:30:00+07:00", "src": "claude.ai", "session": "claude.ai-2026-11-01", "branch": "main", "prompt": "Đưa output vừa rồi vào https://github.com/trantrong810-bz/claude-starter"}
+{"id": "ca-20261101-06", "type": "model", "model": "claude-opus-5-5", "effort": "unknown", "subagents": [], "ket_qua": ["88e147e"]}
+{"id": "ca-20261101-07", "t": "2026-11-01T05:36:00+07:00", "src": "claude.ai", "session": "claude.ai-2026-11-01", "branch": "main", "prompt": "chọn cách 1"}
+{"id": "ca-20261101-07", "type": "model", "model": "claude-opus-5-5", "effort": "unknown", "subagents": [], "ket_qua": []}
+{"id": "ca-20261101-08", "t": "2026-11-01T05:36:00+07:00", "src": "claude.ai", "session": "claude.ai-2026-11-01", "branch": "main", "prompt": "tiếp tục"}
+{"id": "ca-20261101-08", "type": "model", "model": "claude-opus-5-5", "effort": "unknown", "subagents": [], "ket_qua": ["73924be"]}
+{"id": "ca-20261101-09", "t": "2026-11-01T05:37:00+07:00", "src": "claude.ai", "session": "claude.ai-2026-11-01", "branch": "main", "prompt": "tiếp tục"}
+{"id": "ca-20261101-09", "type": "model", "model": "claude-opus-5-5", "effort": "unknown", "subagents": [], "ket_qua": ["1eb4579"]}
+{"id": "ca-20261101-10", "t": "2026-11-01T05:39:00+07:00", "src": "claude.ai", "session": "claude.ai-2026-11-01", "branch": "main", "prompt": "tiếp tục"}
+{"id": "ca-20261101-10", "type": "model", "model": "claude-opus-5-5", "effort": "unknown", "subagents": [], "ket_qua": ["e0d333f"]}
+{"id": "ca-20261101-11", "t": "2026-11-01T05:40:00+07:00", "src": "claude.ai", "session": "claude.ai-2026-11-01", "branch": "main", "prompt": "tiếp tục tối ưu quy trình hiện tại thay vì đi vào làm chi tiết các phần"}
+{"id": "ca-20261101-11", "type": "model", "model": "claude-opus-5-5", "effort": "unknown", "subagents": [], "ket_qua": []}
+{"id": "ca-20261101-12", "t": "2026-11-01T05:41:00+07:00", "src": "claude.ai", "session": "claude.ai-2026-11-01", "branch": "main", "prompt": "tiếp tục"}
+{"id": "ca-20261101-12", "type": "model", "model": "claude-opus-5-5", "effort": "unknown", "subagents": [], "ket_qua": ["4f1b848", "ADR-0003", "ADR-0004"]}
+{"id": "ca-20261101-13", "t": "2026-11-01T06:00:00+07:00", "src": "claude.ai", "session": "claude.ai-2026-11-01", "branch": "main", "prompt": "Vẽ sơ đồ quy trình tối ưu hiện tại theo ngôn ngữ Mermaid. cập nhật sơ đồ này khi có thay đổi"}
+{"id": "ca-20261101-13", "type": "model", "model": "claude-opus-5-5", "effort": "unknown", "subagents": [], "ket_qua": ["9c909d1"]}
+{"id": "ca-20261101-14", "t": "2026-11-01T06:03:00+07:00", "src": "claude.ai", "session": "claude.ai-2026-11-01", "branch": "main", "prompt": "tiếp tục tối ưu"}
+{"id": "ca-20261101-14", "type": "model", "model": "claude-opus-5-5", "effort": "unknown", "subagents": [], "ket_qua": ["b6d0967", "ADR-0005"]}
+{"id": "ca-20261101-15", "t": "2026-11-01T06:06:00+07:00", "src": "claude.ai", "session": "claude.ai-2026-11-01", "branch": "main", "prompt": "tiếp tục tối ưu"}
+{"id": "ca-20261101-15", "type": "model", "model": "claude-opus-5-5", "effort": "unknown", "subagents": [{"type": "app-builder", "model": "sonnet", "effort": "unknown"}, {"type": "app-builder", "model": "sonnet", "effort": "unknown"}, {"type": "code-reviewer", "model": "sonnet", "effort": "unknown"}], "ket_qua": ["1bbadf3", "ADR-0002", "ADR-0007", "ADR-0008"]}
+{"id": "ca-20261101-16", "t": "2026-11-01T06:11:00+07:00", "src": "claude.ai", "session": "claude.ai-2026-11-01", "branch": "main", "prompt": "Cần đánh version cho các phần: Toàn bộ dự án, fe,be,mobile, example, docs, .claude, scripts"}
+{"id": "ca-20261101-16", "type": "model", "model": "claude-opus-5-5", "effort": "unknown", "subagents": [], "ket_qua": []}
+{"id": "ca-20261101-17", "t": "2026-11-01T06:12:00+07:00", "src": "claude.ai", "session": "claude.ai-2026-11-01", "branch": "main", "prompt": "lên kế hoạch đánh version cho các phần: Toàn bộ dự án, fe,be,mobile, example, docs, .claude, scripts. changelog ở mỗi version"}
+{"id": "ca-20261101-17", "type": "model", "model": "claude-opus-5-5", "effort": "unknown", "subagents": [], "ket_qua": []}
+{"id": "ca-20261101-18", "t": "2026-11-01T06:14:00+07:00", "src": "claude.ai", "session": "claude.ai-2026-11-01", "branch": "main", "prompt": "triển khai"}
+{"id": "ca-20261101-18", "type": "model", "model": "claude-opus-5-5", "effort": "unknown", "subagents": [], "ket_qua": ["f8379b7", "ADR-0009"]}
+{"id": "ca-20261101-19", "t": "2026-11-01T06:23:00+07:00", "src": "claude.ai", "session": "claude.ai-2026-11-01", "branch": "main", "prompt": "lên kế hoạch, tôi cần có lịch sử prompt, lịch sử quyết định để tra cứu khi cần"}
+{"id": "ca-20261101-19", "type": "model", "model": "claude-opus-5-5", "effort": "unknown", "subagents": [], "ket_qua": []}
+{"id": "ca-20261101-20", "t": "2026-11-01T06:26:00+07:00", "src": "claude.ai", "session": "claude.ai-2026-11-01", "branch": "main", "prompt": "tiếp tục plan cùng tôi\n1.log prompt có commit lên git\n\n2. có lưu prompt của cuộc trò truyện này\n3. Mọi quyết định có tranh cãi. Loại nào ảnh hưởng rộng sẽ có cách thể hiện riêng để nhận biết"}
+{"id": "ca-20261101-20", "type": "model", "model": "claude-opus-5-5", "effort": "unknown", "subagents": [], "ket_qua": ["ADR-0011"]}
+{"id": "ca-20261101-21", "t": "2026-11-01T06:32:00+07:00", "src": "claude.ai", "session": "claude.ai-2026-11-01", "branch": "main", "prompt": "tiếp tục plan\n\n* Không được versioning log prompt commit lên git.\n* cần phải thể hiện được là prompt đó do model nào xử lý\n* repo claude-starter đang riêng tư\n* log không khi thêm tóm tắt câu trả lời của Claude"}
+{"id": "ca-20261101-21", "type": "model", "model": "claude-opus-5-5", "effort": "unknown", "subagents": [], "ket_qua": ["ADR-0010"]}
+{"id": "ca-20261101-22", "t": "2026-11-01T06:36:00+07:00", "src": "claude.ai", "session": "claude.ai-2026-11-01", "branch": "main", "prompt": "duyệt"}
+{"id": "ca-20261101-22", "type": "model", "model": "claude-opus-5-5", "effort": "unknown", "subagents": [], "ket_qua": ["ADR-0010", "ADR-0011"]}

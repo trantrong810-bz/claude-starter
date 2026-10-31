@@ -19,7 +19,8 @@ flowchart TD
     subgraph PHASE1["Session 1: Opus, pha lập kế hoạch"]
         P1["/plan-feature: tạo spec, plan, contract"] --> APPROVE{"Bạn duyệt plan và contract"}
         APPROVE -->|"Sửa"| P1
-        APPROVE -->|"OK"| BR["Tạo nhánh feat/tên, main luôn xanh"]
+        APPROVE -->|"OK"| ADR1["ADR cho mỗi quyết định có tranh cãi"]
+        ADR1 --> BR["Tạo nhánh feat/tên, main luôn xanh"]
         BR --> RED["Tạo cờ .allow-red"]
         RED --> CONTRACT["Schema trong packages/shared"]
         CONTRACT --> STUB["Stub backend: chữ ký đầy đủ, throw not implemented"]
@@ -54,7 +55,7 @@ flowchart TD
     MERGE -->|"Cần sửa"| FIX
     MERGE -->|"OK"| RETRO["/retro: đề xuất cải tiến"]
     RETRO --> PICK{"Bạn chọn đề xuất"}
-    PICK --> IMPROVE["Lint rule, hook, dòng CLAUDE.md, command mới"]
+    PICK --> IMPROVE["Lint rule, hook, dòng CLAUDE.md, command mới, kèm ADR"]
     IMPROVE -.->|"Cấu hình tốt hơn cho task sau"| START
 
     SMALL --> DONE(["Xong"])
@@ -74,12 +75,15 @@ Các cơ chế này hoạt động ở mọi loại task, không cần gọi.
 
 ```mermaid
 flowchart TD
-    SS["Hook SessionStart: đưa spec đang dở và cảnh báo cờ vào context"] --> EDIT
+    SS["Hook SessionStart: đưa spec đang dở và cảnh báo cờ vào context, nhớ model"] --> PROMPT
+    PROMPT["Hook UserPromptSubmit: ghi prompt đã che secret vào history/"] --> EDIT
     EDIT["Claude sửa file"] --> FMT["Hook PostToolUse: Prettier"]
     FMT --> WORK["Tiếp tục làm"]
     WORK --> STOP{"Claude định kết thúc"}
     STOP --> DIFF{"Có thay đổi trong apps/ hoặc packages/?"}
-    DIFF -->|"Không"| END(["Cho kết thúc"])
+    DIFF -->|"Không"| QUICK["verify --quick: quét secret trong log, kiểm tra ADR"]
+    QUICK -->|"OK"| END(["Cho kết thúc"])
+    QUICK -->|"Lỗi"| BLOCK
     DIFF -->|"Có"| FLAG{"Có cờ .allow-red?"}
     FLAG -->|"Không"| VERIFY["pnpm verify: typecheck, lint có ranh giới import, test"]
     FLAG -->|"Có: pha 1"| VERIFYP1["pnpm verify: typecheck, lint, bỏ qua test"]
@@ -88,8 +92,26 @@ flowchart TD
     VERIFY -->|"Lỗi"| BLOCK["Chặn, trả lỗi gọn cho Claude"]
     VERIFYP1 -->|"Lỗi"| BLOCK
     BLOCK --> WORK
+    END --> LOGM["Hook Stop: ghi model, effort, subagent, commit của lượt"]
 
     PERM["Permissions deny: .env, migration cũ, rm -rf, force push"] -.->|"Luôn áp dụng"| EDIT
+```
+
+## Lịch sử và tra cứu
+
+Mọi prompt được ghi vào `history/prompts/` (commit lên git, ngoài versioning, không chứa câu trả lời). Mọi quyết định có tranh cãi thành ADR trong `docs/decisions/`; quyết định rộng có chữ R.
+
+```mermaid
+flowchart TD
+    Q["/why câu hỏi"] --> A1{"ADR trả lời được?"}
+    A1 -->|"Có"| ANS["Trả lời 1–3 câu, kèm nguồn file:dòng, commit, id prompt, model"]
+    A1 -->|"Không"| A2{"Spec?"}
+    A2 -->|"Có"| ANS
+    A2 -->|"Không"| A3{"git log và changelog?"}
+    A3 -->|"Có"| ANS
+    A3 -->|"Không"| A4{"Log prompt?"}
+    A4 -->|"Có"| ANS
+    A4 -->|"Không"| NONE["Báo không tìm thấy và đã tìm ở đâu"]
 ```
 
 ## Khi nào đổi model
