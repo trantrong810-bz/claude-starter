@@ -28,16 +28,12 @@
     "PostToolUse": [
       {
         "matcher": "Edit|Write|MultiEdit",
-        "hooks": [
-          { "type": "command", "command": "bash .claude/hooks/format.sh" }
-        ]
+        "hooks": [{ "type": "command", "command": "bash .claude/hooks/format.sh" }]
       }
     ],
     "Stop": [
       {
-        "hooks": [
-          { "type": "command", "command": "bash .claude/hooks/verify-on-stop.sh" }
-        ]
+        "hooks": [{ "type": "command", "command": "bash .claude/hooks/verify-on-stop.sh" }]
       }
     ]
   }

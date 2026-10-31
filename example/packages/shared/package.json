@@ -3,6 +3,12 @@
   "private": true,
   "type": "module",
   "main": "src/index.ts",
-  "scripts": { "typecheck": "tsc", "test": "vitest run --passWithNoTests" },
-  "dependencies": { "zod": "^3.25.0" }
+  "scripts": {
+    "typecheck": "tsc",
+    "lint": "eslint src",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "zod": "^3.25.0"
+  }
 }

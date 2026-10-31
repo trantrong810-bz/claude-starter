@@ -2,6 +2,12 @@
   "name": "@app/mobile",
   "private": true,
   "type": "module",
-  "scripts": { "typecheck": "tsc", "test": "vitest run --passWithNoTests" },
-  "dependencies": { "@app/shared": "workspace:*" }
+  "scripts": {
+    "typecheck": "tsc",
+    "lint": "eslint src",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@app/shared": "workspace:*"
+  }
 }

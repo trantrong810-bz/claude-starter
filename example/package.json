@@ -5,11 +5,17 @@
   "scripts": {
     "verify": "bash scripts/verify.sh",
     "typecheck": "turbo run typecheck",
-    "test": "turbo run test"
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "format": "prettier --write ."
   },
   "devDependencies": {
     "turbo": "^2.5.0",
     "typescript": "^5.8.0",
-    "vitest": "^3.2.0"
-  }
+    "vitest": "^3.2.0",
+    "eslint": "^9.30.0",
+    "typescript-eslint": "^8.35.0",
+    "prettier": "^3.6.0"
+  },
+  "type": "module"
 }
