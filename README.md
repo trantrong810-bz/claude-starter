@@ -20,6 +20,7 @@ SETUP.md                         # hướng dẫn cài đặt chi tiết
 .claude/
   settings.json                  # permissions + đăng ký hooks
   hooks/format.sh                # Prettier sau mỗi lần sửa file
+  hooks/session-context.sh       # đầu session: báo việc đang dở
   hooks/verify-on-stop.sh        # chặn kết thúc khi verify đỏ
   commands/plan-feature.md       # /plan-feature — pha 1: plan, contract, test đỏ
   commands/build-feature.md      # /build-feature — pha 2: test xanh, web+mobile song song

@@ -21,16 +21,19 @@ flowchart TD
         APPROVE -->|"Sửa"| P1
         APPROVE -->|"OK"| RED["Tạo cờ .allow-red"]
         RED --> CONTRACT["Schema trong packages/shared"]
-        CONTRACT --> TESTS["Test backend viết trước, đang đỏ"]
-        TESTS --> C1["Commit: contract và failing tests"]
+        CONTRACT --> STUB["Stub backend: chữ ký đầy đủ, throw not implemented"]
+        STUB --> TESTS["Test backend viết trước, đỏ vì not implemented"]
+        TESTS --> V1["verify: typecheck và lint phải qua"]
+        V1 --> C1["Commit: contract, stub, failing tests"]
         C1 --> HO["/handoff: ghi tiến độ vào spec"]
     end
 
     HO --> SWITCH["/clear rồi /model sonnet"]
-    SWITCH --> P2
+    SWITCH --> CTX["Hook SessionStart: báo spec đang dở và cờ .allow-red"]
+    CTX --> P2
 
     subgraph PHASE2["Session 2: Sonnet, pha thực thi"]
-        P2["/build-feature: đọc spec, xóa cờ .allow-red"] --> BE["Backend: làm test xanh"]
+        P2["/build-feature: đọc spec, xóa cờ .allow-red"] --> BE["Backend: thay stub, làm test xanh"]
         BE --> C2["Commit: backend"]
         C2 --> WEB["Subagent app-builder: web"]
         C2 --> MOB["Subagent app-builder: mobile"]
@@ -62,16 +65,19 @@ Các cơ chế này hoạt động ở mọi loại task, không cần gọi.
 
 ```mermaid
 flowchart TD
+    SS["Hook SessionStart: đưa spec đang dở và cảnh báo cờ vào context"] --> EDIT
     EDIT["Claude sửa file"] --> FMT["Hook PostToolUse: Prettier"]
     FMT --> WORK["Tiếp tục làm"]
     WORK --> STOP{"Claude định kết thúc"}
-    STOP --> FLAG{"Có cờ .allow-red?"}
-    FLAG -->|"Có: pha 1"| END(["Cho kết thúc"])
-    FLAG -->|"Không"| DIFF{"Có thay đổi trong apps/ hoặc packages/?"}
-    DIFF -->|"Không"| END
-    DIFF -->|"Có"| VERIFY["pnpm verify: typecheck, lint có ranh giới import, test"]
+    STOP --> DIFF{"Có thay đổi trong apps/ hoặc packages/?"}
+    DIFF -->|"Không"| END(["Cho kết thúc"])
+    DIFF -->|"Có"| FLAG{"Có cờ .allow-red?"}
+    FLAG -->|"Không"| VERIFY["pnpm verify: typecheck, lint có ranh giới import, test"]
+    FLAG -->|"Có: pha 1"| VERIFYP1["pnpm verify: typecheck, lint, bỏ qua test"]
     VERIFY -->|"OK"| END
+    VERIFYP1 -->|"OK"| END
     VERIFY -->|"Lỗi"| BLOCK["Chặn, trả lỗi gọn cho Claude"]
+    VERIFYP1 -->|"Lỗi"| BLOCK
     BLOCK --> WORK
 
     PERM["Permissions deny: .env, migration cũ, rm -rf, force push"] -.->|"Luôn áp dụng"| EDIT

@@ -11,8 +11,10 @@ Tính năng: $ARGUMENTS
 2. Chỉ đọc những file liên quan. Điền Mục tiêu, Contract, Plan, Checklist. Nếu tính năng KHÔNG đổi contract API hoặc chỉ chạm 1 lớp, nói rõ và đề xuất làm thẳng không cần quy trình này.
 3. DỪNG để tôi duyệt plan và contract. Đây là điểm kiểm tra quan trọng nhất — nêu rõ các quyết định có thể tranh cãi.
 4. Sau khi được duyệt:
-   - Tạo file `.claude/.allow-red` (cho phép test đỏ có chủ đích ở pha này).
-   - Viết schema/types trong `packages/shared` (phải typecheck được).
-   - Viết test backend mô tả hành vi mong muốn. Chưa viết code thực thi; test được phép đỏ.
+   - Tạo file `.claude/.allow-red` (verify sẽ bỏ qua test, nhưng typecheck và lint vẫn phải qua).
+   - Viết schema/types trong `packages/shared`.
+   - Tạo stub cho các hàm backend: chữ ký đầy đủ theo contract, thân hàm chỉ `throw new Error("not implemented")`. Chữ ký này là một phần của contract.
+   - Viết test backend gọi các stub đó, mô tả hành vi mong muốn. Test phải đỏ vì "not implemented", không phải vì lỗi import hay type.
+   - `pnpm verify` phải qua (typecheck + lint), rồi chạy riêng test backend để xác nhận chúng đỏ đúng lý do.
    - Commit: `feat(<tên>): contract + failing tests`.
 5. Chạy `/handoff`, rồi nhắc tôi: `/clear`, `/model sonnet`, `/build-feature <tên-tính-năng>`.

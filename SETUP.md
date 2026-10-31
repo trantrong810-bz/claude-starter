@@ -7,8 +7,9 @@ Chép các file này vào gốc monorepo (pnpm + Turborepo, apps/backend, apps/w
 | File                                | Vai trò                                                                  |
 | ----------------------------------- | ------------------------------------------------------------------------ |
 | `CLAUDE.md`                         | Bộ nhớ dự án, giữ ngắn. Điền tên dự án và stack thật.                    |
-| `.claude/settings.json`             | Allow lệnh an toàn, deny `.env`/migration/lệnh phá hoại, đăng ký 2 hook. |
+| `.claude/settings.json`             | Allow lệnh an toàn, deny `.env`/migration/lệnh phá hoại, đăng ký 3 hook. |
 | `.claude/hooks/format.sh`           | Tự chạy Prettier sau mỗi lần Claude sửa file.                            |
+| `.claude/hooks/session-context.sh`  | Đầu session: báo spec đang dở và cờ `.allow-red` vào context.            |
 | `.claude/hooks/verify-on-stop.sh`   | Chặn Claude báo "xong" khi `verify` còn lỗi (có chống lặp vô hạn).       |
 | `scripts/verify.sh`                 | Typecheck + lint + test phần bị ảnh hưởng, output gọn.                   |
 | `.claude/commands/plan-feature.md`  | `/plan-feature` — pha 1 (Opus): plan, contract, test backend đỏ.         |
@@ -33,4 +34,4 @@ Chép các file này vào gốc monorepo (pnpm + Turborepo, apps/backend, apps/w
 
 Xem README, mục "Quy trình".
 
-Cờ `.claude/.allow-red` cho phép test đỏ có chủ đích ở pha 1. Nếu Stop hook không chặn khi lẽ ra phải chặn, kiểm tra xem file này có bị bỏ quên không.
+Cờ `.claude/.allow-red` cho phép test đỏ có chủ đích ở pha 1: verify bỏ qua test nhưng vẫn bắt buộc typecheck và lint. Nếu cờ bị bỏ quên, hook SessionStart sẽ cảnh báo ở đầu mỗi session.
