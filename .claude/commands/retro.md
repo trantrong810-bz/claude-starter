@@ -17,3 +17,4 @@ Với mỗi vấn đề, đề xuất ĐÚNG MỘT cách khắc phục rẻ nh�
 
 Trình bày dạng bảng ngắn: vấn đề → đề xuất → file sẽ sửa. Tối đa 5 dòng; bỏ qua sự cố một lần.
 Không sửa gì cho đến khi tôi chọn. Cũng đề xuất xóa dòng CLAUDE.md nào đã thừa (vì đã có lint/hook thay thế).
+Nếu đề xuất được chọn làm thay đổi quy trình (command, hook, subagent, phân loại task), cập nhật sơ đồ trong `docs/WORKFLOW.md` cùng commit.

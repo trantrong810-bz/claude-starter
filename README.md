@@ -31,7 +31,10 @@ scripts/verify.sh                # typecheck + lint + test phần bị ảnh hư
 scripts/try-example.sh           # dựng demo chạy được từ example/
 example/                         # monorepo mẫu tối giản
 docs/specs/_template.md          # mẫu spec cho mỗi tính năng
+docs/WORKFLOW.md                 # sơ đồ Mermaid của quy trình + lớp bảo vệ
 ```
+
+Sơ đồ quy trình đầy đủ: [docs/WORKFLOW.md](docs/WORKFLOW.md) (GitHub hiển thị Mermaid trực tiếp).
 
 ## Thử ngay với monorepo mẫu
 
