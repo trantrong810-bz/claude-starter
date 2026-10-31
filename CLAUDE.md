@@ -20,6 +20,7 @@
 ## Quy tắc
 
 - Đổi API: sửa schema trong packages/shared TRƯỚC, sau đó backend, rồi web/mobile.
+- Gọi API chỉ qua client trong packages/shared (parse response bằng schema, encode tham số URL). Apps chỉ chứa UI.
 - Không sửa migration đã tồn tại; tạo migration mới.
 - Không đọc/sửa `.env*`. Biến môi trường mẫu nằm trong `.env.example`.
 - Chưa chạy `pnpm verify` thành công thì chưa coi là xong.

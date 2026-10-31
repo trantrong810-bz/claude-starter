@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { CreateTodoSchema } from "./index";
+import { CreateTodoSchema } from "./schema";
 
 describe("CreateTodoSchema", () => {
   it("rejects empty title", () => {

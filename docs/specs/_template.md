@@ -10,15 +10,17 @@
 
 ## Plan
 
-<Thay đổi ở backend / web / mobile.>
+<Thay đổi ở backend / client / web / mobile. Ghi rõ mỗi app có UI đáng kể hay chỉ gọi client.>
 
 ## Checklist
 
 - [ ] Pha 1: plan + contract được duyệt
-- [ ] Pha 1: shared schema + test backend (đỏ) — commit
+- [ ] Pha 1: nhánh feat/, shared schema + stub + test backend (đỏ) — commit
 - [ ] Pha 2: backend xanh — commit
-- [ ] Pha 2: web + mobile (subagent song song) — commit
-- [ ] Pha 2: code-reviewer
+- [ ] Pha 2: client trong shared + test — commit
+- [ ] Pha 2: UI web + mobile — commit
+- [ ] Pha 2: code-reviewer, sửa vấn đề cao/trung
+- [ ] Merge vào main (được duyệt)
 - [ ] /retro
 
 ## Tiến độ

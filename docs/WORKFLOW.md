@@ -19,7 +19,8 @@ flowchart TD
     subgraph PHASE1["Session 1: Opus, pha lập kế hoạch"]
         P1["/plan-feature: tạo spec, plan, contract"] --> APPROVE{"Bạn duyệt plan và contract"}
         APPROVE -->|"Sửa"| P1
-        APPROVE -->|"OK"| RED["Tạo cờ .allow-red"]
+        APPROVE -->|"OK"| BR["Tạo nhánh feat/tên, main luôn xanh"]
+        BR --> RED["Tạo cờ .allow-red"]
         RED --> CONTRACT["Schema trong packages/shared"]
         CONTRACT --> STUB["Stub backend: chữ ký đầy đủ, throw not implemented"]
         STUB --> TESTS["Test backend viết trước, đỏ vì not implemented"]
@@ -35,15 +36,23 @@ flowchart TD
     subgraph PHASE2["Session 2: Sonnet, pha thực thi"]
         P2["/build-feature: đọc spec, xóa cờ .allow-red"] --> BE["Backend: thay stub, làm test xanh"]
         BE --> C2["Commit: backend"]
-        C2 --> WEB["Subagent app-builder: web"]
-        C2 --> MOB["Subagent app-builder: mobile"]
+        C2 --> CLIENT["Client trong shared: parse bằng schema, encode URL, test"]
+        CLIENT --> C2B["Commit: client"]
+        C2B --> UIQ{"Mỗi app có UI đáng kể?"}
+        UIQ -->|"Có"| WEB["Subagent app-builder: web"]
+        UIQ -->|"Có"| MOB["Subagent app-builder: mobile"]
+        UIQ -->|"Không"| INLINE["Tự làm UI trực tiếp"]
         WEB --> JOIN["pnpm verify toàn bộ"]
         MOB --> JOIN
+        INLINE --> JOIN
         JOIN --> C3["Commit: web và mobile"]
-        C3 --> REV["Subagent code-reviewer"]
+        C3 --> REV["Subagent code-reviewer: main...HEAD, kèm spec và kết quả verify"]
+        REV --> FIX["Sửa vấn đề cao và trung, commit"]
     end
 
-    REV --> RETRO["/retro: đề xuất cải tiến"]
+    FIX --> MERGE{"Bạn duyệt merge vào main"}
+    MERGE -->|"Cần sửa"| FIX
+    MERGE -->|"OK"| RETRO["/retro: đề xuất cải tiến"]
     RETRO --> PICK{"Bạn chọn đề xuất"}
     PICK --> IMPROVE["Lint rule, hook, dòng CLAUDE.md, command mới"]
     IMPROVE -.->|"Cấu hình tốt hơn cho task sau"| START
@@ -54,7 +63,7 @@ flowchart TD
     IMPROVE --> DONE
 
     classDef human fill:#fff4d6,stroke:#c98a00,color:#000
-    class APPROVE,MEDOK,PICK human
+    class APPROVE,MEDOK,MERGE,PICK human
 ```
 
 Ô vàng là điểm bạn cần có mặt. Mọi bước khác Claude tự làm.

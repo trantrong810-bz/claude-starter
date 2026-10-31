@@ -1,6 +1,7 @@
-import { API, type CreateTodoInput, type Todo } from "@app/shared";
+import { API, TodoSchema, type CreateTodoInput, type Todo } from "./schema";
 
-// Placeholder: thay app này bằng create-next-app / create-expo-app, giữ client gọi API qua @app/shared.
+// Client gọi API dùng chung cho web và mobile.
+// Quy tắc: parse response bằng schema (không ép kiểu `as`), encode tham số đưa vào URL.
 export async function createTodo(baseUrl: string, input: CreateTodoInput): Promise<Todo> {
   const res = await fetch(baseUrl + API.todos, {
     method: "POST",
@@ -8,5 +9,5 @@ export async function createTodo(baseUrl: string, input: CreateTodoInput): Promi
     body: JSON.stringify(input),
   });
   if (!res.ok) throw new Error(`createTodo failed: ${res.status}`);
-  return (await res.json()) as Todo;
+  return TodoSchema.parse(await res.json());
 }

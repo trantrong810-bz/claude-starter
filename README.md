@@ -44,11 +44,11 @@ bash scripts/try-example.sh ~/claude-starter-demo
 cd ~/claude-starter-demo && pnpm verify && claude
 ```
 
-Script ghép `example/` (shared + backend + web + mobile, có Zod schema và test thật) với toàn bộ cấu hình, chạy `git init` và `pnpm install`. Muốn thấy cơ chế hoạt động: đổi `title` thành `name` trong `packages/shared/src/index.ts` rồi chạy `pnpm verify` — typecheck backend báo lỗi đúng dòng, test fail, và Stop hook sẽ không cho Claude báo xong.
+Script ghép `example/` (shared + backend + web + mobile, có Zod schema và test thật) với toàn bộ cấu hình, chạy `git init` và `pnpm install`. Muốn thấy cơ chế hoạt động: đổi `title` thành `name` trong `packages/shared/src/schema.ts` rồi chạy `pnpm verify` — typecheck báo lỗi đúng dòng ở cả 4 package (shared, backend, web, mobile), và Stop hook sẽ không cho Claude báo xong.
 
 Mẫu có sẵn Prettier (hook format chạy thật) và `eslint.config.js` với quy tắc ranh giới: thử thêm `import { listTodos } from "@app/backend"` vào `apps/web` — `pnpm verify` báo lỗi kèm hướng dẫn đưa code vào `packages/shared`. Chép file này sang dự án thật để giữ nguyên ranh giới.
 
-App `web` và `mobile` trong mẫu chỉ là client TypeScript; khi dùng thật, thay bằng `create-next-app` / `create-expo-app` và giữ việc gọi API qua `@app/shared`.
+Client gọi API nằm trong `packages/shared/src/client.ts` (parse response bằng Zod, có test với `fetch` giả); `web` và `mobile` chỉ gọi client đó. Khi dùng thật, thay hai app bằng `create-next-app` / `create-expo-app` và giữ nguyên cách này.
 
 ## Áp vào dự án có sẵn
 
@@ -81,19 +81,22 @@ Phần lớn việc hằng ngày là loại nhỏ và vừa — đừng ép chú
 Session 1 (Opus)                         Session 2 (Sonnet)
 /plan-feature <tên> <mô tả>              /build-feature <tên>
   → DUYỆT plan + contract  ◀── bạn         → backend: test xanh → commit
-  → shared schema + test backend đỏ        → web ┐ subagent app-builder
-  → commit → /handoff                      → mobile ┘ song song → commit
-        │                                  → code-reviewer
-        └── /clear, /model sonnet ──▶      → /retro  ◀── bạn chọn cải tiến
+  → nhánh feat/<tên>                       → client trong shared + test → commit
+  → schema + stub + test backend đỏ        → UI web + mobile → commit
+  → commit → /handoff                        (subagent song song nếu UI lớn)
+        │                                  → code-reviewer → sửa
+        └── /clear, /model sonnet ──▶      → DUYỆT merge vào main  ◀── bạn
+                                           → /retro  ◀── bạn chọn cải tiến
 ```
 
 Vì sao như vậy:
 
 - **Model đúng việc, không phá cache.** Phần cần tư duy (plan, contract, test) dùng Opus; phần nhiều token (viết code) dùng Sonnet. Đổi model ở ranh giới `/clear` nên không làm mất prompt cache giữa session.
 - **Contract + test chốt trước.** Pha 2 có "trọng tài" sẵn: làm cho test xanh, không phải tự phán đoán khi nào xong.
-- **Song song khi đã độc lập.** Web và mobile chỉ phụ thuộc contract, nên chạy hai subagent cùng lúc; context chính chỉ nhận vài dòng kết quả.
-- **Commit mỗi lớp.** Điểm quay lại rõ ràng, diff nhỏ nên Stop hook chạy nhanh.
-- **Bạn chỉ cần có mặt ở 2 điểm:** duyệt plan/contract (sửa ở đây rẻ nhất) và chọn đề xuất của `/retro`.
+- **Client dùng chung, app chỉ là UI.** Hàm gọi API viết một lần trong `shared`, có test; web và mobile không lặp lại logic.
+- **Song song chỉ khi đáng.** Mỗi subagent tốn ~10k token khởi động. Chỉ giao web/mobile cho subagent khi mỗi app có phần UI đáng kể; việc nhỏ thì làm thẳng.
+- **Nhánh `feat/`, commit mỗi lớp.** `main` luôn xanh dù test pha 1 đỏ; mỗi lớp là một điểm quay lại; reviewer xem đúng `main...HEAD`.
+- **Bạn chỉ cần có mặt ở 3 điểm:** duyệt plan/contract (sửa ở đây rẻ nhất), duyệt merge vào `main`, và chọn đề xuất của `/retro`.
 
 ### Cải tiến dần — tự động qua `/retro`
 

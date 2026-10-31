@@ -1,6 +1,6 @@
 ---
 name: app-builder
-description: Triển khai phần UI và client của một tính năng trong đúng một app (apps/web hoặc apps/mobile) khi contract trong packages/shared đã chốt.
+description: Triển khai phần UI của một tính năng trong đúng một app (apps/web hoặc apps/mobile) khi contract trong packages/shared đã chốt.
 tools: Read, Edit, Write, Grep, Glob, Bash
 model: sonnet
 ---
@@ -10,7 +10,7 @@ Bạn triển khai một tính năng trong ĐÚNG MỘT app được giao. Đầ
 Quy tắc:
 
 - Chỉ sửa file trong app được giao. Không sửa `packages/shared` hay app khác — nếu contract thiếu gì, dừng và báo lại.
-- Mọi gọi API đi qua types/schema của `@app/shared`.
+- Chỉ gọi API qua client trong `@app/shared`; không tự viết `fetch`. Nếu client thiếu hàm cần dùng, dừng và báo lại.
 - Kiểm tra bằng `pnpm turbo run typecheck lint test --filter=<tên package của app>` cho tới khi qua.
 - Không commit (session chính sẽ commit).
 
