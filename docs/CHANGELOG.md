@@ -13,6 +13,7 @@ Ghi thay đổi vào mục `Unreleased` cùng commit (subagent `versioner` tự 
 - ADR 0012R (công cụ version đi theo kit) và 0013R (tự động versioning, chế độ tắt).
 - `GIT.md`: quy ước git — commit message, nhánh, merge, viết lại lịch sử, tag, push, xuống dòng.
 - ADR 0014R: quy ước git chung, nạp mọi session và ép bằng hook.
+- ADR 0015R: Windows 11 + VSCode là môi trường chuẩn, script giữ POSIX.
 
 ### Changed
 
@@ -21,6 +22,7 @@ Ghi thay đổi vào mục `Unreleased` cùng commit (subagent `versioner` tự 
 - README, SETUP: cấu hình tự động versioning và `version.mjs init`.
 - `WORKFLOW.md`: `commit-guard` và git hook trong sơ đồ bảo vệ; bước merge fast-forward; SessionStart báo trạng thái git.
 - README, SETUP: thành phần git mới, bước cài `core.hooksPath`, permissions tùy chọn.
+- README, SETUP: mục Môi trường/Yêu cầu (Windows 11, VSCode, Git for Windows), `.vscode/` trong danh sách thành phần, ghi chú `chmod` trên Windows.
 
 ## [0.1.0] - 2026-11-01
 

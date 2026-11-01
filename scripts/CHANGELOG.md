@@ -18,6 +18,7 @@ Ghi thay đổi vào mục `Unreleased` cùng commit (subagent `versioner` tự 
 - `verify.sh --quick`: kiểm tra thêm changelog thiếu khi bật tự động.
 - `try-example.sh`: tự chạy `version.mjs init` trong demo.
 - `try-example.sh`: chép `.githooks/` và `.gitattributes`, bật `core.hooksPath`, commit đầu đúng quy ước.
+- `try-example.sh`: chép `.vscode/` sang demo.
 
 ### Fixed
 

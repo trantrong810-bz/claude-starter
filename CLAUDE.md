@@ -10,6 +10,13 @@
 - apps/mobile: Expo (React Native)
 - packages/shared: types, Zod schemas, API client — NGUỒN SỰ THẬT DUY NHẤT cho contract API
 
+## Môi trường
+
+- Windows 11, VSCode + extension Claude Code. Terminal PowerShell; hook và `scripts/*.sh` chạy bằng Git Bash (Git for Windows) — lệnh trong Bash tool dùng cú pháp POSIX, đường dẫn `/`.
+- `execSync`/`exec` trong Node chạy qua cmd.exe: dùng nháy kép, không nháy đơn.
+- File text LF (`.gitattributes`); script đọc file phải chịu được CRLF (như `readText` trong `scripts/version.mjs`).
+- `chmod +x` không lưu vào git trên Windows: dùng `git update-index --chmod=+x <file>`.
+
 ## Lệnh
 
 - `pnpm dev` — chạy tất cả (cần `docker compose up -d` trước)

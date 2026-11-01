@@ -1,6 +1,6 @@
 # claude-starter
 
-Bộ cấu hình Claude Code cho monorepo fullstack (backend + web + mobile), tối ưu cho làm việc một mình trên một máy dev.
+Bộ cấu hình Claude Code cho monorepo fullstack (backend + web + mobile), tối ưu cho làm việc một mình trên một máy Windows 11 + VSCode.
 
 Ba nguyên tắc:
 
@@ -12,11 +12,16 @@ Ba nguyên tắc:
 
 pnpm workspaces + Turborepo · `apps/backend` (Node) · `apps/web` (Next.js) · `apps/mobile` (Expo) · `packages/shared` (Zod schemas, types, API client).
 
+## Môi trường
+
+Windows 11 · VSCode + extension Claude Code · Git for Windows (hook và script chạy bằng Git Bash) · Node ≥ 20 · pnpm. Script viết theo POSIX nên vẫn chạy trên macOS/Linux, nhưng chỉ Windows được kiểm thử thường xuyên. Lưu ý cho Claude nằm trong mục "Môi trường" của `CLAUDE.md` (ADR 0015R).
+
 ## Nội dung
 
 ```
 CLAUDE.md                        # bộ nhớ dự án — điền tên & stack thật
 SETUP.md                         # hướng dẫn cài đặt chi tiết
+.vscode/                         # LF, format on save, terminal Git Bash, extension gợi ý
 .claude/
   settings.json                  # permissions + đăng ký hooks
   hooks/format.sh                # Prettier sau mỗi lần sửa file

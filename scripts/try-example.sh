@@ -13,7 +13,7 @@ fi
 
 mkdir -p "$dest"
 cp -r "$root/example/." "$dest/"
-cp -r "$root/.claude" "$root/.githooks" "$root/scripts" "$root/docs" "$root/CLAUDE.md" "$root/.gitattributes" "$dest/"
+cp -r "$root/.claude" "$root/.githooks" "$root/.vscode" "$root/scripts" "$root/docs" "$root/CLAUDE.md" "$root/.gitattributes" "$dest/"
 rm -f "$dest/scripts/try-example.sh"
 # ADR của kit là lịch sử của kit, không phải của dự án mới: chỉ giữ mẫu và mục lục trống.
 find "$dest/docs/decisions" -name "0*.md" -delete 2>/dev/null

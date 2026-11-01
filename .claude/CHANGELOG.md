@@ -25,6 +25,7 @@ Ghi thay đổi vào mục `Unreleased` cùng commit (subagent `versioner` tự 
 - `settings.json`: đăng ký `commit-guard.sh`; `deny` thêm `git clean`, `branch -D`, `tag -d`, `commit --no-verify`, `git config`; `ask` cho `git push`, `rebase`, `tag`.
 - `/plan-feature`, `/build-feature`, `/release`: message theo Conventional Commits; merge `--ff-only`, rebase khi main đi tiếp, xóa nhánh sau merge; phát hành chỉ từ main.
 - `code-reviewer`: kiểm tra lịch sử commit `main..HEAD` theo `docs/GIT.md`.
+- `CLAUDE.md`: mục Môi trường — Windows 11, VSCode, Git Bash, nháy kép trong `execSync`, LF/CRLF, `git update-index --chmod=+x`.
 
 ## [0.1.0] - 2026-11-01
 

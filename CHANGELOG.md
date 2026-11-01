@@ -12,6 +12,7 @@ Thay đổi không thuộc phần nào (ví dụ `versions.json`) ghi vào mục
 - `.gitattributes`: LF cho mọi file text.
 - `.githooks/`: `commit-msg` và `pre-commit` (chặn `.env*`, file cục bộ của Claude, dấu xung đột, cờ `.allow-red` trên main).
 - Tag `v0.1.0` gắn bù cho commit phát hành f8379b7.
+- `.vscode/`: `settings.json` (LF, format on save bằng Prettier, terminal Git Bash) và `extensions.json` (Claude Code, Prettier, ESLint, Markdown Mermaid).
 
 ### Removed
 
