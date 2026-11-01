@@ -1,7 +1,7 @@
 ---
-thu-tu: 5
-tieu-de: Lịch sử và tra cứu
-mo-ta: /why tìm câu trả lời trong ADR, spec, git, changelog và log prompt.
+order: 5
+title: Lịch sử và tra cứu
+description: /why tìm câu trả lời trong ADR, spec, git, changelog và log prompt.
 ---
 
 # Lịch sử và tra cứu

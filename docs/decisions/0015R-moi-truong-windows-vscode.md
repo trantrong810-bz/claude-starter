@@ -1,11 +1,11 @@
 ---
-so: 0015
-pham-vi: rong # rong | tinh-nang
-trang-thai: chap-nhan # de-xuat | chap-nhan | bi-thay-the
-thay-the-boi: # số ADR mới, chỉ khi bi-thay-the
-ngay: 2026-11-01
+number: 0015
+scope: broad # broad | feature
+status: accepted # proposed | accepted | superseded
+superseded-by: # number of the new ADR, only when superseded
+date: 2026-11-01
 model: claude-opus-5-5
-nguon: yêu cầu "thêm thông tin môi trường làm việc: windows 11, VSCode"; ADR 0014R
+source: yêu cầu "thêm thông tin môi trường làm việc: windows 11, VSCode"; ADR 0014R
 ---
 
 # Windows 11 + VSCode là môi trường chuẩn của kit, script giữ POSIX

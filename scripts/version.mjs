@@ -1,31 +1,31 @@
 #!/usr/bin/env node
-// Version cho từng phần của repo + changelog mỗi phần. Không phụ thuộc thư viện ngoài.
+// Versions for each part of the repo + a changelog per part. No external dependencies.
 //
-//   node scripts/version.mjs init                  tạo versions.json + CHANGELOG.md cho dự án (apps/*, packages/*)
-//   node scripts/version.mjs list                  version hiện tại của mọi phần
-//   node scripts/version.mjs mode                  chế độ tự động đang áp dụng: off | changelog | full
+//   node scripts/version.mjs init                  create versions.json + CHANGELOG.md for the project (apps/*, packages/*)
+//   node scripts/version.mjs list                  current version of every part
+//   node scripts/version.mjs mode                  active automation mode: off | changelog | full
 //   node scripts/version.mjs check [--json] [--auto]
-//        phần nào đổi file từ bản phát hành trước mà Unreleased còn trống.
-//        --json: in danh sách cho subagent versioner. --auto: không làm gì nếu chế độ là off.
+//        which parts changed files since the last release while Unreleased is still empty.
+//        --json: print the list for the versioner subagent. --auto: do nothing when mode is off.
 //   node scripts/version.mjs release [--dry-run] [--no-tag]
-//        bump các phần có Unreleased, ghi changelog, commit, tag vX.Y.Z.
-//        --no-tag: không tag — phát hành qua PR, CI gắn tag sau khi merge (docs/GIT.md).
-//   node scripts/version.mjs tag                   gắn tag vX.Y.Z cho HEAD nếu HEAD là commit "release: vX.Y.Z"
-//                                                   (CI chạy sau khi PR release merge vào main)
+//        bump the parts with Unreleased entries, write changelogs, commit, tag vX.Y.Z.
+//        --no-tag: no tag — release goes through a PR and CI tags after merge (docs/GIT.md).
+//   node scripts/version.mjs tag                   tag HEAD vX.Y.Z if HEAD is the "release: vX.Y.Z" commit
+//                                                   (CI runs it after the release PR merges into main)
 //
-// Cấu hình tự động trong versions.json:  "automation": { "mode": "changelog", "confirmRelease": true }
-//   off: không tự động, không chặn commit · changelog: chặn commit thiếu changelog, versioner tự điền
-//   full: như changelog + tự phát hành sau khi merge (hỏi trước nếu confirmRelease)
-// Ghi đè cho một session trên máy: CLAUDE_AUTO_VERSION=off
+// Automation settings in versions.json:  "automation": { "mode": "changelog", "confirmRelease": true }
+//   off: no automation, commits never blocked · changelog: block commits missing a changelog, versioner fills it
+//   full: like changelog + release automatically after merge (asks first when confirmRelease)
+// Override for one session on this machine: CLAUDE_AUTO_VERSION=off
 //
-// Mức bump suy ra từ mục Unreleased: "### Removed" hoặc mục bắt đầu bằng BREAKING → major; "### Added" → minor; còn lại → patch.
-// Với version 0.x, major được hạ xuống minor (quy ước SemVer cho giai đoạn chưa ổn định).
+// The bump level comes from Unreleased: "### Removed" or an entry starting with BREAKING → major; "### Added" → minor; otherwise → patch.
+// For 0.x versions, major is lowered to minor (the SemVer convention for unstable versions).
 
 import { execSync } from "node:child_process";
 import { readFileSync, writeFileSync, existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 
-// Chạy ở gốc repo git; ngoài repo git (ví dụ trước khi git init) thì dùng thư mục hiện tại.
+// Run at the git repo root; outside a git repo (e.g. before git init) use the current directory.
 try {
   process.chdir(
     execSync("git rev-parse --show-toplevel", {
@@ -35,21 +35,21 @@ try {
       .trim(),
   );
 } catch {
-  /* không phải repo git */
+  /* not a git repo */
 }
 
 const CONFIG = "versions.json";
 const MODES = ["off", "changelog", "full"];
 const CHANGELOG_HEADER = `# Changelog
 
-Định dạng theo [Keep a Changelog](https://keepachangelog.com/vi/1.1.0/); version theo [SemVer](https://semver.org/lang/vi/).
-Ghi thay đổi vào mục \`Unreleased\` cùng commit (subagent \`versioner\` tự điền khi bật tự động); \`node scripts/version.mjs release\` chuyển nó thành version mới.
+Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow [SemVer](https://semver.org/).
+Record changes under \`Unreleased\` in the same commit (the \`versioner\` subagent fills it when automation is on); \`node scripts/version.mjs release\` turns it into a new version.
 
 ## [Unreleased]
 `;
 const cmd0 = process.argv[2];
 if (cmd0 !== "init" && !existsSync(CONFIG)) {
-  console.error(`Chưa có ${CONFIG}. Chạy: node scripts/version.mjs init`);
+  console.error(`No ${CONFIG} yet. Run: node scripts/version.mjs init`);
   process.exit(cmd0 === "check" && process.argv.includes("--auto") ? 0 : 1);
 }
 const config = cmd0 === "init" ? {} : JSON.parse(readFileSync(CONFIG, "utf8"));
@@ -83,7 +83,7 @@ function setVersion(c, v) {
     c.version = v;
   }
 }
-// Ở 0.x, thay đổi phá vỡ chỉ bump minor (quy ước SemVer cho giai đoạn chưa ổn định).
+// At 0.x, breaking changes only bump minor (the SemVer convention for unstable versions).
 function effective(v, level) {
   return level === "major" && v.startsWith("0.") ? "minor" : level;
 }
@@ -97,7 +97,7 @@ function bump(v, level) {
 // ---------- changelog ----------
 const UNRELEASED = /^## \[Unreleased\][^\n]*\n([\s\S]*?)(?=^## \[|(?![\s\S]))/m;
 
-// Chuẩn hoá CRLF: file có thể bị checkout với CRLF trên Windows.
+// Normalize CRLF: files may be checked out with CRLF on Windows.
 const readText = (file) => readFileSync(file, "utf8").replace(/\r\n/g, "\n");
 
 function unreleased(file) {
@@ -131,26 +131,26 @@ function stamp(file, version, date, extra = "") {
   );
 }
 
-// ---------- thay đổi kể từ bản phát hành trước ----------
-// Mốc so sánh: tag phát hành gần nhất; dự án chưa phát hành thì dùng commit đầu tiên.
-// Mô tả mốc so sánh cho người đọc: tên tag, hoặc "commit đầu <mã ngắn>" khi chưa phát hành.
+// ---------- changes since the last release ----------
+// Baseline: the latest release tag; a project that never released uses its first commit.
+// Human-readable baseline: the tag name, or "first commit <short hash>" before any release.
 function baseLabel(base) {
-  if (!base) return "đầu";
+  if (!base) return "the start";
   return /^v\d/.test(base)
     ? base
-    : `commit đầu ${base.slice(0, 7)} (chưa phát hành)`;
+    : `first commit ${base.slice(0, 7)} (not released yet)`;
 }
-// Định dạng file vừa ghi nếu repo có Prettier (không bắt buộc).
+// Format the files just written if the repo has Prettier (optional).
 function formatIfPossible(globs) {
   try {
     sh(`npx --no-install prettier --write --log-level=warn ${globs}`);
   } catch {
-    /* không có Prettier: giữ nguyên */
+    /* no Prettier: leave as is */
   }
 }
 function lastTag() {
   try {
-    // Nháy kép: cmd.exe (execSync trên Windows) không hiểu nháy đơn.
+    // Double quotes: cmd.exe (execSync on Windows) does not understand single quotes.
     return sh('git describe --tags --abbrev=0 --match "v[0-9]*"');
   } catch {
     try {
@@ -160,8 +160,8 @@ function lastTag() {
     }
   }
 }
-// Đường dẫn nằm ngoài versioning (ví dụ log prompt): không thuộc phần nào, không đòi changelog.
-// File changelog không tính là thay đổi của phần: sửa changelog không đòi ghi changelog.
+// Paths outside versioning (e.g. the prompt log): belong to no part and need no changelog.
+// Changelog files do not count as changes to their part: editing a changelog needs no changelog entry.
 const changelogFiles = () =>
   new Set([
     config.project?.changelog,
@@ -180,7 +180,7 @@ function changedFiles(base) {
   const untracked = lines(sh("git ls-files --others --exclude-standard"));
   return [...new Set([...tracked, ...untracked])];
 }
-// Mỗi file thuộc phần có đường dẫn khớp dài nhất; không khớp phần nào → cấp dự án.
+// Each file belongs to the part with the longest matching path; no match → project level.
 function ownerOf(file) {
   let best = null;
   let bestLen = -1;
@@ -223,10 +223,10 @@ function analyze() {
   };
 }
 
-// ---------- lệnh ----------
+// ---------- commands ----------
 function cmdList() {
   const { base } = analyze();
-  console.log(`Dự án   ${config.project.version}   (mốc: ${baseLabel(base)})`);
+  console.log(`Project ${config.project.version}   (since: ${baseLabel(base)})`);
   for (const [, c] of Object.entries(config.components)) {
     console.log(`${c.label.padEnd(8)}${getVersion(c)}`);
   }
@@ -247,7 +247,7 @@ function cmdCheck({ quiet = false, json = false, auto = false } = {}) {
     if (projectTouched && projectLevel === "none")
       missing.push({
         id: "project",
-        label: "dự án",
+        label: "project",
         changelog: config.project.changelog,
         files: files.project ?? [],
       });
@@ -259,19 +259,19 @@ function cmdCheck({ quiet = false, json = false, auto = false } = {}) {
     .filter((r) => r.touched && r.level === "none")
     .map(
       (r) =>
-        `- ${r.label}: có file thay đổi từ ${baseLabel(base)} nhưng Unreleased trong ${config.components[r.id].changelog} trống`,
+        `- ${r.label}: files changed since ${baseLabel(base)} but Unreleased in ${config.components[r.id].changelog} is empty`,
     );
   if (projectTouched && projectLevel === "none") {
     errors.push(
-      `- dự án: file ngoài mọi phần đã đổi nhưng Unreleased trong ${config.project.changelog} trống`,
+      `- project: files outside every part changed but Unreleased in ${config.project.changelog} is empty`,
     );
   }
   if (errors.length) {
     const hint =
       mode() === "off"
         ? ""
-        : "\nGọi subagent versioner để điền (nó chạy: node scripts/version.mjs check --json).";
-    console.error("CHANGELOG THIẾU:\n" + errors.join("\n") + hint);
+        : "\nCall the versioner subagent to fill it in (it runs: node scripts/version.mjs check --json).";
+    console.error("CHANGELOG MISSING:\n" + errors.join("\n") + hint);
     process.exitCode = 1;
     return false;
   }
@@ -281,7 +281,7 @@ function cmdCheck({ quiet = false, json = false, auto = false } = {}) {
 
 function cmdRelease(dryRun, noTag) {
   if (!dryRun && sh("git status --porcelain")) {
-    console.error("Còn thay đổi chưa commit. Commit trước khi phát hành.");
+    console.error("There are uncommitted changes. Commit before releasing.");
     process.exitCode = 1;
     return;
   }
@@ -290,11 +290,11 @@ function cmdRelease(dryRun, noTag) {
   const { rows, projectLevel } = analyze();
   const releasing = rows.filter((r) => r.level !== "none");
   if (!releasing.length && projectLevel === "none") {
-    console.log("Không có gì để phát hành (mọi mục Unreleased đều trống).");
+    console.log("Nothing to release (every Unreleased section is empty).");
     return;
   }
 
-  // Ngày theo giờ máy (không phải UTC), dạng YYYY-MM-DD.
+  // Date in local time (not UTC), as YYYY-MM-DD.
   const date = new Date().toLocaleDateString("sv-SE");
   const top = [projectLevel, ...releasing.map((r) => r.level)].reduce((a, b) =>
     LEVELS.indexOf(a) >= LEVELS.indexOf(b) ? a : b,
@@ -307,20 +307,20 @@ function cmdRelease(dryRun, noTag) {
     return {
       ...r,
       level: eff,
-      note: eff !== r.level ? ` (${r.level} hạ xuống ${eff} vì 0.x)` : "",
+      note: eff !== r.level ? ` (${r.level} lowered to ${eff} because 0.x)` : "",
       next: eff === "none" ? r.version : bump(r.version, eff),
     };
   });
   const projNote =
     projectLevelEff !== top
-      ? ` (${top} hạ xuống ${projectLevelEff} vì 0.x)`
+      ? ` (${top} lowered to ${projectLevelEff} because 0.x)`
       : "";
   console.log(
-    `Dự án: ${config.project.version} → ${projectVersion} — ${projectLevelEff}${projNote}`,
+    `Project: ${config.project.version} → ${projectVersion} — ${projectLevelEff}${projNote}`,
   );
   for (const r of plan) {
     console.log(
-      `  ${r.label.padEnd(8)}${r.level === "none" ? `${r.version} (giữ nguyên)` : `${r.version} → ${r.next} — ${r.level}${r.note}`}`,
+      `  ${r.label.padEnd(8)}${r.level === "none" ? `${r.version} (unchanged)` : `${r.version} → ${r.next} — ${r.level}${r.note}`}`,
     );
   }
   if (dryRun) return;
@@ -332,7 +332,7 @@ function cmdRelease(dryRun, noTag) {
   }
 
   const table = [
-    "| Phần | Version | Thay đổi | Changelog |",
+    "| Part | Version | Change | Changelog |",
     "| --- | --- | --- | --- |",
     ...plan.map((r) => {
       const c = config.components[r.id];
@@ -343,41 +343,41 @@ function cmdRelease(dryRun, noTag) {
   config.project.version = projectVersion;
   writeFileSync(CONFIG, JSON.stringify(config, null, 2) + "\n");
 
-  // Định dạng lại các file vừa ghi nếu repo có Prettier (không bắt buộc).
+  // Reformat the files just written if the repo has Prettier (optional).
   formatIfPossible("CHANGELOG.md '**/CHANGELOG.md' versions.json");
 
   sh("git add -A");
   sh(`git commit -q -m "release: v${projectVersion}"`);
   if (noTag) {
     console.log(
-      `Đã commit release: v${projectVersion}. Mở PR bằng /ship; CI gắn tag sau khi merge.`,
+      `Committed release: v${projectVersion}. Open a PR with /ship; CI tags it after merge.`,
     );
     return;
   }
   sh(`git tag -a v${projectVersion} -m "v${projectVersion}"`);
   console.log(
-    `Đã commit và tag v${projectVersion}. Push: git push && git push origin v${projectVersion}`,
+    `Committed and tagged v${projectVersion}. Push: git push && git push origin v${projectVersion}`,
   );
 }
 
-// Gắn tag cho commit release sau khi merge (GitHub rebase-merge đổi mã commit, nên không tag trước được).
+// Tag the release commit after merge (GitHub rebase-merge changes commit hashes, so it cannot be tagged earlier).
 function cmdTag() {
   const tag = `v${config.project.version}`;
   const subject = sh("git log -1 --format=%s");
   if (subject !== `release: ${tag}`) {
     console.error(
-      `HEAD không phải commit "release: ${tag}" (đang là "${subject}") — không gắn tag.`,
+      `HEAD is not the "release: ${tag}" commit (it is "${subject}") — not tagging.`,
     );
     process.exitCode = 1;
     return;
   }
   try {
     sh(`git rev-parse -q --verify "refs/tags/${tag}"`);
-    console.error(`Tag ${tag} đã có.`);
+    console.error(`Tag ${tag} already exists.`);
     process.exitCode = 1;
     return;
   } catch {
-    /* chưa có tag: gắn */
+    /* no tag yet: create it */
   }
   sh(`git tag -a ${tag} -m "${tag}"`);
   console.log(tag);
@@ -385,7 +385,7 @@ function cmdTag() {
 
 function cmdInit() {
   if (existsSync(CONFIG)) {
-    console.error(`${CONFIG} đã tồn tại — không ghi đè.`);
+    console.error(`${CONFIG} already exists — not overwriting.`);
     process.exitCode = 1;
     return;
   }
@@ -426,7 +426,7 @@ function cmdInit() {
     "versions.json 'apps/*/package.json' 'packages/*/package.json'",
   );
   console.log(
-    `Đã tạo ${CONFIG} với ${Object.keys(components).length} phần: ${Object.keys(components).join(", ")}. Chế độ: changelog.`,
+    `Created ${CONFIG} with ${Object.keys(components).length} parts: ${Object.keys(components).join(", ")}. Mode: changelog.`,
   );
 }
 
@@ -441,7 +441,7 @@ else if (cmd === "release")
 else if (cmd === "tag") cmdTag();
 else {
   console.log(
-    "Dùng: node scripts/version.mjs <init|list|mode|check [--json] [--auto]|release [--dry-run] [--no-tag]|tag>",
+    "Usage: node scripts/version.mjs <init|list|mode|check [--json] [--auto]|release [--dry-run] [--no-tag]|tag>",
   );
   process.exitCode = cmd ? 1 : 0;
 }

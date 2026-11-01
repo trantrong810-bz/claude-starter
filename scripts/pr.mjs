@@ -1,11 +1,11 @@
 #!/usr/bin/env node
-// Dọn nhánh local sau khi PR đã merge trên GitHub. Không phụ thuộc thư viện ngoài.
+// Clean up local branches after their PR merged on GitHub. No external dependencies.
 //
-//   node scripts/pr.mjs stale              liệt kê nhánh local mà mọi commit đã có trên main
-//   node scripts/pr.mjs cleanup <nhánh>    xoá nhánh local đó nếu mọi commit đã có trên main
+//   node scripts/pr.mjs stale              list local branches whose commits are all on main
+//   node scripts/pr.mjs cleanup <branch>   delete that local branch if all its commits are on main
 //
-// GitHub merge bằng rebase nên commit trên main có mã mới: `git branch -d` từ chối xoá, còn `-D`
-// bị cấm (docs/GIT.md). Ở đây so theo nội dung patch (`git cherry`), chỉ xoá khi không mất gì.
+// GitHub merges by rebase, so commits on main get new hashes: `git branch -d` refuses, and `-D` is
+// forbidden (docs/GIT.md). This compares patch content (`git cherry`) and deletes only when nothing is lost.
 
 import { execSync } from "node:child_process";
 
@@ -18,13 +18,13 @@ try {
       .trim(),
   );
 } catch {
-  console.error("Không ở trong repo git.");
+  console.error("Not inside a git repo.");
   process.exit(1);
 }
 
 const REMOTE = "origin";
 const MAIN = "main";
-// Nhánh không bao giờ dọn: main và snapshot WIP (scripts/wip.mjs).
+// Branches never cleaned up: main and WIP snapshots (scripts/wip.mjs).
 const KEEP = /^(main|wip\/.*)$/;
 
 const git = (args) =>
@@ -44,7 +44,7 @@ const fail = (msg) => {
   process.exit(1);
 };
 
-// Mốc so sánh: main trên remote (vừa fetch) nếu có, không thì main local.
+// Baseline: main on the remote (freshly fetched) if present, otherwise local main.
 function base() {
   tryGit(`fetch --prune ${REMOTE}`);
   return tryGit(`rev-parse -q --verify ${REMOTE}/${MAIN}`)
@@ -52,7 +52,7 @@ function base() {
     : MAIN;
 }
 
-// Commit của nhánh chưa có trên main (theo nội dung patch).
+// Branch commits not yet on main (by patch content).
 const missing = (branch, ref) =>
   git(`cherry ${ref} "${branch}"`)
     .split("\n")
@@ -73,30 +73,30 @@ function stale() {
 }
 
 function cleanup(branch) {
-  if (!branch) fail("Dùng: node scripts/pr.mjs cleanup <nhánh>");
-  if (KEEP.test(branch)) fail(`Không dọn nhánh ${branch}.`);
+  if (!branch) fail("Usage: node scripts/pr.mjs cleanup <branch>");
+  if (KEEP.test(branch)) fail(`Not cleaning up branch ${branch}.`);
   if (!tryGit(`rev-parse -q --verify "refs/heads/${branch}"`))
-    fail(`Không có nhánh local ${branch}.`);
+    fail(`No local branch ${branch}.`);
   if (git("branch --show-current") === branch)
-    fail(`Đang ở ${branch}: chuyển sang ${MAIN} trước (git switch ${MAIN}).`);
+    fail(`Currently on ${branch}: switch to ${MAIN} first (git switch ${MAIN}).`);
   const ref = base();
   const left = missing(branch, ref);
   if (left.length) {
     fail(
-      `${branch} còn ${left.length} commit chưa có trên ${ref} — không xoá:\n` +
+      `${branch} has ${left.length} commit(s) not on ${ref} — not deleting:\n` +
         left
           .map((sha) => "- " + git(`log -1 --format="%h %s" ${sha}`))
           .join("\n"),
     );
   }
   git(`update-ref -d "refs/heads/${branch}"`);
-  console.log(`Đã xoá nhánh local ${branch} (mọi commit đã có trên ${ref}).`);
+  console.log(`Deleted local branch ${branch} (all commits are on ${ref}).`);
 }
 
 const [cmd, arg] = process.argv.slice(2);
 if (cmd === "stale") stale();
 else if (cmd === "cleanup") cleanup(arg);
 else {
-  console.log("Dùng: node scripts/pr.mjs <stale|cleanup <nhánh>>");
+  console.log("Usage: node scripts/pr.mjs <stale|cleanup <branch>>");
   process.exit(cmd ? 1 : 0);
 }

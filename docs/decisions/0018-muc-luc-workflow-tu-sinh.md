@@ -1,11 +1,11 @@
 ---
-so: 0018
-pham-vi: tinh-nang # rong | tinh-nang
-trang-thai: chap-nhan # de-xuat | chap-nhan | bi-thay-the
-thay-the-boi: # số ADR mới, chỉ khi bi-thay-the
-ngay: 2026-11-01
+number: 0018
+scope: feature # broad | feature
+status: accepted # proposed | accepted | superseded
+superseded-by: # number of the new ADR, only when superseded
+date: 2026-11-01
 model: claude-opus-5-5
-nguon: yêu cầu "tách các workflow ở trong docs/WORKFLOW.md sang các file con" và "sau này nếu thêm workflow thì sao?"; plan docs/plans/t-ch-c-c-workflow-floofy-biscuit.md
+source: yêu cầu "tách các workflow ở trong docs/WORKFLOW.md sang các file con" và "sau này nếu thêm workflow thì sao?"; plan docs/plans/t-ch-c-c-workflow-floofy-biscuit.md
 ---
 
 # Mỗi quy trình một file trong docs/workflows/, docs/WORKFLOW.md là mục lục tự sinh

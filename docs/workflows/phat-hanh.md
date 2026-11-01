@@ -1,7 +1,7 @@
 ---
-thu-tu: 7
-tieu-de: Phát hành version
-mo-ta: Changelog theo phần, automation.mode, /release bump trên nhánh release/ rồi PR; CI gắn tag.
+order: 7
+title: Phát hành version
+description: Changelog theo phần, automation.mode, /release bump trên nhánh release/ rồi PR; CI gắn tag.
 ---
 
 # Phát hành version

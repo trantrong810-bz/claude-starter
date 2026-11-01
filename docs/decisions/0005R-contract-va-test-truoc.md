@@ -1,11 +1,11 @@
 ---
-so: 0005
-pham-vi: rong
-trang-thai: chap-nhan
-thay-the-boi:
-ngay: 2026-11-01
+number: 0005
+scope: broad # broad | feature
+status: accepted # proposed | accepted | superseded
+superseded-by: # number of the new ADR, only when superseded
+date: 2026-11-01
 model: claude-opus-5-5
-nguon: ca-20261101-14, commit b6d0967
+source: ca-20261101-14, commit b6d0967
 ---
 
 # Contract và test viết trước; stub 'not implemented'; cờ .allow-red chỉ bỏ qua test

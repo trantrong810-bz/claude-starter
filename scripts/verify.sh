@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
-# Kiểm tra trước khi coi là xong. Output gọn: "VERIFY OK" hoặc chỉ các dòng lỗi => ít token.
+# Checks to pass before a task counts as done. Terse output: "VERIFY OK" or only the error lines => few tokens.
 #
-#   bash scripts/verify.sh           nhanh + typecheck/lint/test các package bị ảnh hưởng
-#   bash scripts/verify.sh --quick   chỉ phần nhanh (<1s): quét secret trong history/, kiểm tra ADR, todo,
-#                                    mục lục workflow, changelog thiếu (khi bật tự động versioning)
+#   bash scripts/verify.sh           quick part + typecheck/lint/test of the affected packages
+#   bash scripts/verify.sh --quick   quick part only (<1s): secret scan of history/, ADR, todo, workflow index,
+#                                    missing changelogs (when versioning automation is on)
 #
-# Khi có cờ .claude/.allow-red (pha 1: test viết trước, đỏ có chủ đích):
-# vẫn chạy typecheck + lint, chỉ bỏ qua test.
+# With the .claude/.allow-red flag (phase 1: tests written first, red on purpose):
+# typecheck + lint still run, only tests are skipped.
 
 fail=0
 
-# --- Phần nhanh ---
+# --- Quick part ---
 if [ -f .claude/hooks/prompt-log.mjs ] && [ -d history ]; then
   node .claude/hooks/prompt-log.mjs scan history || fail=1
 fi
@@ -28,7 +28,7 @@ if [ -f scripts/version.mjs ] && [ -f versions.json ]; then
 fi
 
 if [ "$1" = "--quick" ]; then
-  [ $fail -eq 0 ] && echo "VERIFY OK (nhanh)"
+  [ $fail -eq 0 ] && echo "VERIFY OK (quick)"
   exit $fail
 fi
 
@@ -37,11 +37,11 @@ tasks="typecheck lint test"
 note=""
 if [ -f .claude/.allow-red ]; then
   tasks="typecheck lint"
-  note=" (pha 1: bỏ qua test vì có cờ .claude/.allow-red)"
+  note=" (phase 1: tests skipped because of the .claude/.allow-red flag)"
 fi
 
 log=$(mktemp)
-# VERIFY_BASE: mốc so sánh để chọn package bị ảnh hưởng (CI đặt origin/main; máy local: thay đổi chưa commit).
+# VERIFY_BASE: baseline for picking affected packages (CI sets origin/main; locally: uncommitted changes).
 pnpm turbo run $tasks --filter="...[${VERIFY_BASE:-HEAD}]" --continue --output-logs=errors-only >"$log" 2>&1
 code=$?
 

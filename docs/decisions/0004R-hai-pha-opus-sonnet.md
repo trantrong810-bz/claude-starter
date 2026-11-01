@@ -1,11 +1,11 @@
 ---
-so: 0004
-pham-vi: rong
-trang-thai: chap-nhan
-thay-the-boi:
-ngay: 2026-11-01
+number: 0004
+scope: broad # broad | feature
+status: accepted # proposed | accepted | superseded
+superseded-by: # number of the new ADR, only when superseded
+date: 2026-11-01
 model: claude-opus-5-5
-nguon: ca-20261101-11, ca-20261101-12, commit 4f1b848
+source: ca-20261101-11, ca-20261101-12, commit 4f1b848
 ---
 
 # Task lớn chạy hai pha, hai session: Opus lập kế hoạch, Sonnet thực thi

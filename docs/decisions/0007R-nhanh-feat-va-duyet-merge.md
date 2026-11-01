@@ -1,11 +1,11 @@
 ---
-so: 0007
-pham-vi: rong
-trang-thai: bi-thay-the
-thay-the-boi: 0019
-ngay: 2026-11-01
+number: 0007
+scope: broad # broad | feature
+status: superseded # proposed | accepted | superseded
+superseded-by: 0019 # number of the new ADR, only when superseded
+date: 2026-11-01
 model: claude-opus-5-5
-nguon: ca-20261101-15, commit 1bbadf3
+source: ca-20261101-15, commit 1bbadf3
 ---
 
 # Tính năng lớn làm trên nhánh feat/, merge vào main là điểm duyệt
