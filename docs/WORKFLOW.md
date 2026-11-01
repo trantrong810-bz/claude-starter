@@ -7,12 +7,12 @@ Yellow boxes are the points where you need to be present. Claude does every othe
 
 | # | Workflow | Description |
 | --- | --- | --- |
-| 1 | [Tổng quan](workflows/tong-quan.md) | Phân loại task; task lớn qua pha 1 (Opus) và pha 2 (Sonnet), merge, retro. |
-| 2 | [Lớp bảo vệ chạy tự động](workflows/lop-bao-ve.md) | Hook, permission và verify chạy ở mọi task mà không cần gọi. |
-| 3 | [Git flow qua GitHub](workflows/git.md) | Mọi thay đổi trên nhánh ngắn; /ship push, mở PR, bạn đồng ý, GitHub rebase-merge khi CI xanh. |
-| 4 | [Đổi máy hoặc tài khoản](workflows/doi-may.md) | /handoff lưu todo, spec và code dở lên remote; /resume làm tiếp ở nơi mới. |
-| 5 | [Lịch sử và tra cứu](workflows/tra-cuu.md) | /why tìm câu trả lời trong ADR, spec, git, changelog và log prompt. |
-| 6 | [Khi nào đổi model](workflows/doi-model.md) | Opus cho plan và contract, Sonnet cho code; chỉ đổi ngay sau /clear. |
-| 7 | [Phát hành version](workflows/phat-hanh.md) | Changelog theo phần, automation.mode, /release bump trên nhánh release/ rồi PR; CI gắn tag. |
+| 1 | [Overview](workflows/overview.md) | Task classification; large tasks go through phase 1 (Opus) and phase 2 (Sonnet), merge, retro. |
+| 2 | [Automatic safeguards](workflows/safeguards.md) | Hooks, permissions and verify that run on every task without being called. |
+| 3 | [Git flow through GitHub](workflows/git.md) | Every change on a short branch; /ship pushes, opens a PR, you agree, GitHub rebase-merges when CI is green. |
+| 4 | [Switching machine or account](workflows/switch-machine.md) | /handoff saves todo, spec and unfinished code to the remote; /resume continues on the new side. |
+| 5 | [History and lookup](workflows/lookup.md) | /why finds answers in ADRs, specs, git, changelogs and the prompt log. |
+| 6 | [When to switch models](workflows/switch-model.md) | Opus for plans and contracts, Sonnet for code; switch only right after /clear. |
+| 7 | [Releasing a version](workflows/release.md) | Changelog per part, automation.mode, /release bumps on a release/ branch then a PR; CI tags. |
 
 New workflow: copy `workflows/_template.md` to `workflows/<name>.md`, fill in the front matter and diagram, then run `node scripts/workflow.mjs index`.

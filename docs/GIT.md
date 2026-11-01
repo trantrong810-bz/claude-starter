@@ -1,115 +1,115 @@
-# Quy ước Git
+# Git conventions
 
-> Nạp vào mọi session qua `CLAUDE.md`. Áp dụng cho Claude và người. Ép bằng công cụ: `.githooks/` (commit-msg, pre-commit — chặn file cấm và tự chạy Prettier trên file đã stage — cho người), hook `commit-guard.sh` (PreToolUse, cho Claude; luôn chạy), `scripts/commit-msg.mjs` (bộ kiểm tra dùng chung), `.gitattributes`, ruleset `main` trên GitHub (`scripts/github-setup.sh`) và CI `.github/workflows/verify.yml`. Hook SessionStart báo nhánh, file chưa commit, nhánh chưa merge hoặc đã merge cần dọn, tag thiếu. Quyết định: ADR 0014R, 0016R, 0019R. Sơ đồ: [workflows/git.md](workflows/git.md).
+> Loaded into every session through `CLAUDE.md`. Applies to Claude and people. Enforced by tools: `.githooks/` (commit-msg, pre-commit — blocks forbidden files and runs Prettier on staged files — for people), the `commit-guard.sh` hook (PreToolUse, for Claude; always on), `scripts/commit-msg.mjs` (the shared checker), `.gitattributes`, the `main` ruleset on GitHub (`scripts/github-setup.sh`) and CI `.github/workflows/verify.yml`. The SessionStart hook reports the branch, uncommitted files, unmerged or merged branches to clean up, and missing tags. Decisions: ADR 0014R, 0016R, 0019R, 0020R. Diagram: [workflows/git.md](workflows/git.md).
 
 ## Commit message
 
-[Conventional Commits 1.0](https://www.conventionalcommits.org/en/v1.0.0/), viết **tiếng Anh**:
+[Conventional Commits 1.0](https://www.conventionalcommits.org/en/v1.0.0/), written in **English**:
 
 ```
-<type>(<scope>)!: <subject>        ← header ≤ 72 ký tự; scope và ! tùy chọn
+<type>(<scope>)!: <subject>        ← header ≤ 72 characters; scope and ! optional
 
-<body: vì sao, không phải làm gì; dòng ≤ 72; gạch đầu dòng "- " được>
+<body: why, not what; lines ≤ 72; "- " bullets allowed>
 
-BREAKING CHANGE: <điều gì vỡ, cách chuyển>
-Refs: docs/specs/<tên>.md | ADR 0014
+BREAKING CHANGE: <what breaks, how to migrate>
+Refs: docs/specs/<name>.md | ADR 0014
 Co-Authored-By: <model> <noreply@anthropic.com>
 ```
 
-| type       | Dùng khi                                        | Mục changelog         |
-| ---------- | ----------------------------------------------- | --------------------- |
-| `feat`     | Thêm hành vi cho người dùng hoặc cho kit        | Added                 |
-| `fix`      | Sửa lỗi                                         | Fixed                 |
-| `refactor` | Đổi cấu trúc, không đổi hành vi                 | Changed (nếu đáng kể) |
-| `perf`     | Nhanh hơn, không đổi hành vi                    | Changed               |
-| `test`     | Chỉ thêm/sửa test                               | —                     |
-| `docs`     | Chỉ tài liệu, ADR, changelog                    | —                     |
-| `style`    | Format, không đổi logic                         | —                     |
-| `build`    | Dependency, cấu hình build, turbo, tsconfig     | Changed               |
-| `ci`       | CI, git hook                                    | —                     |
-| `chore`    | Việc lặt vặt khác (cấu hình, dọn dẹp, log)      | —                     |
-| `revert`   | Đảo commit cũ; body ghi `This reverts <sha>`    | Theo commit bị đảo    |
-| `release`  | Chỉ do `version.mjs release`: `release: vX.Y.Z` | —                     |
+| type       | Use when                                              | Changelog section           |
+| ---------- | ----------------------------------------------------- | --------------------------- |
+| `feat`     | Adds behaviour for users or for the kit               | Added                       |
+| `fix`      | Fixes a bug                                           | Fixed                       |
+| `refactor` | Restructures without changing behaviour               | Changed (if notable)        |
+| `perf`     | Faster, no behaviour change                           | Changed                     |
+| `test`     | Only adds/edits tests                                 | —                           |
+| `docs`     | Only docs, ADRs, changelogs                           | —                           |
+| `style`    | Formatting, no logic change                           | —                           |
+| `build`    | Dependencies, build config, turbo, tsconfig           | Changed                     |
+| `ci`       | CI, git hooks                                         | —                           |
+| `chore`    | Other odd jobs (config, cleanup, logs)                | —                           |
+| `revert`   | Reverts an old commit; body says `This reverts <sha>` | Same as the reverted commit |
+| `release`  | Only from `version.mjs release`: `release: vX.Y.Z`    | —                           |
 
-- **scope**: chữ thường, kebab-case. Dùng nhãn phần trong `versions.json` (`claude`, `docs`, `scripts`, `example`, `shared`, `be`, `fe`, `mobile`) hoặc tên tính năng (`feat/<tên>` → scope `<tên>`). Đổi nhiều phần → bỏ scope hoặc chọn phần chính.
-- **subject**: mệnh lệnh (`add`, không `added`/`adds`), chữ đầu viết thường, không dấu chấm cuối, nói _cái gì_, không nói _file nào_.
-- **`!` / `BREAKING CHANGE:`**: khi đổi contract API, xoá/đổi tên lệnh, script, hook hoặc đường dẫn mà người khác dựa vào. Changelog ghi `**BREAKING:**` tương ứng.
-- **Trailer**: commit do Claude tạo luôn có `Co-Authored-By` của model đang chạy. Commit gắn với spec/ADR thì thêm `Refs:`.
-- Commit tạo tự động bởi git (`Merge ...`, `Revert "..."`, `fixup! ...`, `squash! ...`) được chấp nhận nguyên dạng.
+- **scope**: lowercase kebab-case. Use a part label from `versions.json` (`claude`, `docs`, `scripts`, `example`, `shared`, `be`, `fe`, `mobile`) or the feature name (`feat/<name>` → scope `<name>`). Several parts changed → drop the scope or pick the main part.
+- **subject**: imperative (`add`, not `added`/`adds`), lowercase first letter, no trailing period; says _what_, not _which file_.
+- **`!` / `BREAKING CHANGE:`**: when changing the API contract, or removing/renaming a command, script, hook or path others rely on. The changelog gets a matching `**BREAKING:**`.
+- **Trailers**: commits made by Claude always carry the running model's `Co-Authored-By`. Commits tied to a spec/ADR add `Refs:`.
+- Commits generated by git itself (`Merge ...`, `Revert "..."`, `fixup! ...`, `squash! ...`) are accepted as is.
 
-Ví dụ: `feat(todos): add contract, stub and failing tests` · `fix(shared): encode query params in listTodos` · `feat(shared)!: rename Todo.title to Todo.name` · `docs(changelog): fill unreleased for be and fe` · `release: v0.2.0`.
+Examples: `feat(todos): add contract, stub and failing tests` · `fix(shared): encode query params in listTodos` · `feat(shared)!: rename Todo.title to Todo.name` · `docs(changelog): fill unreleased for be and fe` · `release: v0.2.0`.
 
-## Commit
+## Commits
 
-- **Một commit = một thay đổi logic**, gồm code + test + changelog (`Unreleased`) + sơ đồ/ADR liên quan. Không trộn refactor với feat; không commit "WIP".
-- **`pnpm verify` xanh trước khi commit.** Ngoại lệ duy nhất: commit pha 1 (`.claude/.allow-red`) trên nhánh `feat/`, khi test đỏ có chủ đích. Không bao giờ commit đỏ vào `main`.
-- Stage có chủ đích: `git add <đường dẫn>`; chỉ `git add -A` khi đã xem `git status` và mọi file đều thuộc commit này.
-- Không commit: `.env*` (trừ `.env.example`), secret, token, build output, `node_modules/`, `.claude/state/`, `.claude/.allow-red`, `CLAUDE.local.md`.
-- `history/prompts/` do hook ghi; đi kèm commit bất kỳ, không cần commit riêng.
-- Không dùng `--no-verify`. Hook chặn thì sửa nguyên nhân.
-- Ngoại lệ verify: commit **chỉ** gồm `TODO.md`, `docs/todo/`, `docs/specs/`, `docs/plans/` (ví dụ `/handoff` giữa chừng) được phép khi verify đỏ — code dở đi theo snapshot WIP, không vào commit.
-- Commit có file todo viết tay (`docs/todo/<phần>.md`) → hook tự chạy `todo.mjs sync` và stage file auto + `TODO.md` vào cùng commit.
+- **One commit = one logical change**, including code + tests + changelog (`Unreleased`) + related diagrams/ADRs. Do not mix refactors with features; no "WIP" commits.
+- **`pnpm verify` is green before committing.** The only exception: the phase 1 commit (`.claude/.allow-red`) on a `feat/` branch, when tests are red on purpose. Never commit red into `main`.
+- Stage on purpose: `git add <path>`; use `git add -A` only after reading `git status` and confirming every file belongs in this commit.
+- Never commit: `.env*` (except `.env.example`), secrets, tokens, build output, `node_modules/`, `.claude/state/`, `.claude/.allow-red`, `CLAUDE.local.md`.
+- `history/prompts/` is written by a hook; it rides along with any commit and needs no commit of its own.
+- Never use `--no-verify`. When a hook blocks, fix the cause.
+- Verify exception: a commit containing **only** `TODO.md`, `docs/todo/`, `docs/specs/`, `docs/plans/` (for example a mid-task `/handoff`) is allowed while verify is red — unfinished code goes into the WIP snapshot, not the commit.
+- A commit with a hand-written todo file (`docs/todo/<part>.md`) → the hook runs `todo.mjs sync` and stages the auto file + `TODO.md` into the same commit.
 
-## Nhánh
+## Branches
 
-| Nhánh                                         | Khi nào                                                                |
-| --------------------------------------------- | ---------------------------------------------------------------------- |
-| `main`                                        | Luôn xanh, lịch sử thẳng. **Chỉ nhận qua PR**, không commit trực tiếp. |
-| `feat/<tên>`                                  | Task lớn (tạo trong `/plan-feature`). `<tên>` = tên spec.              |
-| `fix/<tên>`                                   | Sửa lỗi.                                                               |
-| `refactor/<tên>`, `chore/<tên>`, `docs/<tên>` | Task nhỏ và vừa theo loại thay đổi.                                    |
-| `release/vX.Y.Z`                              | Chỉ do `/release` tạo.                                                 |
+| Branch                                           | When                                                                      |
+| ------------------------------------------------ | ------------------------------------------------------------------------- |
+| `main`                                           | Always green, linear history. **Only accepts PRs**, never direct commits. |
+| `feat/<name>`                                    | Large tasks (created in `/plan-feature`). `<name>` = the spec name.       |
+| `fix/<name>`                                     | Bug fixes.                                                                |
+| `refactor/<name>`, `chore/<name>`, `docs/<name>` | Small and medium tasks, by kind of change.                                |
+| `release/vX.Y.Z`                                 | Created only by `/release`.                                               |
 
-- `<tên>`: kebab-case, chữ thường, ≤ 40 ký tự, không dấu tiếng Việt.
-- Tạo nhánh từ `main` mới nhất: `git switch main && git pull --ff-only && git switch -c feat/<tên>`.
-- Mọi task, kể cả sửa 1 chỗ, đều có nhánh. Commit trên `main` bị chặn bởi `commit-guard.sh` (Claude) và `.githooks/pre-commit` (người).
-- Một nhánh = một tính năng/việc. Việc khác phát sinh → ghi vào spec, làm ở nhánh khác.
+- `<name>`: lowercase kebab-case ASCII, ≤ 40 characters.
+- Branch off the latest `main`: `git switch main && git pull --ff-only && git switch -c feat/<name>`.
+- Every task, even a one-spot fix, has a branch. Commits on `main` are blocked by `commit-guard.sh` (Claude) and `.githooks/pre-commit` (people).
+- One branch = one feature/job. Other work that comes up → note it in the spec, do it on another branch.
 
 ## Merge
 
-Merge diễn ra trên GitHub qua PR, bằng `/ship`:
+Merging happens on GitHub through a PR, with `/ship`:
 
-- Claude push nhánh, mở PR (`gh pr create`), gửi link và **hỏi người**. Merge vào `main` vẫn là điểm duyệt của người. Câu trả lời nằm trong chat, vì GitHub không cho tác giả tự approve PR của mình.
-- Người đồng ý thì Claude bật auto-merge: `gh pr merge --auto --rebase`. GitHub merge khi job `verify` xanh.
-- Chỉ **rebase-merge**: lịch sử thẳng, giữ commit theo lớp. Không merge commit, không squash (ruleset chỉ cho rebase).
-- `main` đã đi tiếp: trên nhánh chạy `git rebase origin/main`, `pnpm verify`, rồi push. Nhánh đã push mà cần rebase thì phải force push, việc này bị cấm, nên hỏi người.
-- Rebase-merge tạo commit mới trên `main`, nên `git branch -d` từ chối xoá nhánh. Sau merge: `git switch main && git pull --ff-only && node scripts/pr.mjs cleanup <nhánh>`. Script chỉ xoá khi mọi patch đã có trên `main`. Nhánh remote do GitHub tự xoá.
-- Thiết lập repo một lần: `bash scripts/github-setup.sh`. Script đặt ruleset `main` (chỉ qua PR, CI xanh, lịch sử thẳng, cấm force push và xoá), chỉ cho rebase, bật auto-merge.
+- Claude pushes the branch, opens the PR (`gh pr create`), sends the link and **asks the user**. Merging into `main` stays the user's approval point. The answer lives in the chat, because GitHub does not let authors approve their own PRs.
+- When the user agrees, Claude enables auto-merge: `gh pr merge --auto --rebase`. GitHub merges once the `verify` job is green.
+- **Rebase-merge** only: linear history, layer commits kept. No merge commits, no squash (the ruleset only allows rebase).
+- `main` moved on: on the branch run `git rebase origin/main`, `pnpm verify`, then push. A pushed branch that needs a rebase would need a force push, which is forbidden, so ask the user.
+- Rebase-merge creates new commits on `main`, so `git branch -d` refuses to delete the branch. After the merge: `git switch main && git pull --ff-only && node scripts/pr.mjs cleanup <branch>`. The script deletes only when every patch is on `main`. GitHub deletes the remote branch.
+- One-time repo setup: `bash scripts/github-setup.sh`. It sets the `main` ruleset (PRs only, green CI, linear history, no force push or deletion), allows only rebase, and enables auto-merge.
 
-## Viết lại lịch sử
+## Rewriting history
 
-- Được: `commit --amend`, `rebase` trên **nhánh của mình, với commit chưa push**.
-- Không bao giờ: viết lại `main`, commit đã push, tag đã tạo.
-- Muốn bỏ commit đã có trên `main` → `git revert <sha>` trên nhánh `fix/<tên>`, rồi `/ship`; không `reset`.
+- Allowed: `commit --amend`, `rebase` on **your own branch, for commits not yet pushed**.
+- Never: rewrite `main`, pushed commits or existing tags.
+- To undo a commit already on `main` → `git revert <sha>` on a `fix/<name>` branch, then `/ship`; never `reset`.
 
-## Tag và phát hành
+## Tags and releases
 
-- `/release` chạy trên nhánh `release/vX.Y.Z`: `version.mjs release --no-tag` tạo commit `release: vX.Y.Z`, rồi `/ship`.
-- Tag dạng `vX.Y.Z` (annotated), **chỉ** do Action `release-tag` tạo (chạy `node scripts/version.mjs tag`) sau khi commit release vào `main`. Không tạo trước khi merge được, vì rebase-merge đổi mã commit. Không tạo, sửa, xoá tag bằng tay.
-- `version.mjs` so thay đổi với tag gần nhất; thiếu tag → `check` báo thiếu changelog cho cả lịch sử.
+- `/release` runs on a `release/vX.Y.Z` branch: `version.mjs release --no-tag` creates the `release: vX.Y.Z` commit, then `/ship`.
+- Tags look like `vX.Y.Z` (annotated) and are created **only** by the `release-tag` Action (running `node scripts/version.mjs tag`) after the release commit lands on `main`. They cannot be created before the merge, because rebase-merge changes commit hashes. Never create, edit or delete tags by hand.
+- `version.mjs` compares changes against the latest tag; without a tag, `check` reports missing changelogs for the whole history.
 
-## Snapshot WIP
+## WIP snapshots
 
-Code đang sửa dở mang sang máy/tài khoản khác bằng `node scripts/wip.mjs` (gọi qua `/handoff`, `/resume`), không bằng commit "WIP".
+Unfinished code moves to another machine/account with `node scripts/wip.mjs` (called through `/handoff`, `/resume`), never with a "WIP" commit.
 
-- Ref `refs/heads/wip/<nhánh>` trên remote: một commit rời, cha = HEAD của nhánh, chứa toàn bộ working tree trừ `history/`. Chỉ `wip.mjs` tạo (force-update), áp và xoá.
-- Không checkout, không merge, không tạo nhánh từ `wip/*`. `restore` áp thay đổi vào working tree (chưa stage) rồi xoá ref trên remote.
-- `restore` từ chối khi working tree bẩn hoặc snapshot cũ (nhánh đã có commit sau khi chụp) — hỏi người, không tự bỏ thay đổi.
+- The `refs/heads/wip/<branch>` ref on the remote: a detached commit whose parent is the branch HEAD, containing the whole working tree except `history/`. Only `wip.mjs` creates (force-updates), applies and deletes it.
+- Never check out, merge or branch off `wip/*`. `restore` applies the changes to the working tree (unstaged), then deletes the ref on the remote.
+- `restore` refuses when the working tree is dirty or the snapshot is stale (the branch has commits after it was taken) — ask the user; never discard changes yourself.
 
-## Push và remote
+## Push and remote
 
-- Claude push **nhánh của mình** trong `/ship` (`git push -u origin <nhánh>`) và `/handoff` (nhánh + `wip/<nhánh>`). Không bao giờ push `main` (ruleset cũng chặn), không push tag.
-- Cấm: `push --force`, `reset --hard` (`deny` trong `settings.json`); `clean`, `branch -D`, `tag -d`, `git config` (không dùng; muốn ép thì thêm vào `deny`, xem SETUP.md).
-- Muốn bỏ thay đổi chưa commit: hỏi người trước — `restore`/`checkout -- <file>` không lấy lại được.
+- Claude pushes **its own branch** in `/ship` (`git push -u origin <branch>`) and `/handoff` (branch + `wip/<branch>`). Never push `main` (the ruleset blocks it too), never push tags.
+- Forbidden: `push --force`, `reset --hard` (`deny` in `settings.json`); `clean`, `branch -D`, `tag -d`, `git config` (not used; to enforce, add them to `deny`, see SETUP.md).
+- To discard uncommitted changes: ask the user first — `restore`/`checkout -- <file>` cannot be undone.
 
-## Xuống dòng
+## Line endings
 
-LF ở mọi file text, ép bằng `.gitattributes` (kể cả khi `core.autocrlf=true`). Không đổi `.gitattributes` để "sửa" diff — chuẩn hoá file thay vì vậy.
+LF in every text file, enforced by `.gitattributes` (even with `core.autocrlf=true`). Never edit `.gitattributes` to "fix" a diff — normalize the file instead.
 
-## Cài trên máy mới
+## Setting up a new machine
 
 ```bash
-git config core.hooksPath .githooks   # bật commit-msg + pre-commit cho người
-git config pull.ff only               # pull không tạo merge commit
-gh auth login                         # GitHub CLI cho /ship (cài: winget install GitHub.cli)
+git config core.hooksPath .githooks   # enable commit-msg + pre-commit for people
+git config pull.ff only               # pull never creates merge commits
+gh auth login                         # GitHub CLI for /ship (install: winget install GitHub.cli)
 ```

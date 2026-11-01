@@ -7,7 +7,7 @@ Record changes under `Unreleased` in the same commit (the `versioner` subagent f
 
 ### Added
 
-- `lang.mjs check`: lists lines with Vietnamese letters outside the hand-written todo files and `history/` (ADR 0020R).
+- `lang.mjs check [--all]`: lists lines with Vietnamese letters outside the hand-written todo files and `history/prompts/` (ADR 0020R).
 - `commit-msg.mjs`: rejects commit messages with Vietnamese letters in the body as well as the header.
 - `pr.mjs`: `stale` and `cleanup <branch>` clean up local branches after a GitHub rebase-merge (compared by patch; deletes only when every commit is on main).
 - `github-setup.sh`: `main` ruleset (PRs only, CI `verify` green, linear history, rebase only) and auto-merge; safe to rerun.

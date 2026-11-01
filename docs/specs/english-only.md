@@ -2,7 +2,7 @@
 
 ## Goal
 
-Everything in the repo is English, except hand-written `docs/todo/<part>.md`. A check in verify enforces it. ADR 0020R. Plan: `docs/plans/commit-encapsulated-lemur.md`.
+Everything in the repo is English, except hand-written `docs/todo/<part>.md`. A check in verify enforces it. ADR 0020R. Plan: `docs/plans/english-only.md`.
 
 ## Contract
 
@@ -17,15 +17,15 @@ No app API change. Kit-level breaking renames:
 
 - [x] Commit 1: ADR 0020R + `CLAUDE.md` in English
 - [x] Commit 2: scripts translated, identifiers renamed, `lang.mjs`, data migrated
-- [ ] Commit 3: `.claude/` translated
-- [ ] Commit 4: docs translated, ADR/workflow files renamed
+- [x] Commit 3: `.claude/` translated
+- [x] Commit 4: docs translated, ADR/workflow files renamed
 - [ ] Commit 5: example, `.github`, `.githooks`, `.gitattributes`
 - [ ] `lang.mjs check` clean, `verify.sh --quick` OK
 - [ ] `/ship`
 
 ## Progress
 
-Commits 1–2 done. `lang.mjs` exists but is not yet wired into `verify.sh` (wire it in the last commit, once the repo is clean). Next: commit 3 (`.claude/`).
+Commits 1–4 done. `lang.mjs` exists but is not yet wired into `verify.sh` (wire it in the last commit, once the repo is clean). Next: commit 5 (example, .github, .githooks, .gitattributes, root CHANGELOG), then wire lang.mjs into verify.sh.
 
 ## Notes
 

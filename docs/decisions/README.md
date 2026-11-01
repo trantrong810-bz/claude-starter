@@ -9,28 +9,28 @@ Affects two or more parts, changes a shared process or contract, or is hard to r
 
 | No. | Decision | Status | Date | Model |
 | --- | --- | --- | --- | --- |
-| 0001 | [Monorepo TypeScript ở cả ba tầng, types dùng chung trong packages/shared](0001R-monorepo-typescript-va-shared.md) | Accepted | 2026-11-01 | claude-opus-5-5 |
-| 0002 | [Client gọi API đặt trong packages/shared, các app chỉ chứa UI](0002R-client-api-trong-shared.md) | Accepted | 2026-11-01 | claude-opus-5-5 |
-| 0003 | [Phân loại task nhỏ / vừa / lớn trước khi làm](0003R-phan-loai-task.md) | Accepted | 2026-11-01 | claude-opus-5-5 |
-| 0004 | [Task lớn chạy hai pha, hai session: Opus lập kế hoạch, Sonnet thực thi](0004R-hai-pha-opus-sonnet.md) | Accepted | 2026-11-01 | claude-opus-5-5 |
-| 0005 | [Contract và test viết trước; stub 'not implemented'; cờ .allow-red chỉ bỏ qua test](0005R-contract-va-test-truoc.md) | Accepted | 2026-11-01 | claude-opus-5-5 |
-| 0006 | [Stop hook chặn Claude báo xong khi verify còn lỗi](0006R-stop-hook-chan-khi-verify-do.md) | Accepted | 2026-11-01 | claude-opus-5-5 |
-| 0007 | [~~Tính năng lớn làm trên nhánh feat/, merge vào main là điểm duyệt~~](0007R-nhanh-feat-va-duyet-merge.md) | Superseded → 0019 | 2026-11-01 | claude-opus-5-5 |
-| 0008 | [Chỉ dùng subagent cho web/mobile khi mỗi app có phần UI đáng kể](0008R-subagent-chi-khi-ui-lon.md) | Accepted | 2026-11-01 | claude-opus-5-5 |
-| 0009 | [Version và changelog riêng cho từng phần; mức bump suy ra từ changelog; chỉ tag version dự án](0009R-version-theo-tung-phan.md) | Accepted | 2026-11-01 | claude-opus-5-5 |
-| 0010 | [Log prompt commit lên git, nằm ngoài versioning, ghi model xử lý, không ghi câu trả lời](0010R-log-prompt-trong-git.md) | Accepted | 2026-11-01 | claude-opus-5-5 |
-| 0011 | [Mọi quyết định có tranh cãi đều có ADR; quyết định ảnh hưởng rộng được đánh dấu R](0011R-adr-cho-quyet-dinh-tranh-cai.md) | Accepted | 2026-11-01 | claude-opus-5-5 |
-| 0012 | [Công cụ version đi theo kit, dự án mới tạo cấu hình bằng `init`](0012R-cong-cu-version-di-theo-kit.md) | Accepted | 2026-11-01 | claude-opus-5-5 |
-| 0013 | [Tự động versioning bằng hook chặn commit và subagent `versioner` (Haiku), có chế độ tắt](0013R-tu-dong-versioning.md) | Accepted | 2026-11-01 | claude-opus-5-5 |
-| 0014 | [Quy ước git chung trong docs/GIT.md, nạp mọi session và ép bằng hook](0014R-quy-uoc-git.md) | Accepted | 2026-11-01 | claude-opus-5-5 |
-| 0015 | [Windows 11 + VSCode là môi trường chuẩn của kit, script giữ POSIX](0015R-moi-truong-windows-vscode.md) | Accepted | 2026-11-01 | claude-opus-5-5 |
-| 0016 | [Git pre-commit tự chạy Prettier trên file đã stage rồi stage lại](0016R-pre-commit-format.md) | Accepted | 2026-11-01 | claude-opus-5-5 |
-| 0017 | [Mọi trạng thái làm việc nằm trong repo: todo hai lớp, code dở ở ref wip/<nhánh>, usage ≥ 90% thì buộc handoff](0017R-todo-hai-lop-va-snapshot-wip.md) | Accepted | 2026-11-01 | claude-opus-5-5 |
-| 0019 | [Mọi thay đổi vào main qua PR trên GitHub; người đồng ý trong chat, GitHub rebase-merge khi CI xanh](0019R-git-flow-qua-github-pr.md) | Accepted | 2026-11-01 | claude-opus-5-5 |
+| 0001 | [TypeScript monorepo across all three layers, with shared types in packages/shared](0001R-typescript-monorepo-with-shared.md) | Accepted | 2026-11-01 | claude-opus-5-5 |
+| 0002 | [The API client lives in packages/shared; apps contain UI only](0002R-api-client-in-shared.md) | Accepted | 2026-11-01 | claude-opus-5-5 |
+| 0003 | [Classify tasks as small / medium / large before starting](0003R-task-classification.md) | Accepted | 2026-11-01 | claude-opus-5-5 |
+| 0004 | [Large tasks run in two phases and two sessions: Opus plans, Sonnet implements](0004R-two-phases-opus-sonnet.md) | Accepted | 2026-11-01 | claude-opus-5-5 |
+| 0005 | [Contract and tests come first; 'not implemented' stubs; the .allow-red flag only skips tests](0005R-contract-and-tests-first.md) | Accepted | 2026-11-01 | claude-opus-5-5 |
+| 0006 | [A Stop hook prevents Claude from reporting done while verify fails](0006R-stop-hook-blocks-red-verify.md) | Accepted | 2026-11-01 | claude-opus-5-5 |
+| 0007 | [~~Large features live on a feat/ branch; merging into main is the approval point~~](0007R-feat-branch-and-merge-approval.md) | Superseded → 0019 | 2026-11-01 | claude-opus-5-5 |
+| 0008 | [Use web/mobile subagents only when each app has significant UI](0008R-subagents-only-for-large-ui.md) | Accepted | 2026-11-01 | claude-opus-5-5 |
+| 0009 | [A version and changelog per part; the bump level comes from the changelog; only the project version is tagged](0009R-version-per-part.md) | Accepted | 2026-11-01 | claude-opus-5-5 |
+| 0010 | [The prompt log is committed to git, outside versioning, with the handling model and without answers](0010R-prompt-log-in-git.md) | Accepted | 2026-11-01 | claude-opus-5-5 |
+| 0011 | [Every contested decision has an ADR; broad decisions are marked R](0011R-adr-for-contested-decisions.md) | Accepted | 2026-11-01 | claude-opus-5-5 |
+| 0012 | [The version tool ships with the kit; new projects create their config with `init`](0012R-version-tool-ships-with-kit.md) | Accepted | 2026-11-01 | claude-opus-5-5 |
+| 0013 | [Automatic versioning through a commit-blocking hook and the `versioner` subagent (Haiku), with an off mode](0013R-automatic-versioning.md) | Accepted | 2026-11-01 | claude-opus-5-5 |
+| 0014 | [Shared git conventions in docs/GIT.md, loaded into every session and enforced by hooks](0014R-git-conventions.md) | Accepted | 2026-11-01 | claude-opus-5-5 |
+| 0015 | [Windows 11 + VSCode is the kit's standard environment; scripts stay POSIX](0015R-windows-vscode-environment.md) | Accepted | 2026-11-01 | claude-opus-5-5 |
+| 0016 | [The git pre-commit hook runs Prettier on staged files and restages them](0016R-pre-commit-format.md) | Accepted | 2026-11-01 | claude-opus-5-5 |
+| 0017 | [All working state lives in the repo: two-layer todo, unfinished code at wip/<branch>, forced handoff at usage ≥ 90%](0017R-two-layer-todo-and-wip-snapshots.md) | Accepted | 2026-11-01 | claude-opus-5-5 |
+| 0019 | [Every change reaches main through a GitHub PR; the user agrees in chat, GitHub rebase-merges when CI is green](0019R-git-flow-through-github-prs.md) | Accepted | 2026-11-01 | claude-opus-5-5 |
 | 0020 | [Everything in the repo is written in English, except hand-written todo files](0020R-english-only.md) | Accepted | 2026-11-01 | claude-opus-5-5 |
 
 ## Feature level
 
 | No. | Decision | Status | Date | Model |
 | --- | --- | --- | --- | --- |
-| 0018 | [Mỗi quy trình một file trong docs/workflows/, docs/WORKFLOW.md là mục lục tự sinh](0018-muc-luc-workflow-tu-sinh.md) | Accepted | 2026-11-01 | claude-opus-5-5 |
+| 0018 | [One file per workflow in docs/workflows/; docs/WORKFLOW.md is a generated index](0018-generated-workflow-index.md) | Accepted | 2026-11-01 | claude-opus-5-5 |

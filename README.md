@@ -1,91 +1,94 @@
 # claude-starter
 
-Bộ cấu hình Claude Code cho monorepo fullstack (backend + web + mobile), tối ưu cho làm việc một mình trên một máy Windows 11 + VSCode.
+A Claude Code setup for a full-stack monorepo (backend + web + mobile), tuned for working solo on one Windows 11 + VSCode machine.
 
-Ba nguyên tắc:
+Three principles:
 
-1. **Claude tự kiểm chứng được** — `pnpm verify` + Stop hook không cho báo "xong" khi còn lỗi.
-2. **Context luôn gọn** — CLAUDE.md ngắn, output verify chỉ hiện lỗi, review chạy trong subagent, tiến độ lưu vào spec để `/clear` thoải mái.
-3. **Quy tắc ép bằng công cụ** — permissions deny `.env`/migration/lệnh phá hoại, hook tự format, ESLint chặn import vượt ranh giới (app chỉ được import `@app/shared`).
+1. **Claude can verify its own work** — `pnpm verify` + a Stop hook never let it report "done" while something fails.
+2. **The context stays lean** — a short CLAUDE.md, verify output that shows only errors, reviews in a subagent, progress saved to the spec so `/clear` is cheap.
+3. **Rules are enforced by tools** — permissions deny `.env`/migrations/destructive commands, a hook formats files, ESLint blocks imports across boundaries (apps may only import `@app/shared`).
 
-## Stack giả định
+Everything in the repo is written in English, except your hand-written todo files (ADR 0020R).
+
+## Assumed stack
 
 pnpm workspaces + Turborepo · `apps/backend` (Node) · `apps/web` (Next.js) · `apps/mobile` (Expo) · `packages/shared` (Zod schemas, types, API client).
 
-## Môi trường
+## Environment
 
-Windows 11 · VSCode + extension Claude Code · Git for Windows (hook và script chạy bằng Git Bash) · Node ≥ 20 · pnpm. Script viết theo POSIX nên vẫn chạy trên macOS/Linux, nhưng chỉ Windows được kiểm thử thường xuyên. Lưu ý cho Claude nằm trong mục "Môi trường" của `CLAUDE.md` (ADR 0015R).
+Windows 11 · VSCode + the Claude Code extension · Git for Windows (hooks and scripts run in Git Bash) · Node ≥ 20 · pnpm. Scripts are POSIX, so they still run on macOS/Linux, but only Windows is tested regularly. Notes for Claude live in the "Environment" section of `CLAUDE.md` (ADR 0015R).
 
-## Nội dung
+## Contents
 
 ```
-CLAUDE.md                        # bộ nhớ dự án — điền tên & stack thật
-SETUP.md                         # hướng dẫn cài đặt chi tiết
-.vscode/                         # LF, format on save, terminal Git Bash, extension gợi ý
+CLAUDE.md                        # project memory — fill in the real name & stack
+SETUP.md                         # detailed setup guide
+.vscode/                         # LF, format on save, Git Bash terminal, recommended extensions
 .claude/
-  settings.json                  # permissions + đăng ký hooks
-  hooks/format.sh                # Prettier sau mỗi lần sửa file
-  hooks/session-context.sh       # đầu session: báo việc đang dở
-  hooks/verify-on-stop.sh        # chặn kết thúc khi verify đỏ
-  commands/plan-feature.md       # /plan-feature — pha 1: plan, contract, test đỏ
-  commands/build-feature.md      # /build-feature — pha 2: test xanh, web+mobile song song
-  commands/handoff.md            # /handoff — lưu todo, spec, code dở + push (đổi máy/tài khoản)
-  commands/resume.md             # /resume — làm tiếp trên máy/tài khoản khác
-  commands/todo.md               # /todo — todo theo phần, hai lớp
-  hooks/statusline.mjs           # usage 5h/7d/context → .claude/state/usage.json
-  hooks/usage-guard.mjs          # usage ≥ 90%: chỉ cho /handoff rồi dừng
-  commands/retro.md              # /retro — biến lỗi thành lint/hook/CLAUDE.md
-  commands/why.md                # /why — tra cứu quyết định và lịch sử prompt
-  commands/release.md            # /release — điền changelog thiếu, xem trước, phát hành qua PR
-  commands/ship.md               # /ship — push nhánh, mở PR, hỏi, auto-merge khi CI xanh
-  agents/versioner.md            # subagent điền changelog từ diff (Haiku)
-  hooks/version-guard.sh         # chặn git commit thiếu changelog
-  hooks/commit-guard.sh          # chặn git commit sai quy ước (message, nhánh, --no-verify)
-  hooks/prompt-log.mjs           # ghi prompt + model xử lý vào history/
-  agents/app-builder.md          # subagent làm một app (web hoặc mobile)
-  agents/code-reviewer.md        # subagent review diff (Sonnet)
-scripts/verify.sh                # typecheck + lint + test phần bị ảnh hưởng
-scripts/try-example.sh           # dựng demo chạy được từ example/
-scripts/adr.mjs                  # tạo, đánh mục lục, kiểm tra ADR
+  settings.json                  # permissions + hook registration
+  hooks/format.sh                # Prettier after every file edit
+  hooks/session-context.sh       # session start: report unfinished work
+  hooks/verify-on-stop.sh        # block finishing while verify is red
+  commands/plan-feature.md       # /plan-feature — phase 1: plan, contract, red tests
+  commands/build-feature.md      # /build-feature — phase 2: green tests, web+mobile in parallel
+  commands/handoff.md            # /handoff — save todo, spec, unfinished code + push (switch machine/account)
+  commands/resume.md             # /resume — continue on another machine/account
+  commands/todo.md               # /todo — two-layer todo per part
+  hooks/statusline.mjs           # 5h/7d/context usage → .claude/state/usage.json
+  hooks/usage-guard.mjs          # usage ≥ 90%: only /handoff, then stop
+  commands/retro.md              # /retro — turn mistakes into lint/hook/CLAUDE.md
+  commands/why.md                # /why — look up decisions and prompt history
+  commands/release.md            # /release — fill missing changelogs, preview, release through a PR
+  commands/ship.md               # /ship — push the branch, open a PR, ask, auto-merge when CI is green
+  agents/versioner.md            # subagent that writes changelogs from the diff (Haiku)
+  hooks/version-guard.sh         # block git commit without a changelog
+  hooks/commit-guard.sh          # block git commit that breaks conventions (message, branch, --no-verify)
+  hooks/prompt-log.mjs           # log prompts + the handling model to history/
+  agents/app-builder.md          # subagent that builds one app (web or mobile)
+  agents/code-reviewer.md        # subagent that reviews the diff (Sonnet)
+scripts/verify.sh                # typecheck + lint + test of the affected parts
+scripts/try-example.sh           # build a runnable demo from example/
+scripts/adr.mjs                  # create, index and check ADRs
 scripts/version.mjs              # init / list / mode / check / release
-scripts/commit-msg.mjs           # kiểm tra commit message (Conventional Commits)
-scripts/todo.mjs                 # đồng bộ todo viết tay → auto, sinh TODO.md
-scripts/wip.mjs                  # snapshot code dở lên wip/<nhánh>, restore ở máy khác
-TODO.md                          # tổng quan todo mọi phần (tự sinh)
-docs/todo/                       # <phần>.md viết tay + <phần>.auto.md Claude ghi
-docs/plans/                      # file plan của plan mode
-.githooks/                       # commit-msg + pre-commit (Prettier file đã stage) cho người
-.gitattributes                   # LF cho mọi file text
-docs/GIT.md                      # quy ước git — nạp vào mọi session
-example/                         # monorepo mẫu tối giản
-docs/specs/_template.md          # mẫu spec cho mỗi tính năng
-docs/WORKFLOW.md                 # mục lục quy trình (tự sinh bằng scripts/workflow.mjs)
-docs/workflows/                  # mỗi quy trình một file sơ đồ Mermaid; _template.md cho quy trình mới
-docs/decisions/                  # ADR — mọi quyết định có tranh cãi; R = ảnh hưởng rộng
-history/prompts/                 # log prompt (commit, ngoài versioning)
-versions.json                    # bảng phần → đường dẫn, version
-CHANGELOG.md                     # changelog toàn dự án; mỗi phần có CHANGELOG.md riêng
+scripts/commit-msg.mjs           # check commit messages (Conventional Commits)
+scripts/lang.mjs                 # check that the repo is English-only
+scripts/todo.mjs                 # sync manual todo → auto, generate TODO.md
+scripts/wip.mjs                  # snapshot unfinished code to wip/<branch>, restore elsewhere
+TODO.md                          # todo overview of every part (generated)
+docs/todo/                       # <part>.md hand-written + <part>.auto.md written by Claude
+docs/plans/                      # plan mode's plan files
+.githooks/                       # commit-msg + pre-commit (Prettier on staged files) for people
+.gitattributes                   # LF for every text file
+docs/GIT.md                      # git conventions — loaded into every session
+example/                         # minimal sample monorepo
+docs/specs/_template.md          # spec template for each feature
+docs/WORKFLOW.md                 # workflow index (generated by scripts/workflow.mjs)
+docs/workflows/                  # one Mermaid diagram file per workflow; _template.md for new ones
+docs/decisions/                  # ADRs — every contested decision; R = broad impact
+history/prompts/                 # prompt log (committed, outside versioning)
+versions.json                    # part → path table, versions
+CHANGELOG.md                     # project changelog; each part has its own CHANGELOG.md
 ```
 
-Sơ đồ quy trình: mục lục [docs/WORKFLOW.md](docs/WORKFLOW.md), mỗi quy trình một file trong [docs/workflows/](docs/workflows/) (GitHub hiển thị Mermaid trực tiếp).
+Workflow diagrams: the index is [docs/WORKFLOW.md](docs/WORKFLOW.md), with one file per workflow in [docs/workflows/](docs/workflows/) (GitHub renders Mermaid directly).
 
-## Thử ngay với monorepo mẫu
+## Try it with the sample monorepo
 
 ```bash
 bash scripts/try-example.sh ~/claude-starter-demo
 cd ~/claude-starter-demo && pnpm verify && claude
 ```
 
-Script ghép `example/` (shared + backend + web + mobile, có Zod schema và test thật) với toàn bộ cấu hình, chạy `git init` và `pnpm install`. Muốn thấy cơ chế hoạt động: đổi `title` thành `name` trong `packages/shared/src/schema.ts` rồi chạy `pnpm verify` — typecheck báo lỗi đúng dòng ở cả 4 package (shared, backend, web, mobile), và Stop hook sẽ không cho Claude báo xong.
+The script combines `example/` (shared + backend + web + mobile, with real Zod schemas and tests) with the full setup, then runs `git init` and `pnpm install`. To see it work: rename `title` to `name` in `packages/shared/src/schema.ts` and run `pnpm verify` — typecheck points at the exact lines in all 4 packages (shared, backend, web, mobile), and the Stop hook will not let Claude report done.
 
-Mẫu có sẵn Prettier (hook format chạy thật) và `eslint.config.js` với quy tắc ranh giới: thử thêm `import { listTodos } from "@app/backend"` vào `apps/web` — `pnpm verify` báo lỗi kèm hướng dẫn đưa code vào `packages/shared`. Chép file này sang dự án thật để giữ nguyên ranh giới.
+The sample ships with Prettier (the format hook really runs) and an `eslint.config.js` with boundary rules: try adding `import { listTodos } from "@app/backend"` to `apps/web` — `pnpm verify` fails with a hint to move the code into `packages/shared`. Copy this file into your real project to keep the boundaries.
 
-Client gọi API nằm trong `packages/shared/src/client.ts` (parse response bằng Zod, có test với `fetch` giả); `web` và `mobile` chỉ gọi client đó. Khi dùng thật, thay hai app bằng `create-next-app` / `create-expo-app` và giữ nguyên cách này.
+The API client lives in `packages/shared/src/client.ts` (parses responses with Zod, tested with a fake `fetch`); `web` and `mobile` only call that client. In a real project, replace the two apps with `create-next-app` / `create-expo-app` and keep the same pattern.
 
-## Áp vào dự án có sẵn
+## Applying it to an existing project
 
 ```bash
-# chép vào gốc monorepo của bạn
+# copy into the root of your monorepo
 cp -r CLAUDE.md SETUP.md .claude scripts docs /path/to/your-monorepo/
 cd /path/to/your-monorepo
 chmod +x .claude/hooks/*.sh scripts/*.sh
@@ -93,96 +96,96 @@ npm pkg set scripts.verify="bash scripts/verify.sh"
 printf 'CLAUDE.local.md\n.claude/.allow-red\n' >> .gitignore
 ```
 
-Sau đó mở `claude`, gõ `/hooks` để kiểm tra hook đã được nhận. Chi tiết xem [SETUP.md](SETUP.md).
+Then open `claude` and type `/hooks` to check that the hooks were picked up. Details in [SETUP.md](SETUP.md).
 
-## Quy trình
+## Workflow
 
-### Phân loại task trước
+### Classify the task first
 
-| Loại | Dấu hiệu                          | Cách làm                                       |
-| ---- | --------------------------------- | ---------------------------------------------- |
-| Nhỏ  | Sửa 1 chỗ, bug rõ ràng            | Làm thẳng. Stop hook là đủ kiểm soát.          |
-| Vừa  | 1–2 lớp, không đổi contract API   | Plan ngắn trong chat, duyệt, làm.              |
-| Lớn  | Đổi contract API hoặc chạm 3+ lớp | `/plan-feature` → `/build-feature` → `/retro`. |
+| Kind   | Signs                                    | How                                            |
+| ------ | ---------------------------------------- | ---------------------------------------------- |
+| Small  | One spot, an obvious bug                 | Just do it. The Stop hook is enough control.   |
+| Medium | 1–2 layers, no API contract change       | Short plan in chat, approve, do it.            |
+| Large  | API contract change or 3+ layers touched | `/plan-feature` → `/build-feature` → `/retro`. |
 
-Phần lớn việc hằng ngày là loại nhỏ và vừa — đừng ép chúng qua quy trình lớn.
+Most daily work is small or medium — do not force it through the large process.
 
-### Task lớn: hai pha, hai session
+### Large tasks: two phases, two sessions
 
 ```
 Session 1 (Opus)                         Session 2 (Sonnet)
-/plan-feature <tên> <mô tả>              /build-feature <tên>
-  → DUYỆT plan + contract  ◀── bạn         → backend: test xanh → commit
-  → nhánh feat/<tên>                       → client trong shared + test → commit
-  → schema + stub + test backend đỏ        → UI web + mobile → commit
-  → commit → /handoff                        (subagent song song nếu UI lớn)
-        │                                  → code-reviewer → sửa
-        └── /clear, /model sonnet ──▶      → DUYỆT merge vào main  ◀── bạn
-                                           → /retro  ◀── bạn chọn cải tiến
+/plan-feature <name> <description>       /build-feature <name>
+  → APPROVE plan + contract  ◀── you       → backend: green tests → commit
+  → branch feat/<name>                     → client in shared + tests → commit
+  → schema + stubs + red backend tests     → web + mobile UI → commit
+  → commit → /handoff                        (parallel subagents if the UI is large)
+        │                                  → code-reviewer → fix
+        └── /clear, /model sonnet ──▶      → APPROVE merge into main  ◀── you
+                                           → /retro  ◀── you pick improvements
 ```
 
-Vì sao như vậy:
+Why it works this way:
 
-- **Model đúng việc, không phá cache.** Phần cần tư duy (plan, contract, test) dùng Opus; phần nhiều token (viết code) dùng Sonnet. Đổi model ở ranh giới `/clear` nên không làm mất prompt cache giữa session.
-- **Contract + test chốt trước.** Pha 2 có "trọng tài" sẵn: làm cho test xanh, không phải tự phán đoán khi nào xong.
-- **Client dùng chung, app chỉ là UI.** Hàm gọi API viết một lần trong `shared`, có test; web và mobile không lặp lại logic.
-- **Song song chỉ khi đáng.** Mỗi subagent tốn ~10k token khởi động. Chỉ giao web/mobile cho subagent khi mỗi app có phần UI đáng kể; việc nhỏ thì làm thẳng.
-- **Nhánh `feat/`, commit mỗi lớp.** `main` luôn xanh dù test pha 1 đỏ; mỗi lớp là một điểm quay lại; reviewer xem đúng `main...HEAD`. Commit message theo Conventional Commits; `main` chỉ nhận qua PR trên GitHub (`/ship`: rebase-merge tự động khi CI xanh, sau khi bạn đồng ý) — đầy đủ trong [docs/GIT.md](docs/GIT.md), ép bằng hook và ruleset.
-- **Bạn chỉ cần có mặt ở 3 điểm:** duyệt plan/contract (sửa ở đây rẻ nhất), duyệt merge vào `main`, và chọn đề xuất của `/retro`.
+- **The right model for the job, without breaking the cache.** The thinking (plan, contract, tests) uses Opus; the token-heavy part (writing code) uses Sonnet. The model switches at the `/clear` boundary, so no prompt cache is lost mid-session.
+- **Contract + tests are settled first.** Phase 2 has a ready referee: make the tests green, instead of judging on its own when it is done.
+- **One shared client, apps are only UI.** API calls are written once in `shared`, with tests; web and mobile do not repeat the logic.
+- **Parallel only when worth it.** Each subagent costs ~10k tokens to start. Hand web/mobile to subagents only when each app has significant UI; do small work directly.
+- **A `feat/` branch, one commit per layer.** `main` stays green even while phase 1 tests are red; each layer is a rollback point; the reviewer sees exactly `main...HEAD`. Commit messages follow Conventional Commits; `main` only accepts GitHub PRs (`/ship`: automatic rebase-merge when CI is green, after you agree) — all in [docs/GIT.md](docs/GIT.md), enforced by hooks and the ruleset.
+- **You only need to be there at 3 points:** approving the plan/contract (the cheapest place to change things), approving the merge into `main`, and picking `/retro` proposals.
 
-### Cải tiến dần — tự động qua `/retro`
+### Improving over time — automatically through `/retro`
 
-Sau mỗi task lớn, `/retro` đề xuất cách khắc phục rẻ nhất cho từng lỗi đã gặp, theo thứ tự: lint rule/hook → một dòng CLAUDE.md → command mới. Nó cũng đề xuất xóa dòng CLAUDE.md đã thừa, để file luôn ngắn.
+After each large task, `/retro` proposes the cheapest fix for each mistake hit, in this order: lint rule/hook → one CLAUDE.md line → new command. It also proposes removing CLAUDE.md lines that became redundant, so the file stays short.
 
-## Todo và làm tiếp ở máy khác
+## Todo and continuing on another machine
 
-Mỗi phần (root, shared, be, fe, mobile) có hai file: `docs/todo/<phần>.md` bạn viết tay, `docs/todo/<phần>.auto.md` Claude ghi (đang làm, việc phát sinh, đã xong). `TODO.md` ở gốc là bảng tổng quan tự sinh, trỏ tới cả hai. Commit file viết tay → hook tự cập nhật file auto và `TODO.md` vào cùng commit.
+Each part (root, shared, be, fe, mobile) has two files: `docs/todo/<part>.md`, which you write by hand in any language, and `docs/todo/<part>.auto.md`, which Claude writes (in progress, new work, done). `TODO.md` at the root is a generated overview linking to both. Committing a manual file → the hook updates the auto file and `TODO.md` in the same commit.
 
-Đổi máy hoặc tài khoản: `/handoff` (todo + spec + code dở lên `wip/<nhánh>`, push) → máy mới `git pull`, `/resume`. Khi usage 5h/7d chạm 90%, hook ép làm `/handoff` rồi dừng. Chi tiết: [SETUP.md](SETUP.md#vòng-làm-việc), sơ đồ: [docs/workflows/doi-may.md](docs/workflows/doi-may.md).
+Switching machine or account: `/handoff` (todo + spec + unfinished code to `wip/<branch>`, push) → on the new machine `git pull`, `/resume`. When 5h/7d usage reaches 90%, a hook forces `/handoff` and then stops. Details: [SETUP.md](SETUP.md#daily-loop), diagram: [docs/workflows/switch-machine.md](docs/workflows/switch-machine.md).
 
-## Lịch sử prompt và quyết định
+## Prompt history and decisions
 
-- **Prompt:** hook ghi mọi prompt vào `history/prompts/YYYY-MM.jsonl`: thời gian, nhánh, prompt (đã che secret), **model và effort xử lý**, subagent kèm model của chúng, và commit tạo ra. Không ghi câu trả lời. Được commit nhưng nằm ngoài versioning; `pnpm verify` chặn nếu còn chuỗi giống secret. Định dạng: [history/README.md](history/README.md).
-- **Quyết định:** mọi quyết định có tranh cãi là một ADR trong `docs/decisions/`. Quyết định ảnh hưởng rộng có `pham-vi: rong`, chữ **R** trong tên file và bảng riêng trong [mục lục](docs/decisions/README.md).
-- **Tra cứu:** `/why vì sao dùng nhánh feat?` — tìm ADR → spec → git → log prompt, trả lời kèm nguồn và model.
+- **Prompts:** a hook logs every prompt to `history/prompts/YYYY-MM.jsonl`: time, branch, prompt (secrets redacted, in your own words and language), **the model and effort that handled it**, subagents with their models, and the commits made. Answers are not logged. The log is committed but sits outside versioning; `pnpm verify` blocks secret-like strings. Format: [history/README.md](history/README.md).
+- **Decisions:** every contested decision is an ADR in `docs/decisions/`. Broad decisions have `scope: broad`, an **R** in the file name and their own table in the [index](docs/decisions/README.md).
+- **Lookup:** `/why why use feat branches?` — searches ADR → spec → git → prompt log and answers with sources and models.
 
-Log prompt chứa nguyên văn những gì bạn gõ. Chỉ dùng khi repo riêng tư (xem ADR 0010); với repo công khai, đặt `CLAUDE_PROMPT_LOG=off` hoặc thêm `history/` vào `.gitignore`.
+The prompt log contains exactly what you type. Use it only in a private repo (see ADR 0010); for a public repo, set `CLAUDE_PROMPT_LOG=off` or add `history/` to `.gitignore`.
 
 ## Versioning
 
-Mỗi phần có version SemVer và `CHANGELOG.md` riêng; toàn dự án có version và tag `vX.Y.Z`.
+Each part has its own SemVer version and `CHANGELOG.md`; the whole project has a version and a `vX.Y.Z` tag.
 
-| Phần    | Đường dẫn                              |
-| ------- | -------------------------------------- |
-| .claude | `.claude/`, `CLAUDE.md`                |
-| docs    | `docs/`, `README.md`, `SETUP.md`       |
-| scripts | `scripts/`                             |
-| example | `example/` (cấu hình gốc của monorepo) |
-| shared  | `example/packages/shared/`             |
-| be      | `example/apps/backend/`                |
-| fe      | `example/apps/web/`                    |
-| mobile  | `example/apps/mobile/`                 |
+| Part    | Paths                                   |
+| ------- | --------------------------------------- |
+| .claude | `.claude/`, `CLAUDE.md`                 |
+| docs    | `docs/`, `README.md`, `SETUP.md`        |
+| scripts | `scripts/`                              |
+| example | `example/` (the monorepo's root config) |
+| shared  | `example/packages/shared/`              |
+| be      | `example/apps/backend/`                 |
+| fe      | `example/apps/web/`                     |
+| mobile  | `example/apps/mobile/`                  |
 
-File khớp nhiều đường dẫn thuộc về đường dẫn dài nhất, nên mỗi thay đổi chỉ tính cho một phần.
+A file matching several paths belongs to the longest one, so each change counts for exactly one part.
 
 ```bash
-node scripts/version.mjs init               # dự án mới: tạo versions.json + CHANGELOG.md
-node scripts/version.mjs list               # version hiện tại
-node scripts/version.mjs mode               # chế độ tự động đang áp dụng
-node scripts/version.mjs check              # phần nào đổi file mà chưa ghi changelog
-node scripts/version.mjs release --dry-run  # xem trước
-node scripts/version.mjs release --no-tag   # bump, ghi changelog, commit (trên nhánh release/vX.Y.Z)
-node scripts/version.mjs tag                # CI: gắn tag sau khi PR release merge
+node scripts/version.mjs init               # new project: create versions.json + CHANGELOG.md
+node scripts/version.mjs list               # current versions
+node scripts/version.mjs mode               # active automation mode
+node scripts/version.mjs check              # which parts changed without a changelog
+node scripts/version.mjs release --dry-run  # preview
+node scripts/version.mjs release --no-tag   # bump, write changelogs, commit (on a release/vX.Y.Z branch)
+node scripts/version.mjs tag                # CI: tag after the release PR merges
 ```
 
-**Tự động** (cấu hình trong `versions.json`): `"automation": { "mode": "changelog", "confirmRelease": true }`.
+**Automation** (configured in `versions.json`): `"automation": { "mode": "changelog", "confirmRelease": true }`.
 
-| mode                   | Hành vi                                                                                                 |
-| ---------------------- | ------------------------------------------------------------------------------------------------------- |
-| `off`                  | Không tự động, không chặn commit; `check` chỉ chạy lúc phát hành.                                       |
-| `changelog` (mặc định) | Hook chặn `git commit` thiếu changelog; subagent `versioner` (Haiku) đọc diff và tự điền `Unreleased`.  |
-| `full`                 | Như `changelog`, thêm tự chạy `/release` sau khi merge vào main (hỏi trước nếu `confirmRelease: true`). |
+| mode                  | Behaviour                                                                                                               |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `off`                 | No automation, commits never blocked; `check` runs only at release time.                                                |
+| `changelog` (default) | A hook blocks `git commit` without a changelog; the `versioner` subagent (Haiku) reads the diff and fills `Unreleased`. |
+| `full`                | Like `changelog`, plus `/release` runs after merging into main (asking first when `confirmRelease: true`).              |
 
-Tắt cho một session trên máy mà không sửa repo: `CLAUDE_AUTO_VERSION=off`. Dự án mới: `node scripts/version.mjs init` tạo `versions.json` và changelog cho mỗi app/package.
+Turn it off for one session on this machine without editing the repo: `CLAUDE_AUTO_VERSION=off`. New project: `node scripts/version.mjs init` creates `versions.json` and a changelog per app/package.
 
-Không tự sửa số version. Mức bump suy ra từ changelog: `### Removed` hoặc `BREAKING` → major, `### Added` → minor, còn lại → patch (ở `0.x`, major hạ xuống minor). Sơ đồ: [docs/workflows/phat-hanh.md](docs/workflows/phat-hanh.md).
+Never edit version numbers by hand. The bump level comes from the changelog: `### Removed` or `BREAKING` → major, `### Added` → minor, otherwise → patch (at `0.x`, major is lowered to minor). Diagram: [docs/workflows/release.md](docs/workflows/release.md).

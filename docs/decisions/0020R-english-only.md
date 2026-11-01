@@ -5,7 +5,7 @@ status: accepted # proposed | accepted | superseded
 superseded-by: # number of the new ADR, only when superseded
 date: 2026-11-01
 model: claude-opus-5-5
-source: user request to use English everywhere except hand-written todo files; plan docs/plans/commit-encapsulated-lemur.md; spec docs/specs/english-only.md
+source: user request to use English everywhere except hand-written todo files; plan docs/plans/english-only.md; spec docs/specs/english-only.md
 ---
 
 # Everything in the repo is written in English, except hand-written todo files

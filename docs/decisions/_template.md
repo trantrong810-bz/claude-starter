@@ -8,20 +8,20 @@ model: # the model that made the decision, e.g. claude-opus-5-5
 source: # prompt id in history/, commit hash, related spec
 ---
 
-# <Tiêu đề: quyết định là gì, viết như một mệnh đề>
+# <Title: what was decided, written as a statement>
 
-## Bối cảnh
+## Context
 
-<Vấn đề cần quyết định và vì sao nó có tranh cãi.>
+<The problem to decide and why it is contested.>
 
-## Phương án
+## Options
 
-<Các phương án đã cân nhắc, mỗi cái 1–2 dòng kèm ưu/nhược.>
+<The options considered, 1–2 lines each with pros/cons.>
 
-## Quyết định
+## Decision
 
-<Phương án được chọn và lý do chính.>
+<The chosen option and the main reason.>
 
-## Hệ quả
+## Consequences
 
-<Điều gì dễ hơn, khó hơn, và cần theo dõi gì.>
+<What becomes easier or harder, and what to watch.>

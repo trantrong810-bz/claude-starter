@@ -1,10 +1,10 @@
-# Lịch sử prompt
+# Prompt history
 
-`prompts/YYYY-MM.jsonl` — mỗi prompt hai dòng cùng `id`:
+`prompts/YYYY-MM.jsonl` — each prompt has two lines with the same `id`:
 
-- Dòng prompt: `t` (giờ địa phương), `src` (`claude-code` | `claude.ai`), `session`, `branch`, `prompt` (đã che secret; cắt ở 4.000 ký tự, kèm `truncated_from`).
-- Dòng `"type": "model"`: `model` xử lý, `effort`, `subagents` (loại, model khai báo, effort), `ket_qua` (mã commit hoặc `ADR-NNNN` — không có tóm tắt câu trả lời). Nếu có nhiều dòng `model` cho một `id`, dòng cuối là đúng.
+- The prompt line: `t` (local time), `src` (`claude-code` | `claude.ai`), `session`, `branch`, `prompt` (secrets redacted; cut at 4,000 characters, with `truncated_from`). Prompts are stored verbatim in the language they were written in.
+- The `"type": "model"` line: the handling `model`, `effort`, `subagents` (type, declared model, effort), `commits` (commit hashes or `ADR-NNNN` — no answer summary; older lines call this field `ket_qua`). If an `id` has several `model` lines, the last one is right.
 
-Ghi tự động bởi `.claude/hooks/prompt-log.mjs` (tắt: `CLAUDE_PROMPT_LOG=off`). Được commit nhưng nằm ngoài versioning. `pnpm verify` chặn nếu còn chuỗi giống secret.
+Written automatically by `.claude/hooks/prompt-log.mjs` (off: `CLAUDE_PROMPT_LOG=off`). Committed but outside versioning. `pnpm verify` blocks secret-like strings.
 
-`unknown` nghĩa là không xác định được — không bao giờ đoán. Prompt từ claude.ai được điền lại thủ công; model của subagent là model khai báo trong file agent.
+`unknown` means it could not be determined — never a guess. Prompts from claude.ai are backfilled by hand; a subagent's model is the one declared in its agent file.

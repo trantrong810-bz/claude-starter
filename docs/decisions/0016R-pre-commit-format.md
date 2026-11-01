@@ -5,27 +5,27 @@ status: accepted # proposed | accepted | superseded
 superseded-by: # number of the new ADR, only when superseded
 date: 2026-11-01
 model: claude-opus-5-5
-source: yêu cầu "công cụ tự động format khi thay đổi các file trong dự án bằng tay"; ADR 0014R, 0015R
+source: request "a tool that formats files automatically when they are edited by hand"; ADR 0014R, 0015R
 ---
 
-# Git pre-commit tự chạy Prettier trên file đã stage rồi stage lại
+# The git pre-commit hook runs Prettier on staged files and restages them
 
-## Bối cảnh
+## Context
 
-File Claude sửa đã được format bằng hook `format.sh`, file người sửa trong VSCode được format khi lưu (ADR 0015R). Còn lọt: file sửa bằng editor khác, khi chưa cài extension Prettier, hoặc lưu bằng "Save without formatting". Diff format lẫn vào commit sau làm review khó đọc.
+Files edited by Claude are formatted by the `format.sh` hook, and files edited by people in VSCode are formatted on save (ADR 0015R). What still slips through: files edited in another editor, without the Prettier extension, or saved with "Save without formatting". Formatting diffs then leak into later commits and make review harder.
 
-## Phương án
+## Options
 
-- Pre-commit tự format file đã stage rồi `git add` lại: người không phải làm gì; bất lợi là commit đổi nội dung so với lúc stage, và file stage một phần không format được an toàn.
-- Pre-commit chỉ `prettier --check` và chặn: không tự đổi file; nhưng thêm một vòng sửa tay mỗi lần lệch.
-- Watcher nền format mọi file khi lưu trên đĩa: bao mọi editor; nhưng phải nhớ bật, và giành file với format-on-save của VSCode.
+- Pre-commit formats the staged files and `git add`s them again: nothing for people to do; the downside is that the commit differs from what was staged, and partially staged files cannot be formatted safely.
+- Pre-commit only runs `prettier --check` and blocks: never changes files, but adds a manual round each time something is off.
+- A background watcher formats every file saved to disk: covers every editor, but must be remembered and fights VSCode's format-on-save.
 
-## Quyết định
+## Decision
 
-Chọn phương án 1 (người dùng chọn). File stage một phần không bị format; hook chỉ kiểm tra bản đã stage và chặn nếu lệch, để không kéo phần chưa stage vào commit. Hook chỉ chạy khi có `node_modules/.bin/prettier`, nên repo kit gốc (không cài Prettier) không bị ảnh hưởng. Danh sách đuôi file dùng chung với `format.sh`.
+Option 1 (the user's choice). Partially staged files are not formatted; for them the hook only checks the staged version and blocks if it is off, so unstaged changes never get pulled into the commit. The hook only runs when `node_modules/.bin/prettier` exists, so the kit repo itself (no Prettier installed) is unaffected. The list of file extensions is shared with `format.sh`.
 
-## Hệ quả
+## Consequences
 
-- Commit của người luôn đúng format, kể cả khi bỏ qua VSCode; chỉ có hiệu lực khi đã bật `core.hooksPath .githooks`.
-- Commit chậm thêm thời gian chạy Prettier trên các file đã stage.
-- Đổi danh sách đuôi file phải sửa cả `.githooks/pre-commit` và `.claude/hooks/format.sh`.
+- People's commits are always formatted, even when bypassing VSCode; only effective once `core.hooksPath .githooks` is set.
+- Commits take a little longer, the time Prettier needs on the staged files.
+- Changing the extension list means editing both `.githooks/pre-commit` and `.claude/hooks/format.sh`.
