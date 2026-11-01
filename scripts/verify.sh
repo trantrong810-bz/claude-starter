@@ -3,7 +3,7 @@
 #
 #   bash scripts/verify.sh           quick part + typecheck/lint/test of the affected packages
 #   bash scripts/verify.sh --quick   quick part only (<1s): secret scan of history/, ADR, todo, workflow index,
-#                                    missing changelogs (when versioning automation is on)
+#                                    language (English only), missing changelogs (when versioning automation is on)
 #
 # With the .claude/.allow-red flag (phase 1: tests written first, red on purpose):
 # typecheck + lint still run, only tests are skipped.
@@ -22,6 +22,9 @@ if [ -f scripts/todo.mjs ] && [ -d docs/todo ]; then
 fi
 if [ -f scripts/workflow.mjs ] && [ -d docs/workflows ]; then
   node scripts/workflow.mjs check || fail=1
+fi
+if [ -f scripts/lang.mjs ]; then
+  node scripts/lang.mjs check || fail=1
 fi
 if [ -f scripts/version.mjs ] && [ -f versions.json ]; then
   node scripts/version.mjs check --auto >/dev/null 2>&1 || node scripts/version.mjs check --auto || fail=1

@@ -19,13 +19,13 @@ No app API change. Kit-level breaking renames:
 - [x] Commit 2: scripts translated, identifiers renamed, `lang.mjs`, data migrated
 - [x] Commit 3: `.claude/` translated
 - [x] Commit 4: docs translated, ADR/workflow files renamed
-- [ ] Commit 5: example, `.github`, `.githooks`, `.gitattributes`
-- [ ] `lang.mjs check` clean, `verify.sh --quick` OK
+- [x] Commit 5: example, `.github`, `.githooks`, `.gitattributes`
+- [x] `lang.mjs check` clean, `verify.sh --quick` OK
 - [ ] `/ship`
 
 ## Progress
 
-Commits 1–4 done. `lang.mjs` exists but is not yet wired into `verify.sh` (wire it in the last commit, once the repo is clean). Next: commit 5 (example, .github, .githooks, .gitattributes, root CHANGELOG), then wire lang.mjs into verify.sh.
+Commits 1–5 done; `lang.mjs` runs in `verify.sh`. Next: `/ship`.
 
 ## Notes
 

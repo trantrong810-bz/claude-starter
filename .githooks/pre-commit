@@ -1,36 +1,36 @@
 #!/usr/bin/env bash
-# Git hook: chặn những thứ không được commit theo docs/GIT.md, format file đã stage. Bật: git config core.hooksPath .githooks
+# Git hook: block what must not be committed per docs/GIT.md, format staged files. Enable: git config core.hooksPath .githooks
 fail=0
 staged=$(git diff --cached --name-only --diff-filter=ACMR)
 
-# .env* (trừ .env.example), cờ và state cục bộ của Claude
+# .env* (except .env.example), Claude's local flags and state
 bad=$(printf '%s\n' "$staged" | grep -E '(^|/)\.env($|\.)|(^|/)CLAUDE\.local\.md$|^\.claude/(\.allow-red|state/)' | grep -vE '(^|/)\.env\.example$')
 if [ -n "$bad" ]; then
-  echo "Không commit file cục bộ/bí mật:" >&2
+  echo "Do not commit local/secret files:" >&2
   printf '  %s\n' $bad >&2
   fail=1
 fi
 
-# Dấu xung đột merge còn sót
+# Leftover merge conflict markers
 if git diff --cached -U0 | grep -qE '^\+(<<<<<<<|>>>>>>>)( |$)|^\+=======$'; then
-  echo "Còn dấu xung đột merge (<<<<<<< / ======= / >>>>>>>) trong file đã stage." >&2
+  echo "Merge conflict markers (<<<<<<< / ======= / >>>>>>>) left in staged files." >&2
   fail=1
 fi
 
-# main chỉ nhận thay đổi qua PR trên GitHub; commit ở main local sẽ không push được.
+# main only accepts changes through GitHub PRs; commits on a local main could never be pushed.
 branch=$(git branch --show-current)
 if [ "$branch" = "main" ]; then
-  echo "main chỉ nhận thay đổi qua PR: git switch -c <feat|fix|refactor|chore|docs>/<tên>, commit, rồi mở PR." >&2
+  echo "main only accepts changes through PRs: git switch -c <feat|fix|refactor|chore|docs>/<name>, commit, then open a PR." >&2
   fail=1
 fi
 
-# Commit có file todo viết tay → đồng bộ file auto + TODO.md vào cùng commit (scripts/todo.mjs).
+# A commit with a hand-written todo file → sync the auto file + TODO.md into the same commit (scripts/todo.mjs).
 if [ $fail -eq 0 ] && printf '%s\n' "$staged" | grep -qE '^docs/todo/[a-z]+\.md$'; then
   node scripts/todo.mjs sync >/dev/null && git add -- TODO.md docs/todo/ || fail=1
 fi
 
-# Prettier cho file đã stage (sửa tay ngoài VSCode, quên format), rồi stage lại.
-# Chỉ chạy khi dự án cài Prettier; cùng danh sách đuôi với .claude/hooks/format.sh.
+# Prettier on staged files (hand edits outside VSCode, forgotten formatting), then restage them.
+# Runs only when the project has Prettier installed; same extension list as .claude/hooks/format.sh.
 if [ $fail -eq 0 ] && [ -e node_modules/.bin/prettier ]; then
   files=()
   unstaged=$(git diff --name-only -z | tr '\0' '\n')
@@ -40,10 +40,10 @@ if [ $fail -eq 0 ] && [ -e node_modules/.bin/prettier ]; then
       *) continue ;;
     esac
     if printf '%s\n' "$unstaged" | grep -qxF -- "$f"; then
-      # Stage một phần: format cả file sẽ kéo theo phần chưa stage, nên chỉ kiểm tra bản đã stage.
+      # Partially staged: formatting the whole file would pull in unstaged changes, so only check the staged version.
       staged_blob=$(git show ":$f")
       if [ "$(printf '%s' "$staged_blob" | npx --no-install prettier --stdin-filepath "$f" 2>/dev/null)" != "$staged_blob" ]; then
-        echo "File stage một phần chưa đúng format: $f — chạy: npx prettier --write \"$f\" rồi git add lại." >&2
+        echo "Partially staged file is not formatted: $f — run: npx prettier --write \"$f\" then git add it again." >&2
         fail=1
       fi
     else
@@ -55,7 +55,7 @@ if [ $fail -eq 0 ] && [ -e node_modules/.bin/prettier ]; then
     if npx --no-install prettier --write --ignore-unknown --log-level=warn -- "${files[@]}" >/dev/null; then
       git add -- "${files[@]}"
     else
-      echo "Prettier lỗi (xem trên): sửa cú pháp rồi commit lại." >&2
+      echo "Prettier failed (see above): fix the syntax and commit again." >&2
       fail=1
     fi
   fi

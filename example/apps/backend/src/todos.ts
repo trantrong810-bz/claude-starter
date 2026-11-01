@@ -2,7 +2,7 @@ import { CreateTodoSchema, type Todo } from "@app/shared";
 
 const store = new Map<string, Todo>();
 
-// Framework-agnostic handler: gắn vào Hono/NestJS/Express tùy bạn.
+// Framework-agnostic handler: plug it into Hono/NestJS/Express as you like.
 export function createTodo(body: unknown): { status: 201; data: Todo } | { status: 400; error: string } {
   const parsed = CreateTodoSchema.safeParse(body);
   if (!parsed.success) return { status: 400, error: parsed.error.issues[0]?.message ?? "invalid" };

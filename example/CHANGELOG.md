@@ -1,19 +1,20 @@
 # Changelog
 
-Định dạng theo [Keep a Changelog](https://keepachangelog.com/vi/1.1.0/); version theo [SemVer](https://semver.org/lang/vi/).
-Ghi thay đổi vào mục `Unreleased` cùng commit (subagent `versioner` tự điền khi bật tự động); `node scripts/version.mjs release` chuyển nó thành version mới.
+Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow [SemVer](https://semver.org/).
+Record changes under `Unreleased` in the same commit (the `versioner` subagent fills it when automation is on); `node scripts/version.mjs release` turns it into a new version.
 
 ## [Unreleased]
 
 ### Changed
 
-- `.gitignore`: bỏ qua `.claude/state/`.
+- `.gitignore`: ignores `.claude/state/`.
+- `eslint.config.js`: comments and boundary messages are in English (ADR 0020R).
 
 ## [0.1.0] - 2026-11-01
 
 ### Added
 
-- Monorepo pnpm workspaces + Turborepo (typecheck, lint, test).
-- TypeScript strict dùng chung (`tsconfig.base.json`).
-- ESLint: typescript-eslint và quy tắc ranh giới import (app chỉ import `@app/shared`).
+- pnpm workspaces + Turborepo monorepo (typecheck, lint, test).
+- Shared strict TypeScript config (`tsconfig.base.json`).
+- ESLint: typescript-eslint and import boundary rules (apps only import `@app/shared`).
 - Prettier.

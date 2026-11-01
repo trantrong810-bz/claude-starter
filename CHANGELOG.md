@@ -1,42 +1,40 @@
 # Changelog — claude-starter
 
-Version toàn dự án. Mỗi bản phát hành liệt kê version của từng phần; chi tiết nằm trong changelog của phần đó.
-Thay đổi không thuộc phần nào (ví dụ `versions.json`) ghi vào mục `Unreleased` bên dưới.
+The project-wide version. Each release lists the version of every part; details live in that part's changelog.
+Changes that belong to no part (for example `versions.json`) go under `Unreleased` below.
 
 ## [Unreleased]
 
 ### Added
 
-- `.github/workflows/`: `verify` chạy `scripts/verify.sh` cho mọi PR (status check bắt buộc); `release-tag` gắn tag `vX.Y.Z` sau khi PR release merge.
-- `history/prompts/`: lịch sử prompt (commit lên git, ngoài versioning), điền lại cuộc trò chuyện dựng kit trên claude.ai.
-- `versions.json`: danh sách `ignore`; công cụ version bỏ qua các đường dẫn này. `.gitignore` gốc.
-- `.gitattributes`: LF cho mọi file text.
-- `.githooks/`: `commit-msg` và `pre-commit` (chặn `.env*`, file cục bộ của Claude, dấu xung đột, cờ `.allow-red` trên main).
-- Tag `v0.1.0` gắn bù cho commit phát hành f8379b7.
-- `.vscode/`: `settings.json` (LF, format on save bằng Prettier, terminal Git Bash) và `extensions.json` (Claude Code, Prettier, ESLint, Markdown Mermaid).
+- `.github/workflows/`: `verify` runs `scripts/verify.sh` for every PR (the required status check); `release-tag` tags `vX.Y.Z` after the release PR merges.
+- `history/prompts/`: prompt history (committed to git, outside versioning), backfilled with the claude.ai conversation that built the kit.
+- `versions.json`: an `ignore` list; the version tool skips these paths. A root `.gitignore`.
+- `.gitattributes`: LF for every text file.
+- `.githooks/`: `commit-msg` and `pre-commit` (blocks `.env*`, Claude's local files, conflict markers, the `.allow-red` flag on main).
+- Tag `v0.1.0` added retroactively on release commit f8379b7.
+- `.vscode/`: `settings.json` (LF, format on save with Prettier, Git Bash terminal) and `extensions.json` (Claude Code, Prettier, ESLint, Markdown Mermaid).
 
 ### Changed
 
-- `.githooks/pre-commit`: chặn commit trên `main` (main chỉ nhận qua PR); bỏ kiểm tra cờ `.allow-red` trên main vì đã bao gồm.
-- `.githooks/pre-commit`: tự chạy Prettier trên file đã stage rồi stage lại (file người sửa tay); file stage một phần chỉ kiểm tra, lệch thì chặn. Chỉ chạy khi dự án cài Prettier.
+- `.githooks/`, `.github/workflows/`, `.gitattributes`, `history/README.md`: comments, messages and step names are in English (ADR 0020R); the prompt log field `ket_qua` is now `commits`.
+- `.githooks/pre-commit`: blocks commits on `main` (main only accepts PRs); drops the `.allow-red` check on main, which this covers.
+- `.githooks/pre-commit`: runs Prettier on staged files and restages them (hand-edited files); partially staged files are only checked and blocked if off. Runs only when the project has Prettier.
+- `versions.json`: adds `automation` (`mode: changelog`, `confirmRelease: true`) for the kit repo itself.
 
 ### Removed
 
-- **BREAKING:** `tools/version.mjs` chuyển thành `scripts/version.mjs`; lệnh cũ không còn.
-
-### Changed
-
-- `versions.json`: thêm `automation` (`mode: changelog`, `confirmRelease: true`) cho chính repo kit.
+- **BREAKING:** `tools/version.mjs` moved to `scripts/version.mjs`; the old command is gone.
 
 ## [0.1.0] - 2026-11-01
 
-Bản phát hành đầu tiên có version: bộ cấu hình Claude Code cho monorepo fullstack, quy trình hai pha đã qua một vòng chạy thử.
+The first versioned release: a Claude Code setup for a full-stack monorepo, with the two-phase workflow through one trial run.
 
 ### Added
 
-- `tools/version.mjs`: version riêng cho từng phần, changelog cho mỗi phần, phát hành bằng một lệnh.
+- `tools/version.mjs`: a version per part, a changelog per part, releases with one command.
 
-| Phần    | Version | Changelog                                                                    |
+| Part    | Version | Changelog                                                                    |
 | ------- | ------- | ---------------------------------------------------------------------------- |
 | .claude | 0.1.0   | [.claude/CHANGELOG.md](.claude/CHANGELOG.md)                                 |
 | docs    | 0.1.0   | [docs/CHANGELOG.md](docs/CHANGELOG.md)                                       |

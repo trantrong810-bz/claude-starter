@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-// Nguồn sự thật duy nhất cho contract API. Đổi ở đây → typecheck báo lỗi mọi nơi bị ảnh hưởng.
+// Single source of truth for the API contract. Change it here → typecheck flags every affected place.
 export const TodoSchema = z.object({
   id: z.string(),
   title: z.string().min(1).max(200),
