@@ -36,7 +36,8 @@ SETUP.md                         # hướng dẫn cài đặt chi tiết
   hooks/usage-guard.mjs          # usage ≥ 90%: chỉ cho /handoff rồi dừng
   commands/retro.md              # /retro — biến lỗi thành lint/hook/CLAUDE.md
   commands/why.md                # /why — tra cứu quyết định và lịch sử prompt
-  commands/release.md            # /release — điền changelog thiếu, xem trước, phát hành
+  commands/release.md            # /release — điền changelog thiếu, xem trước, phát hành qua PR
+  commands/ship.md               # /ship — push nhánh, mở PR, hỏi, auto-merge khi CI xanh
   agents/versioner.md            # subagent điền changelog từ diff (Haiku)
   hooks/version-guard.sh         # chặn git commit thiếu changelog
   hooks/commit-guard.sh          # chặn git commit sai quy ước (message, nhánh, --no-verify)
@@ -126,7 +127,7 @@ Vì sao như vậy:
 - **Contract + test chốt trước.** Pha 2 có "trọng tài" sẵn: làm cho test xanh, không phải tự phán đoán khi nào xong.
 - **Client dùng chung, app chỉ là UI.** Hàm gọi API viết một lần trong `shared`, có test; web và mobile không lặp lại logic.
 - **Song song chỉ khi đáng.** Mỗi subagent tốn ~10k token khởi động. Chỉ giao web/mobile cho subagent khi mỗi app có phần UI đáng kể; việc nhỏ thì làm thẳng.
-- **Nhánh `feat/`, commit mỗi lớp.** `main` luôn xanh dù test pha 1 đỏ; mỗi lớp là một điểm quay lại; reviewer xem đúng `main...HEAD`. Commit message theo Conventional Commits, merge chỉ fast-forward — đầy đủ trong [docs/GIT.md](docs/GIT.md), ép bằng hook.
+- **Nhánh `feat/`, commit mỗi lớp.** `main` luôn xanh dù test pha 1 đỏ; mỗi lớp là một điểm quay lại; reviewer xem đúng `main...HEAD`. Commit message theo Conventional Commits; `main` chỉ nhận qua PR trên GitHub (`/ship`: rebase-merge tự động khi CI xanh, sau khi bạn đồng ý) — đầy đủ trong [docs/GIT.md](docs/GIT.md), ép bằng hook và ruleset.
 - **Bạn chỉ cần có mặt ở 3 điểm:** duyệt plan/contract (sửa ở đây rẻ nhất), duyệt merge vào `main`, và chọn đề xuất của `/retro`.
 
 ### Cải tiến dần — tự động qua `/retro`
@@ -170,8 +171,8 @@ node scripts/version.mjs list               # version hiện tại
 node scripts/version.mjs mode               # chế độ tự động đang áp dụng
 node scripts/version.mjs check              # phần nào đổi file mà chưa ghi changelog
 node scripts/version.mjs release --dry-run  # xem trước
-node scripts/version.mjs release            # bump, ghi changelog, commit, tag
-git push && git push --tags
+node scripts/version.mjs release --no-tag   # bump, ghi changelog, commit (trên nhánh release/vX.Y.Z)
+node scripts/version.mjs tag                # CI: gắn tag sau khi PR release merge
 ```
 
 **Tự động** (cấu hình trong `versions.json`): `"automation": { "mode": "changelog", "confirmRelease": true }`.

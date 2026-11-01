@@ -20,7 +20,8 @@ Chép các file này vào gốc monorepo (pnpm + Turborepo, apps/backend, apps/w
 | `.vscode/`                          | LF, format on save bằng Prettier, terminal Git Bash, extension gợi ý.                     |
 | `.gitattributes`                    | Ép LF cho mọi file text, kể cả trên Windows.                                              |
 | `.claude/agents/versioner.md`       | Subagent (Haiku) đọc diff, điền mục `Unreleased`.                                         |
-| `.claude/commands/release.md`       | `/release` — điền changelog thiếu, xem trước, hỏi, phát hành.                             |
+| `.claude/commands/release.md`       | `/release` — điền changelog thiếu, xem trước, hỏi, phát hành qua PR `release/vX.Y.Z`.     |
+| `.claude/commands/ship.md`          | `/ship` — push nhánh, mở PR, hỏi, bật auto-merge, chờ CI, dọn nhánh.                      |
 | `scripts/version.mjs`               | `init`, `list`, `mode`, `check`, `release`.                                               |
 | `scripts/adr.mjs`                   | Tạo ADR, sinh mục lục, kiểm tra (chạy trong verify).                                      |
 | `.claude/hooks/verify-on-stop.sh`   | Chặn Claude báo "xong" khi `verify` còn lỗi (có chống lặp vô hạn).                        |
@@ -59,8 +60,10 @@ Chép các file này vào gốc monorepo (pnpm + Turborepo, apps/backend, apps/w
    chmod +x .githooks/*
    git config core.hooksPath .githooks   # mỗi máy, mỗi bản clone
    git config pull.ff only
+   git switch -c chore/normalize-line-endings
    git add --renormalize . && git commit -m "chore: normalize line endings to lf"
    ```
+   GitHub: chép `.github/`, cài `gh` (`winget install GitHub.cli`), `gh auth login`, đẩy `main` lần cuối rồi chạy `bash scripts/github-setup.sh` (ruleset `main`, chỉ rebase-merge, auto-merge; repo private cần GitHub Pro/Team). Từ đó mọi thay đổi vào `main` qua `/ship`.
    Dự án đã phát hành mà chưa có tag: gắn tag cho commit phát hành cuối, `git tag -a vX.Y.Z <sha> -m "vX.Y.Z"`, nếu không `version.mjs check` sẽ so với commit đầu.
    Tùy chọn, ép thêm bằng permissions trong `.claude/settings.json`: `"deny"` thêm `Bash(git clean:*)`, `Bash(git branch -D:*)`, `Bash(git tag -d:*)`, `Bash(git commit --no-verify:*)`, `Bash(git config:*)`; `"ask"`: `["Bash(git push:*)", "Bash(git rebase:*)", "Bash(git tag:*)"]`.
 10. Chạy `claude`, gõ `/hooks` để kiểm tra hook đã nhận.

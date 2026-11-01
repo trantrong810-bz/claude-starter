@@ -15,7 +15,7 @@
 | 0004 | [Task lớn chạy hai pha, hai session: Opus lập kế hoạch, Sonnet thực thi](0004R-hai-pha-opus-sonnet.md) | Chấp nhận | 2026-11-01 | claude-opus-5-5 |
 | 0005 | [Contract và test viết trước; stub 'not implemented'; cờ .allow-red chỉ bỏ qua test](0005R-contract-va-test-truoc.md) | Chấp nhận | 2026-11-01 | claude-opus-5-5 |
 | 0006 | [Stop hook chặn Claude báo xong khi verify còn lỗi](0006R-stop-hook-chan-khi-verify-do.md) | Chấp nhận | 2026-11-01 | claude-opus-5-5 |
-| 0007 | [Tính năng lớn làm trên nhánh feat/, merge vào main là điểm duyệt](0007R-nhanh-feat-va-duyet-merge.md) | Chấp nhận | 2026-11-01 | claude-opus-5-5 |
+| 0007 | [~~Tính năng lớn làm trên nhánh feat/, merge vào main là điểm duyệt~~](0007R-nhanh-feat-va-duyet-merge.md) | Bị thay thế → 0019 | 2026-11-01 | claude-opus-5-5 |
 | 0008 | [Chỉ dùng subagent cho web/mobile khi mỗi app có phần UI đáng kể](0008R-subagent-chi-khi-ui-lon.md) | Chấp nhận | 2026-11-01 | claude-opus-5-5 |
 | 0009 | [Version và changelog riêng cho từng phần; mức bump suy ra từ changelog; chỉ tag version dự án](0009R-version-theo-tung-phan.md) | Chấp nhận | 2026-11-01 | claude-opus-5-5 |
 | 0010 | [Log prompt commit lên git, nằm ngoài versioning, ghi model xử lý, không ghi câu trả lời](0010R-log-prompt-trong-git.md) | Chấp nhận | 2026-11-01 | claude-opus-5-5 |
@@ -26,6 +26,7 @@
 | 0015 | [Windows 11 + VSCode là môi trường chuẩn của kit, script giữ POSIX](0015R-moi-truong-windows-vscode.md) | Chấp nhận | 2026-11-01 | claude-opus-5-5 |
 | 0016 | [Git pre-commit tự chạy Prettier trên file đã stage rồi stage lại](0016R-pre-commit-format.md) | Chấp nhận | 2026-11-01 | claude-opus-5-5 |
 | 0017 | [Mọi trạng thái làm việc nằm trong repo: todo hai lớp, code dở ở ref wip/<nhánh>, usage ≥ 90% thì buộc handoff](0017R-todo-hai-lop-va-snapshot-wip.md) | Chấp nhận | 2026-11-01 | claude-opus-5-5 |
+| 0019 | [Mọi thay đổi vào main qua PR trên GitHub; người đồng ý trong chat, GitHub rebase-merge khi CI xanh](0019R-git-flow-qua-github-pr.md) | Chấp nhận | 2026-11-01 | claude-opus-5-5 |
 
 ## Cấp tính năng
 
