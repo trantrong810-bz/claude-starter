@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Git hook: chặn những thứ không được commit theo docs/GIT.md. Bật: git config core.hooksPath .githooks
+# Git hook: chặn những thứ không được commit theo docs/GIT.md, format file đã stage. Bật: git config core.hooksPath .githooks
 fail=0
 staged=$(git diff --cached --name-only --diff-filter=ACMR)
 
@@ -22,6 +22,38 @@ branch=$(git branch --show-current)
 if [ -f .claude/.allow-red ] && [ "$branch" = "main" ]; then
   echo "Cờ .claude/.allow-red đang bật trên main: commit pha 1 phải ở nhánh feat/<tên>." >&2
   fail=1
+fi
+
+# Prettier cho file đã stage (sửa tay ngoài VSCode, quên format), rồi stage lại.
+# Chỉ chạy khi dự án cài Prettier; cùng danh sách đuôi với .claude/hooks/format.sh.
+if [ $fail -eq 0 ] && [ -e node_modules/.bin/prettier ]; then
+  files=()
+  unstaged=$(git diff --name-only -z | tr '\0' '\n')
+  while IFS= read -r -d '' f; do
+    case "$f" in
+      *.ts|*.tsx|*.js|*.jsx|*.mjs|*.cjs|*.json|*.css|*.md|*.yml|*.yaml) ;;
+      *) continue ;;
+    esac
+    if printf '%s\n' "$unstaged" | grep -qxF -- "$f"; then
+      # Stage một phần: format cả file sẽ kéo theo phần chưa stage, nên chỉ kiểm tra bản đã stage.
+      staged_blob=$(git show ":$f")
+      if [ "$(printf '%s' "$staged_blob" | npx --no-install prettier --stdin-filepath "$f" 2>/dev/null)" != "$staged_blob" ]; then
+        echo "File stage một phần chưa đúng format: $f — chạy: npx prettier --write \"$f\" rồi git add lại." >&2
+        fail=1
+      fi
+    else
+      files+=("$f")
+    fi
+  done < <(git diff --cached --name-only --diff-filter=ACMR -z)
+
+  if [ ${#files[@]} -gt 0 ]; then
+    if npx --no-install prettier --write --ignore-unknown --log-level=warn -- "${files[@]}" >/dev/null; then
+      git add -- "${files[@]}"
+    else
+      echo "Prettier lỗi (xem trên): sửa cú pháp rồi commit lại." >&2
+      fail=1
+    fi
+  fi
 fi
 
 exit $fail

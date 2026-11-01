@@ -16,7 +16,7 @@ Chép các file này vào gốc monorepo (pnpm + Turborepo, apps/backend, apps/w
 | `.claude/hooks/commit-guard.sh`     | Chặn `git commit` của Claude sai quy ước: message, tên nhánh, `--no-verify`, amend.   |
 | `docs/GIT.md`                       | Quy ước git, nạp vào mọi session qua `CLAUDE.md`.                                     |
 | `scripts/commit-msg.mjs`            | Kiểm tra commit message (dùng chung cho hook của Claude và `.githooks/`).             |
-| `.githooks/`                        | `commit-msg` + `pre-commit` cho commit của người (bật bằng `core.hooksPath`).         |
+| `.githooks/`                        | `commit-msg` + `pre-commit` (chặn file cấm, Prettier file đã stage) cho người.        |
 | `.vscode/`                          | LF, format on save bằng Prettier, terminal Git Bash, extension gợi ý.                 |
 | `.gitattributes`                    | Ép LF cho mọi file text, kể cả trên Windows.                                          |
 | `.claude/agents/versioner.md`       | Subagent (Haiku) đọc diff, điền mục `Unreleased`.                                     |

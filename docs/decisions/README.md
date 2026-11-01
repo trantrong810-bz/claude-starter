@@ -24,6 +24,7 @@
 | 0013 | [Tự động versioning bằng hook chặn commit và subagent `versioner` (Haiku), có chế độ tắt](0013R-tu-dong-versioning.md) | Chấp nhận | 2026-11-01 | claude-opus-5-5 |
 | 0014 | [Quy ước git chung trong docs/GIT.md, nạp mọi session và ép bằng hook](0014R-quy-uoc-git.md) | Chấp nhận | 2026-11-01 | claude-opus-5-5 |
 | 0015 | [Windows 11 + VSCode là môi trường chuẩn của kit, script giữ POSIX](0015R-moi-truong-windows-vscode.md) | Chấp nhận | 2026-11-01 | claude-opus-5-5 |
+| 0016 | [Git pre-commit tự chạy Prettier trên file đã stage rồi stage lại](0016R-pre-commit-format.md) | Chấp nhận | 2026-11-01 | claude-opus-5-5 |
 
 ## Cấp tính năng
 

@@ -1,6 +1,6 @@
 # Quy ước Git
 
-> Nạp vào mọi session qua `CLAUDE.md`. Áp dụng cho Claude và người. Ép bằng công cụ: `.githooks/` (commit-msg, pre-commit, cho người), hook `commit-guard.sh` (PreToolUse, cho Claude; luôn chạy), `scripts/commit-msg.mjs` (bộ kiểm tra dùng chung), `.gitattributes`. Hook SessionStart báo nhánh, file chưa commit, nhánh chưa merge, tag thiếu. Quyết định: ADR 0014R.
+> Nạp vào mọi session qua `CLAUDE.md`. Áp dụng cho Claude và người. Ép bằng công cụ: `.githooks/` (commit-msg, pre-commit — chặn file cấm và tự chạy Prettier trên file đã stage — cho người), hook `commit-guard.sh` (PreToolUse, cho Claude; luôn chạy), `scripts/commit-msg.mjs` (bộ kiểm tra dùng chung), `.gitattributes`. Hook SessionStart báo nhánh, file chưa commit, nhánh chưa merge, tag thiếu. Quyết định: ADR 0014R, 0016R.
 
 ## Commit message
 

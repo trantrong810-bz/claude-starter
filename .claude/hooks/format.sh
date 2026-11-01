@@ -5,7 +5,7 @@ file=$(printf '%s' "$input" | node -e 'let s="";process.stdin.on("data",d=>s+=d)
 [ -z "$file" ] || [ ! -f "$file" ] && exit 0
 
 case "$file" in
-  *.ts|*.tsx|*.js|*.jsx|*.json|*.css|*.md)
+  *.ts|*.tsx|*.js|*.jsx|*.mjs|*.cjs|*.json|*.css|*.md|*.yml|*.yaml)
     npx --no-install prettier --write --log-level=warn "$file" >/dev/null 2>&1 || true
     ;;
 esac

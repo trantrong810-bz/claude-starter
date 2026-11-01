@@ -13,6 +13,8 @@ Ghi thay đổi vào mục `Unreleased` cùng commit (subagent `versioner` tự 
 - ADR 0012R (công cụ version đi theo kit) và 0013R (tự động versioning, chế độ tắt).
 - `GIT.md`: quy ước git — commit message, nhánh, merge, viết lại lịch sử, tag, push, xuống dòng.
 - ADR 0014R: quy ước git chung, nạp mọi session và ép bằng hook.
+- ADR 0016R: git pre-commit tự format file đã stage.
+- `WORKFLOW.md`: luồng người sửa tay → format on save → pre-commit Prettier.
 - ADR 0015R: Windows 11 + VSCode là môi trường chuẩn, script giữ POSIX.
 
 ### Changed

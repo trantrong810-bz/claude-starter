@@ -14,6 +14,10 @@ Thay đổi không thuộc phần nào (ví dụ `versions.json`) ghi vào mục
 - Tag `v0.1.0` gắn bù cho commit phát hành f8379b7.
 - `.vscode/`: `settings.json` (LF, format on save bằng Prettier, terminal Git Bash) và `extensions.json` (Claude Code, Prettier, ESLint, Markdown Mermaid).
 
+### Changed
+
+- `.githooks/pre-commit`: tự chạy Prettier trên file đã stage rồi stage lại (file người sửa tay); file stage một phần chỉ kiểm tra, lệch thì chặn. Chỉ chạy khi dự án cài Prettier.
+
 ### Removed
 
 - **BREAKING:** `tools/version.mjs` chuyển thành `scripts/version.mjs`; lệnh cũ không còn.

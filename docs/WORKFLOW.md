@@ -86,8 +86,11 @@ flowchart TD
     CGUARD -->|"Đúng docs/GIT.md"| GUARD{"Hook version-guard: phần đổi file có changelog chưa?"}
     GUARD -->|"Thiếu, mode khác off"| VERS["Subagent versioner (Haiku) điền Unreleased"]
     VERS --> COMMIT
-    GUARD -->|"Đủ, hoặc mode off"| GITHOOK["Git hook nếu bật: commit-msg, pre-commit"]
+    GUARD -->|"Đủ, hoặc mode off"| GITHOOK["Git hook nếu bật: commit-msg, pre-commit (chặn file cấm, Prettier file đã stage rồi stage lại)"]
     GITHOOK --> WORK
+    HUMAN["Người sửa tay"] --> SAVE["VSCode format on save: Prettier"]
+    SAVE --> HCOMMIT["Người chạy git commit"]
+    HCOMMIT --> GITHOOK
     WORK --> STOP{"Claude định kết thúc"}
     STOP --> DIFF{"Có thay đổi trong apps/ hoặc packages/?"}
     DIFF -->|"Không"| QUICK["verify --quick: quét secret trong log, kiểm tra ADR"]

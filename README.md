@@ -44,7 +44,7 @@ scripts/try-example.sh           # dựng demo chạy được từ example/
 scripts/adr.mjs                  # tạo, đánh mục lục, kiểm tra ADR
 scripts/version.mjs              # init / list / mode / check / release
 scripts/commit-msg.mjs           # kiểm tra commit message (Conventional Commits)
-.githooks/                       # commit-msg + pre-commit cho người (core.hooksPath)
+.githooks/                       # commit-msg + pre-commit (Prettier file đã stage) cho người
 .gitattributes                   # LF cho mọi file text
 docs/GIT.md                      # quy ước git — nạp vào mọi session
 example/                         # monorepo mẫu tối giản
