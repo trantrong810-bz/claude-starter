@@ -1,7 +1,7 @@
 import { API, TodoSchema, type CreateTodoInput, type Todo } from "./schema";
 
-// Client gọi API dùng chung cho web và mobile.
-// Quy tắc: parse response bằng schema (không ép kiểu `as`), encode tham số đưa vào URL.
+// API client shared by web and mobile.
+// Rules: parse responses with the schema (no `as` casts), encode every parameter that goes into a URL.
 export async function createTodo(baseUrl: string, input: CreateTodoInput): Promise<Todo> {
   const res = await fetch(baseUrl + API.todos, {
     method: "POST",

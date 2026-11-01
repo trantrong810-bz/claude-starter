@@ -1,7 +1,7 @@
 // @ts-check
 import tseslint from "typescript-eslint";
 
-// Ranh giới kiến trúc được ép bằng lint, không chỉ ghi trong CLAUDE.md.
+// Architectural boundaries are enforced by lint, not just written in CLAUDE.md.
 const noAppImports = (allowed) => ({
   "no-restricted-imports": [
     "error",
@@ -9,9 +9,9 @@ const noAppImports = (allowed) => ({
       patterns: [
         {
           group: ["@app/*", ...allowed.map((a) => `!@app/${a}`)],
-          message: "Vi phạm ranh giới: chỉ được import @app/shared. Đưa code dùng chung vào packages/shared.",
+          message: "Boundary violation: only @app/shared may be imported. Move shared code into packages/shared.",
         },
-        { group: ["../../*", "../../../*"], message: "Không import xuyên package bằng đường dẫn tương đối." },
+        { group: ["../../*", "../../../*"], message: "Do not import across packages with relative paths." },
       ],
     },
   ],

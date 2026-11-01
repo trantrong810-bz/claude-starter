@@ -3,7 +3,7 @@ import { createTodo, listTodos } from "./todos";
 
 describe("createTodo", () => {
   it("creates a todo", () => {
-    const res = createTodo({ title: "Viết spec" });
+    const res = createTodo({ title: "Write the spec" });
     expect(res.status).toBe(201);
     expect(listTodos()).toHaveLength(1);
   });

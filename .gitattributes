@@ -1,5 +1,5 @@
-# Mọi file text dùng LF trong repo và khi checkout, kể cả trên Windows (core.autocrlf=true).
-# Script bash, hook và các parser (adr.mjs, version.mjs) giả định LF. Xem docs/GIT.md.
+# Every text file uses LF in the repo and on checkout, even on Windows (core.autocrlf=true).
+# Bash scripts, hooks and the parsers (adr.mjs, version.mjs) assume LF. See docs/GIT.md.
 * text=auto eol=lf
 
 *.sh text eol=lf
