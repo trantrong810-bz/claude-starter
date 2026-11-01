@@ -27,6 +27,7 @@
 | 0016 | [Git pre-commit tự chạy Prettier trên file đã stage rồi stage lại](0016R-pre-commit-format.md) | Chấp nhận | 2026-11-01 | claude-opus-5-5 |
 | 0017 | [Mọi trạng thái làm việc nằm trong repo: todo hai lớp, code dở ở ref wip/<nhánh>, usage ≥ 90% thì buộc handoff](0017R-todo-hai-lop-va-snapshot-wip.md) | Chấp nhận | 2026-11-01 | claude-opus-5-5 |
 | 0019 | [Mọi thay đổi vào main qua PR trên GitHub; người đồng ý trong chat, GitHub rebase-merge khi CI xanh](0019R-git-flow-qua-github-pr.md) | Chấp nhận | 2026-11-01 | claude-opus-5-5 |
+| 0020 | [Everything in the repo is written in English, except hand-written todo files](0020R-english-only.md) | Chấp nhận | 2026-11-01 | claude-opus-5-5 |
 
 ## Cấp tính năng
 
