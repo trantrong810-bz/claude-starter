@@ -20,6 +20,24 @@ if [ -n "$out" ]; then
   printf '%s' "$out"
 fi
 
+# Trạng thái git (quy ước: docs/GIT.md, đã nạp qua CLAUDE.md)
+if git rev-parse --git-dir >/dev/null 2>&1; then
+  branch=$(git branch --show-current)
+  dirty=$(git status --porcelain | grep -vc '^.. history/')
+  git_out="Git: nhánh ${branch:-(detached)}"
+  [ "$dirty" -gt 0 ] && git_out+=", $dirty file chưa commit"
+  echo "$git_out."
+  unmerged=$(git branch --format='%(refname:short)' --no-merged main 2>/dev/null | tr '\n' ' ')
+  [ -n "$unmerged" ] && [ "$branch" = "main" ] && echo "- Nhánh chưa merge vào main: $unmerged"
+  [ "$(git config core.hooksPath)" = ".githooks" ] || [ ! -d .githooks ] || \
+    echo "- Git hook chưa bật cho người: nhắc người dùng chạy git config core.hooksPath .githooks"
+  if [ -f versions.json ]; then
+    v=$(node -e 'try{process.stdout.write(require("./versions.json").project.version)}catch{}')
+    [ -n "$v" ] && ! git rev-parse -q --verify "refs/tags/v$v" >/dev/null && \
+      echo "- Thiếu tag v$v cho version hiện tại: version.mjs check sẽ so với commit đầu."
+  fi
+fi
+
 if [ -f .claude/.allow-red ]; then
   echo "Cờ .claude/.allow-red đang bật: verify bỏ qua test. Chỉ đúng trong pha 1 (/plan-feature); /build-feature phải xóa nó."
 fi

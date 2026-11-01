@@ -16,5 +16,6 @@ Kiểm tra theo thứ tự ưu tiên:
 3. Code gọi API viết trong apps thay vì dùng client của packages/shared.
 4. Thiếu test cho logic mới.
 5. Vi phạm quy tắc trong CLAUDE.md.
+6. Lịch sử commit (`git log --format='%h %s' main..HEAD`) theo `docs/GIT.md`: mỗi commit một thay đổi logic, type đúng bản chất (sai: thay đổi chỉ là refactor mà dùng `feat`), có `!`/`BREAKING CHANGE` khi đổi contract.
 
 Chỉ báo vấn đề thật, mỗi vấn đề: file:dòng, mức độ (cao/trung/thấp), cách sửa 1 câu. Không khen, không tóm tắt diff. Nếu ổn, trả lời "Không có vấn đề đáng kể."

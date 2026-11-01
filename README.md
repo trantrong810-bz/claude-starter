@@ -30,6 +30,7 @@ SETUP.md                         # hướng dẫn cài đặt chi tiết
   commands/release.md            # /release — điền changelog thiếu, xem trước, phát hành
   agents/versioner.md            # subagent điền changelog từ diff (Haiku)
   hooks/version-guard.sh         # chặn git commit thiếu changelog
+  hooks/commit-guard.sh          # chặn git commit sai quy ước (message, nhánh, --no-verify)
   hooks/prompt-log.mjs           # ghi prompt + model xử lý vào history/
   agents/app-builder.md          # subagent làm một app (web hoặc mobile)
   agents/code-reviewer.md        # subagent review diff (Sonnet)
@@ -37,6 +38,10 @@ scripts/verify.sh                # typecheck + lint + test phần bị ảnh hư
 scripts/try-example.sh           # dựng demo chạy được từ example/
 scripts/adr.mjs                  # tạo, đánh mục lục, kiểm tra ADR
 scripts/version.mjs              # init / list / mode / check / release
+scripts/commit-msg.mjs           # kiểm tra commit message (Conventional Commits)
+.githooks/                       # commit-msg + pre-commit cho người (core.hooksPath)
+.gitattributes                   # LF cho mọi file text
+docs/GIT.md                      # quy ước git — nạp vào mọi session
 example/                         # monorepo mẫu tối giản
 docs/specs/_template.md          # mẫu spec cho mỗi tính năng
 docs/WORKFLOW.md                 # sơ đồ Mermaid: quy trình, lớp bảo vệ, tra cứu, phát hành
@@ -106,7 +111,7 @@ Vì sao như vậy:
 - **Contract + test chốt trước.** Pha 2 có "trọng tài" sẵn: làm cho test xanh, không phải tự phán đoán khi nào xong.
 - **Client dùng chung, app chỉ là UI.** Hàm gọi API viết một lần trong `shared`, có test; web và mobile không lặp lại logic.
 - **Song song chỉ khi đáng.** Mỗi subagent tốn ~10k token khởi động. Chỉ giao web/mobile cho subagent khi mỗi app có phần UI đáng kể; việc nhỏ thì làm thẳng.
-- **Nhánh `feat/`, commit mỗi lớp.** `main` luôn xanh dù test pha 1 đỏ; mỗi lớp là một điểm quay lại; reviewer xem đúng `main...HEAD`.
+- **Nhánh `feat/`, commit mỗi lớp.** `main` luôn xanh dù test pha 1 đỏ; mỗi lớp là một điểm quay lại; reviewer xem đúng `main...HEAD`. Commit message theo Conventional Commits, merge chỉ fast-forward — đầy đủ trong [docs/GIT.md](docs/GIT.md), ép bằng hook.
 - **Bạn chỉ cần có mặt ở 3 điểm:** duyệt plan/contract (sửa ở đây rẻ nhất), duyệt merge vào `main`, và chọn đề xuất của `/retro`.
 
 ### Cải tiến dần — tự động qua `/retro`

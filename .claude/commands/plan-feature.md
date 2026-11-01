@@ -12,11 +12,11 @@ Tính năng: $ARGUMENTS
 3. DỪNG để tôi duyệt plan và contract. Đây là điểm kiểm tra quan trọng nhất — nêu rõ các quyết định có thể tranh cãi.
 4. Sau khi được duyệt:
    - Mỗi quyết định có tranh cãi đã được duyệt (mục "Quyết định có thể tranh cãi" trong Contract) → một ADR qua `node scripts/adr.mjs new`, `nguon` ghi tên spec; ghi số ADR vào Ghi chú của spec.
-   - `git switch -c feat/<tên-tính-năng>` — mọi commit của tính năng nằm trên nhánh này; `main` luôn xanh.
+   - `git switch main && git switch -c feat/<tên-tính-năng>` (kebab-case, ≤ 40 ký tự, trùng tên spec) — mọi commit của tính năng nằm trên nhánh này; `main` luôn xanh. Mọi commit theo `docs/GIT.md`.
    - Tạo file `.claude/.allow-red` (verify sẽ bỏ qua test, nhưng typecheck và lint vẫn phải qua).
    - Viết schema/types trong `packages/shared`.
    - Tạo stub cho các hàm backend: chữ ký đầy đủ theo contract, thân hàm chỉ `throw new Error("not implemented")`. Chữ ký này là một phần của contract.
    - Viết test backend gọi các stub đó, mô tả hành vi mong muốn. Test phải đỏ vì "not implemented", không phải vì lỗi import hay type.
    - `pnpm verify` phải qua (typecheck + lint), rồi chạy riêng test backend để xác nhận chúng đỏ đúng lý do.
-   - Commit: `feat(<tên>): contract + failing tests`.
+   - Commit: `feat(<tên>): add contract, stub and failing tests`, body có `Refs: docs/specs/<tên>.md`. Contract đổi API đã có → thêm `!` và footer `BREAKING CHANGE:`.
 5. Chạy `/handoff`, rồi nhắc tôi: `/clear`, `/model sonnet`, `/build-feature <tên-tính-năng>`.

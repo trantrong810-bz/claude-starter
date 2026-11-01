@@ -19,7 +19,8 @@ const STATUSES = { "de-xuat": "Đề xuất", "chap-nhan": "Chấp nhận", "bi-
 const SCOPES = ["rong", "tinh-nang"];
 
 function parse(file) {
-  const text = readFileSync(join(DIR, file), "utf8");
+  // Chuẩn hoá CRLF: file có thể bị checkout với CRLF trên Windows.
+  const text = readFileSync(join(DIR, file), "utf8").replace(/\r\n/g, "\n");
   const fm = text.match(/^---\n([\s\S]*?)\n---/);
   const meta = {};
   if (fm) {
@@ -122,7 +123,7 @@ function check() {
       .filter(Boolean)
       .join("\n");
   const expected = renderIndex(adrs);
-  if (!existsSync(INDEX) || norm(readFileSync(INDEX, "utf8")) !== norm(expected))
+  if (!existsSync(INDEX) || norm(readFileSync(INDEX, "utf8").replace(/\r/g, "")) !== norm(expected))
     errors.push(`${INDEX}: mục lục chưa cập nhật — chạy: node scripts/adr.mjs index`);
   if (errors.length) {
     console.error("ADR LỖI:\n" + errors.map((e) => "- " + e).join("\n"));

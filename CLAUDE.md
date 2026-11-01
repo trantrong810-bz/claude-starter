@@ -19,6 +19,7 @@
 
 ## Quy tắc
 
+- Git (commit message, nhánh, merge, tag, lệnh cấm): theo @docs/GIT.md. Hook `commit-guard.sh` chặn commit sai quy ước.
 - Đổi API: sửa schema trong packages/shared TRƯỚC, sau đó backend, rồi web/mobile.
 - Gọi API chỉ qua client trong packages/shared (parse response bằng schema, encode tham số URL). Apps chỉ chứa UI.
 - Không sửa migration đã tồn tại; tạo migration mới.

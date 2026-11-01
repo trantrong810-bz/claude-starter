@@ -1,0 +1,16 @@
+# Mọi file text dùng LF trong repo và khi checkout, kể cả trên Windows (core.autocrlf=true).
+# Script bash, hook và các parser (adr.mjs, version.mjs) giả định LF. Xem docs/GIT.md.
+* text=auto eol=lf
+
+*.sh text eol=lf
+.githooks/* text eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.pdf binary
+*.woff binary
+*.woff2 binary

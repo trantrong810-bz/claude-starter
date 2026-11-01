@@ -7,12 +7,17 @@ Chép các file này vào gốc monorepo (pnpm + Turborepo, apps/backend, apps/w
 | File                                | Vai trò                                                                              |
 | ----------------------------------- | ------------------------------------------------------------------------------------ |
 | `CLAUDE.md`                         | Bộ nhớ dự án, giữ ngắn. Điền tên dự án và stack thật.                                |
-| `.claude/settings.json`             | Allow lệnh an toàn, deny `.env`/migration/lệnh phá hoại, đăng ký 9 hook (7 sự kiện). |
+| `.claude/settings.json`             | Allow lệnh an toàn, deny `.env`/migration/lệnh phá hoại, đăng ký 10 hook (7 sự kiện). |
 | `.claude/hooks/format.sh`           | Tự chạy Prettier sau mỗi lần Claude sửa file.                                        |
 | `.claude/hooks/session-context.sh`  | Đầu session: báo spec đang dở và cờ `.allow-red` vào context.                        |
 | `.claude/hooks/prompt-log.mjs`      | Ghi prompt, model, effort, subagent, commit vào `history/prompts/`.                  |
 | `.claude/commands/why.md`           | `/why` — tra cứu ADR, spec, git, log prompt.                                         |
 | `.claude/hooks/version-guard.sh`    | Chặn `git commit` khi phần bị đổi chưa có changelog (theo `automation.mode`).        |
+| `.claude/hooks/commit-guard.sh`     | Chặn `git commit` của Claude sai quy ước: message, tên nhánh, `--no-verify`, amend.  |
+| `docs/GIT.md`                       | Quy ước git, nạp vào mọi session qua `CLAUDE.md`.                                    |
+| `scripts/commit-msg.mjs`            | Kiểm tra commit message (dùng chung cho hook của Claude và `.githooks/`).            |
+| `.githooks/`                        | `commit-msg` + `pre-commit` cho commit của người (bật bằng `core.hooksPath`).        |
+| `.gitattributes`                    | Ép LF cho mọi file text, kể cả trên Windows.                                         |
 | `.claude/agents/versioner.md`       | Subagent (Haiku) đọc diff, điền mục `Unreleased`.                                    |
 | `.claude/commands/release.md`       | `/release` — điền changelog thiếu, xem trước, hỏi, phát hành.                        |
 | `scripts/version.mjs`               | `init`, `list`, `mode`, `check`, `release`.                                          |
@@ -37,7 +42,16 @@ Chép các file này vào gốc monorepo (pnpm + Turborepo, apps/backend, apps/w
 6. Xóa ADR của kit (`docs/decisions/0*.md`) rồi chạy `node scripts/adr.mjs index` — đó là lịch sử của kit, không phải của dự án.
 7. `node scripts/version.mjs init` — tạo `versions.json` và `CHANGELOG.md` cho mỗi app/package (chế độ mặc định `changelog`; đặt `"mode": "off"` nếu không muốn tự động).
 8. Sửa đường dẫn migration trong `deny` nếu không dùng Prisma.
-9. Chạy `claude`, gõ `/hooks` để kiểm tra hook đã nhận.
+9. Git: chép `.gitattributes`, `.githooks/`, `docs/GIT.md`; rồi
+   ```bash
+   chmod +x .githooks/*
+   git config core.hooksPath .githooks   # mỗi máy, mỗi bản clone
+   git config pull.ff only
+   git add --renormalize . && git commit -m "chore: normalize line endings to lf"
+   ```
+   Dự án đã phát hành mà chưa có tag: gắn tag cho commit phát hành cuối, `git tag -a vX.Y.Z <sha> -m "vX.Y.Z"`, nếu không `version.mjs check` sẽ so với commit đầu.
+   Tùy chọn, ép thêm bằng permissions trong `.claude/settings.json`: `"deny"` thêm `Bash(git clean:*)`, `Bash(git branch -D:*)`, `Bash(git tag -d:*)`, `Bash(git commit --no-verify:*)`, `Bash(git config:*)`; `"ask"`: `["Bash(git push:*)", "Bash(git rebase:*)", "Bash(git tag:*)"]`.
+10. Chạy `claude`, gõ `/hooks` để kiểm tra hook đã nhận.
 
 ## Vòng làm việc
 

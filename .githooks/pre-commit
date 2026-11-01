@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Git hook: chặn những thứ không được commit theo docs/GIT.md. Bật: git config core.hooksPath .githooks
+fail=0
+staged=$(git diff --cached --name-only --diff-filter=ACMR)
+
+# .env* (trừ .env.example), cờ và state cục bộ của Claude
+bad=$(printf '%s\n' "$staged" | grep -E '(^|/)\.env($|\.)|(^|/)CLAUDE\.local\.md$|^\.claude/(\.allow-red|state/)' | grep -vE '(^|/)\.env\.example$')
+if [ -n "$bad" ]; then
+  echo "Không commit file cục bộ/bí mật:" >&2
+  printf '  %s\n' $bad >&2
+  fail=1
+fi
+
+# Dấu xung đột merge còn sót
+if git diff --cached -U0 | grep -qE '^\+(<<<<<<<|>>>>>>>)( |$)|^\+=======$'; then
+  echo "Còn dấu xung đột merge (<<<<<<< / ======= / >>>>>>>) trong file đã stage." >&2
+  fail=1
+fi
+
+# Commit đỏ có chủ đích (pha 1) chỉ được nằm trên nhánh feat/
+branch=$(git branch --show-current)
+if [ -f .claude/.allow-red ] && [ "$branch" = "main" ]; then
+  echo "Cờ .claude/.allow-red đang bật trên main: commit pha 1 phải ở nhánh feat/<tên>." >&2
+  fail=1
+fi
+
+exit $fail

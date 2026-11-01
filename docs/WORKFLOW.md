@@ -53,7 +53,8 @@ flowchart TD
 
     FIX --> MERGE{"Bạn duyệt merge vào main"}
     MERGE -->|"Cần sửa"| FIX
-    MERGE -->|"OK"| RETRO["/retro: đề xuất cải tiến"]
+    MERGE -->|"OK"| FF["merge --ff-only, main đã đi tiếp thì rebase main trước; xóa nhánh"]
+    FF --> RETRO["/retro: đề xuất cải tiến"]
     RETRO --> PICK{"Bạn chọn đề xuất"}
     PICK --> IMPROVE["Lint rule, hook, dòng CLAUDE.md, command mới, kèm ADR"]
     IMPROVE -.->|"Cấu hình tốt hơn cho task sau"| START
@@ -75,15 +76,18 @@ Các cơ chế này hoạt động ở mọi loại task, không cần gọi.
 
 ```mermaid
 flowchart TD
-    SS["Hook SessionStart: đưa spec đang dở và cảnh báo cờ vào context, nhớ model"] --> PROMPT
+    SS["Hook SessionStart: spec đang dở, cờ, trạng thái git (nhánh, chưa commit, chưa merge, tag thiếu), nhớ model"] --> PROMPT
     PROMPT["Hook UserPromptSubmit: ghi prompt đã che secret vào history/"] --> EDIT
     EDIT["Claude sửa file"] --> FMT["Hook PostToolUse: Prettier"]
     FMT --> WORK["Tiếp tục làm"]
     WORK --> COMMIT{"Claude chạy git commit?"}
-    COMMIT -->|"Có"| GUARD{"Hook PreToolUse: phần đổi file có changelog chưa?"}
+    COMMIT -->|"Có"| CGUARD{"Hook commit-guard: message, tên nhánh, cờ trên main, --no-verify, amend đã push?"}
+    CGUARD -->|"Sai: chặn kèm lý do"| WORK
+    CGUARD -->|"Đúng docs/GIT.md"| GUARD{"Hook version-guard: phần đổi file có changelog chưa?"}
     GUARD -->|"Thiếu, mode khác off"| VERS["Subagent versioner (Haiku) điền Unreleased"]
     VERS --> COMMIT
-    GUARD -->|"Đủ, hoặc mode off"| WORK
+    GUARD -->|"Đủ, hoặc mode off"| GITHOOK["Git hook nếu bật: commit-msg, pre-commit"]
+    GITHOOK --> WORK
     WORK --> STOP{"Claude định kết thúc"}
     STOP --> DIFF{"Có thay đổi trong apps/ hoặc packages/?"}
     DIFF -->|"Không"| QUICK["verify --quick: quét secret trong log, kiểm tra ADR"]
@@ -101,6 +105,8 @@ flowchart TD
 
     PERM["Permissions deny: .env, migration cũ, rm -rf, force push"] -.->|"Luôn áp dụng"| EDIT
 ```
+
+Quy ước git đầy đủ (commit message, nhánh, merge, tag, lệnh cấm): [GIT.md](GIT.md), nạp vào mọi session qua `CLAUDE.md`.
 
 ## Lịch sử và tra cứu
 

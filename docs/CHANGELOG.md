@@ -11,12 +11,16 @@ Ghi thay đổi vào mục `Unreleased` cùng commit (subagent `versioner` tự 
 - `WORKFLOW.md`: sơ đồ tra cứu lịch sử; điểm tạo ADR và hook ghi log trong các sơ đồ cũ.
 - README, SETUP: mục lịch sử prompt và quyết định.
 - ADR 0012R (công cụ version đi theo kit) và 0013R (tự động versioning, chế độ tắt).
+- `GIT.md`: quy ước git — commit message, nhánh, merge, viết lại lịch sử, tag, push, xuống dòng.
+- ADR 0014R: quy ước git chung, nạp mọi session và ép bằng hook.
 
 ### Changed
 
 - Mẫu spec: dòng "Quyết định có thể tranh cãi" trong Contract.
 - `WORKFLOW.md`: hook chặn commit trong sơ đồ bảo vệ; sơ đồ phát hành theo `automation.mode`.
 - README, SETUP: cấu hình tự động versioning và `version.mjs init`.
+- `WORKFLOW.md`: `commit-guard` và git hook trong sơ đồ bảo vệ; bước merge fast-forward; SessionStart báo trạng thái git.
+- README, SETUP: thành phần git mới, bước cài `core.hooksPath`, permissions tùy chọn.
 
 ## [0.1.0] - 2026-11-01
 

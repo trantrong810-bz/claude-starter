@@ -12,6 +12,8 @@ Ghi thay đổi vào mục `Unreleased` cùng commit (subagent `versioner` tự 
 - Hook `version-guard.sh` (PreToolUse): chặn `git commit` khi phần bị đổi chưa có changelog, theo `automation.mode`.
 - Subagent `versioner` (Haiku): đọc diff, điền `Unreleased` theo Added/Changed/Fixed/Removed và đánh dấu `**BREAKING:**`.
 - Command `/release`: điền changelog thiếu, xem trước, hỏi rồi phát hành; không tự push.
+- Hook `commit-guard.sh` (PreToolUse): chặn `git commit` sai `docs/GIT.md` — message, tên nhánh, cờ `.allow-red` trên main, `--no-verify`, `--amend` commit đã push.
+- `session-context.sh`: báo nhánh, số file chưa commit, nhánh chưa merge, git hook chưa bật, tag thiếu cho version hiện tại.
 
 ### Changed
 
@@ -19,6 +21,10 @@ Ghi thay đổi vào mục `Unreleased` cùng commit (subagent `versioner` tự 
 - `/plan-feature` và `/retro` tạo ADR cho quyết định có tranh cãi; `CLAUDE.md` có quy tắc ADR và `/why`.
 - `/build-feature`: commit thiếu changelog thì gọi `versioner`; sau merge tự `/release` khi `mode` là `full`.
 - `CLAUDE.md`: quy tắc changelog theo chế độ tự động.
+- `CLAUDE.md`: nạp `@docs/GIT.md` vào mọi session.
+- `settings.json`: đăng ký `commit-guard.sh`; `deny` thêm `git clean`, `branch -D`, `tag -d`, `commit --no-verify`, `git config`; `ask` cho `git push`, `rebase`, `tag`.
+- `/plan-feature`, `/build-feature`, `/release`: message theo Conventional Commits; merge `--ff-only`, rebase khi main đi tiếp, xóa nhánh sau merge; phát hành chỉ từ main.
+- `code-reviewer`: kiểm tra lịch sử commit `main..HEAD` theo `docs/GIT.md`.
 
 ## [0.1.0] - 2026-11-01
 

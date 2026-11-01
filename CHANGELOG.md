@@ -9,6 +9,9 @@ Thay đổi không thuộc phần nào (ví dụ `versions.json`) ghi vào mục
 
 - `history/prompts/`: lịch sử prompt (commit lên git, ngoài versioning), điền lại cuộc trò chuyện dựng kit trên claude.ai.
 - `versions.json`: danh sách `ignore`; công cụ version bỏ qua các đường dẫn này. `.gitignore` gốc.
+- `.gitattributes`: LF cho mọi file text.
+- `.githooks/`: `commit-msg` và `pre-commit` (chặn `.env*`, file cục bộ của Claude, dấu xung đột, cờ `.allow-red` trên main).
+- Tag `v0.1.0` gắn bù cho commit phát hành f8379b7.
 
 ### Removed
 

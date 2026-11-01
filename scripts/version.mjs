@@ -88,9 +88,12 @@ function bump(v, level) {
 // ---------- changelog ----------
 const UNRELEASED = /^## \[Unreleased\][^\n]*\n([\s\S]*?)(?=^## \[|(?![\s\S]))/m;
 
+// Chuẩn hoá CRLF: file có thể bị checkout với CRLF trên Windows.
+const readText = (file) => readFileSync(file, "utf8").replace(/\r\n/g, "\n");
+
 function unreleased(file) {
   if (!existsSync(file)) return "";
-  const m = readFileSync(file, "utf8").match(UNRELEASED);
+  const m = readText(file).match(UNRELEASED);
   return m ? m[1].trim() : "";
 }
 function hasEntries(body) {
@@ -107,7 +110,7 @@ function levelOf(body) {
   return "patch";
 }
 function stamp(file, version, date, extra = "") {
-  const text = readFileSync(file, "utf8");
+  const text = readText(file);
   const body = unreleased(file);
   const block = `## [Unreleased]\n\n## [${version}] - ${date}\n\n${body}${extra ? `\n\n${extra}` : ""}\n\n`;
   writeFileSync(file, text.replace(UNRELEASED, block).replace(/\n{3,}/g, "\n\n"));
@@ -130,7 +133,8 @@ function formatIfPossible(globs) {
 }
 function lastTag() {
   try {
-    return sh("git describe --tags --abbrev=0 --match 'v[0-9]*'");
+    // Nháy kép: cmd.exe (execSync trên Windows) không hiểu nháy đơn.
+    return sh('git describe --tags --abbrev=0 --match "v[0-9]*"');
   } catch {
     try {
       return lines(sh("git rev-list --max-parents=0 HEAD")).pop() ?? null;

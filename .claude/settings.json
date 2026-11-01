@@ -30,7 +30,17 @@
       "Bash(rm -rf:*)",
       "Bash(git push --force:*)",
       "Bash(git push -f:*)",
-      "Bash(git reset --hard:*)"
+      "Bash(git reset --hard:*)",
+      "Bash(git clean:*)", 
+      "Bash(git branch -D:*)", 
+      "Bash(git tag -d:*)", 
+      "Bash(git commit --no-verify:*)", 
+      "Bash(git config:*)"
+    ],
+    "ask": [
+      "Bash(git push:*)",
+      "Bash(git rebase:*)",
+      "Bash(git tag:*)"
     ]
   },
   "hooks": {
@@ -72,6 +82,10 @@
       {
         "matcher": "Bash",
         "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/commit-guard.sh"
+          },
           {
             "type": "command",
             "command": "bash .claude/hooks/version-guard.sh"
