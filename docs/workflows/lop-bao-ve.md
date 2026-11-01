@@ -10,17 +10,17 @@ Các cơ chế này hoạt động ở mọi loại task, không cần gọi.
 
 ```mermaid
 flowchart TD
-    SS["Hook SessionStart: spec đang dở, todo (todo.mjs brief), snapshot wip, cờ, trạng thái git (nhánh, chưa commit, chưa merge, tag thiếu), nhớ model"] --> PROMPT
+    SS["Hook SessionStart: spec đang dở, todo (todo.mjs brief), snapshot wip, cờ, trạng thái git (nhánh, chưa commit, đã merge trên GitHub hoặc chưa merge, tag thiếu), nhớ model"] --> PROMPT
     PROMPT["Hook UserPromptSubmit: ghi prompt đã che secret vào history/"] --> EDIT
     EDIT["Claude sửa file"] --> FMT["Hook PostToolUse: Prettier"]
     FMT --> WORK["Tiếp tục làm"]
     WORK --> COMMIT{"Claude chạy git commit?"}
-    COMMIT -->|"Có"| CGUARD{"Hook commit-guard: message, tên nhánh, cờ trên main, --no-verify, amend đã push?"}
+    COMMIT -->|"Có"| CGUARD{"Hook commit-guard: message, tên nhánh, đang ở main, --no-verify, amend đã push?"}
     CGUARD -->|"Sai: chặn kèm lý do"| WORK
     CGUARD -->|"Đúng docs/GIT.md"| GUARD{"Hook version-guard: phần đổi file có changelog chưa?"}
     GUARD -->|"Thiếu, mode khác off"| VERS["Subagent versioner (Haiku) điền Unreleased"]
     VERS --> COMMIT
-    GUARD -->|"Đủ, hoặc mode off"| GITHOOK["Git hook nếu bật: commit-msg, pre-commit (chặn file cấm, Prettier file đã stage rồi stage lại)"]
+    GUARD -->|"Đủ, hoặc mode off"| GITHOOK["Git hook nếu bật: commit-msg, pre-commit (chặn commit trên main, file cấm, Prettier file đã stage rồi stage lại)"]
     GITHOOK --> WORK
     HUMAN["Người sửa tay"] --> SAVE["VSCode format on save: Prettier"]
     SAVE --> HCOMMIT["Người chạy git commit"]
@@ -40,7 +40,9 @@ flowchart TD
     BLOCK --> WORK
     END --> LOGM["Hook Stop: ghi model, effort, subagent, commit của lượt"]
 
-    PERM["Permissions deny: .env, migration cũ, rm -rf, force push"] -.->|"Luôn áp dụng"| EDIT
+    PERM["Permissions deny: .env, migration cũ, rm -rf, force push; ask: gh pr merge"] -.->|"Luôn áp dụng"| EDIT
+    PUSH["/ship: nhánh lên GitHub, mở PR"] --> CI{"GitHub Action verify; ruleset main: chỉ qua PR, CI xanh, lịch sử thẳng, chỉ rebase"}
+    CI -.->|"Đỏ: chặn merge"| WORK
     USAGE{"Hook usage-guard: usage 5h/7d ≥ 90%? (số từ statusline)"} -.->|"Chưa lưu: chỉ cho /handoff; đã lưu: chặn mọi tool"| WORK
 ```
 

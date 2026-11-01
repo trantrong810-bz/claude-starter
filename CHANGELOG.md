@@ -17,6 +17,7 @@ Thay đổi không thuộc phần nào (ví dụ `versions.json`) ghi vào mục
 
 ### Changed
 
+- `.githooks/pre-commit`: chặn commit trên `main` (main chỉ nhận qua PR); bỏ kiểm tra cờ `.allow-red` trên main vì đã bao gồm.
 - `.githooks/pre-commit`: tự chạy Prettier trên file đã stage rồi stage lại (file người sửa tay); file stage một phần chỉ kiểm tra, lệch thì chặn. Chỉ chạy khi dự án cài Prettier.
 
 ### Removed

@@ -10,12 +10,12 @@ mo-ta: Phân loại task; task lớn qua pha 1 (Opus) và pha 2 (Sonnet), merge,
 flowchart TD
     START(["Task mới"]) --> TIER{"Phân loại task"}
 
-    TIER -->|"Nhỏ: sửa 1 chỗ"| SMALL["Làm thẳng"]
+    TIER -->|"Nhỏ: sửa 1 chỗ"| SMALL["Nhánh ngắn, làm và commit"]
     TIER -->|"Vừa: không đổi contract"| MED["Plan ngắn trong chat"]
     TIER -->|"Lớn: đổi contract API"| P1
 
     MED --> MEDOK{"Bạn duyệt plan"}
-    MEDOK -->|"OK"| MEDDO["Làm và commit"]
+    MEDOK -->|"OK"| MEDDO["Nhánh, làm và commit"]
     MEDOK -->|"Sửa"| MED
 
     subgraph PHASE1["Session 1: Opus, pha lập kế hoạch"]
@@ -53,16 +53,18 @@ flowchart TD
         REV --> FIX["Sửa vấn đề cao và trung, commit"]
     end
 
-    FIX --> MERGE{"Bạn duyệt merge vào main"}
+    FIX --> SHIP["/ship: push nhánh, mở PR trên GitHub"]
+    SHIP --> MERGE{"Bạn đồng ý merge"}
     MERGE -->|"Cần sửa"| FIX
-    MERGE -->|"OK"| FF["merge --ff-only, main đã đi tiếp thì rebase main trước; xóa nhánh"]
+    MERGE -->|"OK"| FF["Auto-merge rebase khi CI verify xanh; pull main, pr.mjs cleanup"]
     FF --> RETRO["/retro: đề xuất cải tiến"]
     RETRO --> PICK{"Bạn chọn đề xuất"}
     PICK --> IMPROVE["Lint rule, hook, dòng CLAUDE.md, command mới, kèm ADR"]
     IMPROVE -.->|"Cấu hình tốt hơn cho task sau"| START
 
-    SMALL --> DONE(["Xong"])
-    MEDDO --> DONE
+    SMALL --> SHIPS["/ship: PR, bạn đồng ý, auto-merge khi CI xanh"]
+    MEDDO --> SHIPS
+    SHIPS --> DONE(["Xong"])
     PICK -->|"Không cần"| DONE
     IMPROVE --> DONE
 

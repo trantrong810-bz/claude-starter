@@ -72,7 +72,8 @@ process.stdin.on("end", () => {
       .map((s) => s.trim())
       .filter(Boolean)
       .every((s) =>
-        /^(git (status|diff|log|add|commit)\b|node scripts\/(wip|todo)\.mjs\b)/.test(
+        // `git switch -c`: /handoff từ main phải tạo nhánh trước (main chỉ nhận qua PR).
+        /^(git (status|diff|log|add|commit|switch -c)\b|node scripts\/(wip|todo)\.mjs\b)/.test(
           s,
         ),
       );

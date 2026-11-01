@@ -32,7 +32,7 @@
 - Không sửa migration đã tồn tại; tạo migration mới.
 - Không đọc/sửa `.env*`. Biến môi trường mẫu nằm trong `.env.example`.
 - Chưa chạy `pnpm verify` thành công thì chưa coi là xong.
-- Phân loại task trước khi làm: nhỏ (1 chỗ) → làm thẳng; vừa (không đổi contract) → plan ngắn trong chat; lớn (đổi contract API) → `/plan-feature` rồi `/build-feature`.
+- Phân loại task trước khi làm: nhỏ (1 chỗ) → làm thẳng; vừa (không đổi contract) → plan ngắn trong chat; lớn (đổi contract API) → `/plan-feature` rồi `/build-feature`. Mọi loại đều làm trên nhánh và vào `main` bằng `/ship` (PR, hỏi người rồi GitHub auto-merge khi CI xanh). Không commit trên `main`.
 - Task nhiều session: plan và tiến độ ghi vào `docs/specs/<feature>.md`, cập nhật trước khi kết thúc session.
 - Todo: tổng quan `TODO.md` (tự sinh). `docs/todo/<phần>.md` là của người — chỉ đọc, chỉ được đánh `[x]`. Claude ghi WIP/việc vào `docs/todo/<phần>.auto.md` (`/todo`), rồi `node scripts/todo.mjs sync`. Không lưu tiến độ vào memory của Claude — mọi trạng thái nằm trong repo.
 - Đổi máy/tài khoản hoặc usage ≥ 90%: `/handoff` (lưu + push code dở lên `wip/<nhánh>`); nơi mới: `git pull` rồi `/resume`.

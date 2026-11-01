@@ -13,20 +13,21 @@ fi
 errors=""
 add() { errors+="- $1"$'\n'; }
 
-# Cờ của lệnh, bỏ nội dung trong nháy (message có thể chứa "-n").
-flags=$(printf '%s' "$cmd" | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>process.stdout.write(s.replace(/"(?:[^"\\]|\\.)*"|'"'"'[^'"'"']*'"'"'/g,"")))')
+# Cờ của riêng lệnh `git commit`: bỏ nội dung trong nháy (message có thể chứa "-n") và các lệnh
+# khác cùng dòng (`sed -n ... && git commit` không phải --no-verify).
+flags=$(printf '%s' "$cmd" | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{s=s.replace(/"(?:[^"\\]|\\.)*"|'"'"'[^'"'"']*'"'"'/g,"");process.stdout.write(s.split(/&&|\|\||[;|\n]/).filter(p=>/\bgit\b.*\bcommit\b/.test(p)).join(" "))})')
 
 if printf '%s' "$flags" | grep -Eq '(^|[[:space:]])(--no-verify|-n)([[:space:]]|$)'; then
   add "không dùng --no-verify: hook chặn thì sửa nguyên nhân"
 fi
 
 branch=$(git branch --show-current 2>/dev/null)
-if [ "$branch" = "main" ] && [ -f .claude/.allow-red ]; then
-  add "cờ .claude/.allow-red đang bật trên main: commit pha 1 phải ở nhánh feat/<tên>"
+if [ "$branch" = "main" ]; then
+  add "main chỉ nhận thay đổi qua PR: tạo nhánh trước (git switch -c <feat|fix|refactor|chore|docs>/<tên>), rồi /ship"
 fi
 if [ -n "$branch" ] && [ "$branch" != "main" ] && \
-   ! printf '%s' "$branch" | grep -Eq '^(feat|fix|refactor|chore|docs)/[a-z0-9][a-z0-9-]{0,39}$'; then
-  add "nhánh \"$branch\" sai quy ước: <feat|fix|refactor|chore|docs>/<tên-kebab> (đổi: git branch -m <tên-mới>)"
+   ! printf '%s' "$branch" | grep -Eq '^((feat|fix|refactor|chore|docs)/[a-z0-9][a-z0-9-]{0,39}|release/v[0-9]+\.[0-9]+\.[0-9]+)$'; then
+  add "nhánh \"$branch\" sai quy ước: <feat|fix|refactor|chore|docs>/<tên-kebab> hoặc release/vX.Y.Z (đổi: git branch -m <tên-mới>)"
 fi
 
 # --amend chỉ cho commit chưa push

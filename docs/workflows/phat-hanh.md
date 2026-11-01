@@ -1,7 +1,7 @@
 ---
-thu-tu: 6
+thu-tu: 7
 tieu-de: Phát hành version
-mo-ta: Changelog theo phần, automation.mode, /release bump và tag.
+mo-ta: Changelog theo phần, automation.mode, /release bump trên nhánh release/ rồi PR; CI gắn tag.
 ---
 
 # Phát hành version
@@ -26,8 +26,9 @@ flowchart TD
     TRIG -->|"mode full: ngay sau merge vào main"| REL["/release: check, dry-run"]
     TRIG -->|"mode changelog: khi bạn gọi /release"| REL
     REL --> ASK{"confirmRelease: bạn duyệt"}
-    ASK -->|"OK"| DO["release: bump theo changelog, ghi bảng vào CHANGELOG gốc, commit, tag"]
-    DO --> PUSH["Bạn tự push và push tag"]
+    ASK -->|"OK"| DO["Nhánh release/vX.Y.Z; release --no-tag: bump theo changelog, ghi bảng vào CHANGELOG gốc, commit"]
+    DO --> PUSH["/ship: PR, bạn đồng ý, auto-merge khi CI xanh"]
+    PUSH --> TAG["Action release-tag: version.mjs tag gắn vX.Y.Z lên commit release trên main, push tag"]
 
     classDef human fill:#fff4d6,stroke:#c98a00,color:#000
     class ASK human

@@ -27,7 +27,15 @@
       "Bash(node scripts/version.mjs:*)",
       "Bash(node scripts/adr.mjs:*)",
       "Bash(node scripts/wip.mjs:*)",
-      "Bash(node scripts/todo.mjs:*)"
+      "Bash(node scripts/todo.mjs:*)",
+      "Bash(node scripts/pr.mjs:*)",
+      "Bash(git fetch:*)",
+      "Bash(git pull --ff-only)",
+      "Bash(git push -u origin:*)",
+      "Bash(gh pr create:*)",
+      "Bash(gh pr view:*)",
+      "Bash(gh pr checks:*)",
+      "Bash(gh run view:*)"
     ],
     "deny": [
       "Read(./.env)",
@@ -45,7 +53,13 @@
       "Bash(git commit --no-verify:*)",
       "Bash(git config:*)"
     ],
-    "ask": ["Bash(git push:*)", "Bash(git rebase:*)", "Bash(git tag:*)"]
+    "ask": [
+      "Bash(git push:*)",
+      "Bash(git rebase:*)",
+      "Bash(git tag:*)",
+      "Bash(gh pr merge:*)",
+      "Bash(bash scripts/github-setup.sh)"
+    ]
   },
   "hooks": {
     "SessionStart": [

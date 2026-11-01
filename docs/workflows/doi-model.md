@@ -1,5 +1,5 @@
 ---
-thu-tu: 5
+thu-tu: 6
 tieu-de: Khi nào đổi model
 mo-ta: Opus cho plan và contract, Sonnet cho code; chỉ đổi ngay sau /clear.
 ---

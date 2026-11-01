@@ -1,5 +1,5 @@
 ---
-thu-tu: 4
+thu-tu: 5
 tieu-de: Lịch sử và tra cứu
 mo-ta: /why tìm câu trả lời trong ADR, spec, git, changelog và log prompt.
 ---
