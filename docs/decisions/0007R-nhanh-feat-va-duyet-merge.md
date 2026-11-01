@@ -1,8 +1,8 @@
 ---
 so: 0007
 pham-vi: rong
-trang-thai: chap-nhan
-thay-the-boi:
+trang-thai: bi-thay-the
+thay-the-boi: 0019
 ngay: 2026-11-01
 model: claude-opus-5-5
 nguon: ca-20261101-15, commit 1bbadf3

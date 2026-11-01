@@ -20,6 +20,9 @@ if [ -n "$out" ]; then
   printf '%s' "$out"
 fi
 
+# Todo hai lớp (TODO.md, docs/todo/): tổng số + việc đang làm
+[ -f scripts/todo.mjs ] && node scripts/todo.mjs brief
+
 # Trạng thái git (quy ước: docs/GIT.md, đã nạp qua CLAUDE.md)
 if git rev-parse --git-dir >/dev/null 2>&1; then
   branch=$(git branch --show-current)
@@ -27,8 +30,18 @@ if git rev-parse --git-dir >/dev/null 2>&1; then
   git_out="Git: nhánh ${branch:-(detached)}"
   [ "$dirty" -gt 0 ] && git_out+=", $dirty file chưa commit"
   echo "$git_out."
-  unmerged=$(git branch --format='%(refname:short)' --no-merged main 2>/dev/null | tr '\n' ' ')
-  [ -n "$unmerged" ] && [ "$branch" = "main" ] && echo "- Nhánh chưa merge vào main: $unmerged"
+  # GitHub rebase-merge đổi mã commit: nhánh đã merge vẫn hiện "no-merged", nên tách bằng pr.mjs stale.
+  # (pr.mjs fetch remote; chỉ chạy khi đang ở main để hook nhanh.)
+  if [ "$branch" = "main" ]; then
+    merged=$([ -f scripts/pr.mjs ] && node scripts/pr.mjs stale 2>/dev/null | tr '\n' ' ')
+    unmerged=$(git branch --format='%(refname:short)' --no-merged main 2>/dev/null | grep -v '^wip/' | \
+      grep -vxF -f <(printf '%s' "$merged" | tr ' ' '\n' | grep .) 2>/dev/null | tr '\n' ' ')
+    [ -n "$merged" ] && echo "- Nhánh đã merge trên GitHub, dọn: node scripts/pr.mjs cleanup <nhánh> — $merged"
+    [ -n "$unmerged" ] && echo "- Nhánh chưa merge vào main: $unmerged"
+  fi
+  # Snapshot code dở (scripts/wip.mjs) — chỉ xem ref đã fetch, không gọi mạng để hook nhanh.
+  wips=$(git for-each-ref --format='%(refname:lstrip=4)' refs/remotes/origin/wip/ 2>/dev/null | tr '\n' ' ')
+  [ -n "$wips" ] && echo "- Có snapshot code dở: $wips— chạy /resume để áp vào."
   [ "$(git config core.hooksPath)" = ".githooks" ] || [ ! -d .githooks ] || \
     echo "- Git hook chưa bật cho người: nhắc người dùng chạy git config core.hooksPath .githooks"
   if [ -f versions.json ]; then

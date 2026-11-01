@@ -7,6 +7,9 @@ Ghi thay đổi vào mục `Unreleased` cùng commit (subagent `versioner` tự 
 
 ### Added
 
+- `GIT.md`: mục "Snapshot WIP", ngoại lệ verify cho commit chỉ gồm todo/spec/plan, `/handoff` được push.
+- `WORKFLOW.md`: sơ đồ "Đổi máy hoặc tài khoản", usage-guard trong lớp bảo vệ.
+- README, SETUP: todo hai lớp, đổi máy/tài khoản; ADR 0017R; `docs/plans/todo-wip.md`.
 - `docs/decisions/`: mẫu ADR, mục lục tự sinh và 11 ADR cho các quyết định đã đưa ra khi dựng kit.
 - `WORKFLOW.md`: sơ đồ tra cứu lịch sử; điểm tạo ADR và hook ghi log trong các sơ đồ cũ.
 - README, SETUP: mục lịch sử prompt và quyết định.
@@ -19,6 +22,9 @@ Ghi thay đổi vào mục `Unreleased` cùng commit (subagent `versioner` tự 
 
 ### Changed
 
+- `GIT.md`: `main` chỉ nhận qua PR (`/ship`, rebase-merge, auto-merge sau khi người đồng ý), nhánh `release/vX.Y.Z`, tag do CI gắn, dọn nhánh bằng `pr.mjs`; ADR 0019R thay 0007R. README, SETUP: luồng PR và thiết lập GitHub.
+- `workflows/git.md`: sơ đồ git flow qua GitHub PR; tổng quan, lớp bảo vệ, phát hành cập nhật theo `/ship`, CI và tag do Action gắn.
+- `WORKFLOW.md` thành mục lục tự sinh; mỗi sơ đồ quy trình một file trong `docs/workflows/` (kèm `_template.md`); ADR 0018. README trỏ thẳng tới file con.
 - Mẫu spec: dòng "Quyết định có thể tranh cãi" trong Contract.
 - `WORKFLOW.md`: hook chặn commit trong sơ đồ bảo vệ; sơ đồ phát hành theo `automation.mode`.
 - README, SETUP: cấu hình tự động versioning và `version.mjs init`.

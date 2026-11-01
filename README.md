@@ -29,10 +29,15 @@ SETUP.md                         # hướng dẫn cài đặt chi tiết
   hooks/verify-on-stop.sh        # chặn kết thúc khi verify đỏ
   commands/plan-feature.md       # /plan-feature — pha 1: plan, contract, test đỏ
   commands/build-feature.md      # /build-feature — pha 2: test xanh, web+mobile song song
-  commands/handoff.md            # /handoff — ghi tiến độ trước /clear
+  commands/handoff.md            # /handoff — lưu todo, spec, code dở + push (đổi máy/tài khoản)
+  commands/resume.md             # /resume — làm tiếp trên máy/tài khoản khác
+  commands/todo.md               # /todo — todo theo phần, hai lớp
+  hooks/statusline.mjs           # usage 5h/7d/context → .claude/state/usage.json
+  hooks/usage-guard.mjs          # usage ≥ 90%: chỉ cho /handoff rồi dừng
   commands/retro.md              # /retro — biến lỗi thành lint/hook/CLAUDE.md
   commands/why.md                # /why — tra cứu quyết định và lịch sử prompt
-  commands/release.md            # /release — điền changelog thiếu, xem trước, phát hành
+  commands/release.md            # /release — điền changelog thiếu, xem trước, phát hành qua PR
+  commands/ship.md               # /ship — push nhánh, mở PR, hỏi, auto-merge khi CI xanh
   agents/versioner.md            # subagent điền changelog từ diff (Haiku)
   hooks/version-guard.sh         # chặn git commit thiếu changelog
   hooks/commit-guard.sh          # chặn git commit sai quy ước (message, nhánh, --no-verify)
@@ -44,19 +49,25 @@ scripts/try-example.sh           # dựng demo chạy được từ example/
 scripts/adr.mjs                  # tạo, đánh mục lục, kiểm tra ADR
 scripts/version.mjs              # init / list / mode / check / release
 scripts/commit-msg.mjs           # kiểm tra commit message (Conventional Commits)
+scripts/todo.mjs                 # đồng bộ todo viết tay → auto, sinh TODO.md
+scripts/wip.mjs                  # snapshot code dở lên wip/<nhánh>, restore ở máy khác
+TODO.md                          # tổng quan todo mọi phần (tự sinh)
+docs/todo/                       # <phần>.md viết tay + <phần>.auto.md Claude ghi
+docs/plans/                      # file plan của plan mode
 .githooks/                       # commit-msg + pre-commit (Prettier file đã stage) cho người
 .gitattributes                   # LF cho mọi file text
 docs/GIT.md                      # quy ước git — nạp vào mọi session
 example/                         # monorepo mẫu tối giản
 docs/specs/_template.md          # mẫu spec cho mỗi tính năng
-docs/WORKFLOW.md                 # sơ đồ Mermaid: quy trình, lớp bảo vệ, tra cứu, phát hành
+docs/WORKFLOW.md                 # mục lục quy trình (tự sinh bằng scripts/workflow.mjs)
+docs/workflows/                  # mỗi quy trình một file sơ đồ Mermaid; _template.md cho quy trình mới
 docs/decisions/                  # ADR — mọi quyết định có tranh cãi; R = ảnh hưởng rộng
 history/prompts/                 # log prompt (commit, ngoài versioning)
 versions.json                    # bảng phần → đường dẫn, version
 CHANGELOG.md                     # changelog toàn dự án; mỗi phần có CHANGELOG.md riêng
 ```
 
-Sơ đồ quy trình đầy đủ: [docs/WORKFLOW.md](docs/WORKFLOW.md) (GitHub hiển thị Mermaid trực tiếp).
+Sơ đồ quy trình: mục lục [docs/WORKFLOW.md](docs/WORKFLOW.md), mỗi quy trình một file trong [docs/workflows/](docs/workflows/) (GitHub hiển thị Mermaid trực tiếp).
 
 ## Thử ngay với monorepo mẫu
 
@@ -116,12 +127,18 @@ Vì sao như vậy:
 - **Contract + test chốt trước.** Pha 2 có "trọng tài" sẵn: làm cho test xanh, không phải tự phán đoán khi nào xong.
 - **Client dùng chung, app chỉ là UI.** Hàm gọi API viết một lần trong `shared`, có test; web và mobile không lặp lại logic.
 - **Song song chỉ khi đáng.** Mỗi subagent tốn ~10k token khởi động. Chỉ giao web/mobile cho subagent khi mỗi app có phần UI đáng kể; việc nhỏ thì làm thẳng.
-- **Nhánh `feat/`, commit mỗi lớp.** `main` luôn xanh dù test pha 1 đỏ; mỗi lớp là một điểm quay lại; reviewer xem đúng `main...HEAD`. Commit message theo Conventional Commits, merge chỉ fast-forward — đầy đủ trong [docs/GIT.md](docs/GIT.md), ép bằng hook.
+- **Nhánh `feat/`, commit mỗi lớp.** `main` luôn xanh dù test pha 1 đỏ; mỗi lớp là một điểm quay lại; reviewer xem đúng `main...HEAD`. Commit message theo Conventional Commits; `main` chỉ nhận qua PR trên GitHub (`/ship`: rebase-merge tự động khi CI xanh, sau khi bạn đồng ý) — đầy đủ trong [docs/GIT.md](docs/GIT.md), ép bằng hook và ruleset.
 - **Bạn chỉ cần có mặt ở 3 điểm:** duyệt plan/contract (sửa ở đây rẻ nhất), duyệt merge vào `main`, và chọn đề xuất của `/retro`.
 
 ### Cải tiến dần — tự động qua `/retro`
 
 Sau mỗi task lớn, `/retro` đề xuất cách khắc phục rẻ nhất cho từng lỗi đã gặp, theo thứ tự: lint rule/hook → một dòng CLAUDE.md → command mới. Nó cũng đề xuất xóa dòng CLAUDE.md đã thừa, để file luôn ngắn.
+
+## Todo và làm tiếp ở máy khác
+
+Mỗi phần (root, shared, be, fe, mobile) có hai file: `docs/todo/<phần>.md` bạn viết tay, `docs/todo/<phần>.auto.md` Claude ghi (đang làm, việc phát sinh, đã xong). `TODO.md` ở gốc là bảng tổng quan tự sinh, trỏ tới cả hai. Commit file viết tay → hook tự cập nhật file auto và `TODO.md` vào cùng commit.
+
+Đổi máy hoặc tài khoản: `/handoff` (todo + spec + code dở lên `wip/<nhánh>`, push) → máy mới `git pull`, `/resume`. Khi usage 5h/7d chạm 90%, hook ép làm `/handoff` rồi dừng. Chi tiết: [SETUP.md](SETUP.md#vòng-làm-việc), sơ đồ: [docs/workflows/doi-may.md](docs/workflows/doi-may.md).
 
 ## Lịch sử prompt và quyết định
 
@@ -154,8 +171,8 @@ node scripts/version.mjs list               # version hiện tại
 node scripts/version.mjs mode               # chế độ tự động đang áp dụng
 node scripts/version.mjs check              # phần nào đổi file mà chưa ghi changelog
 node scripts/version.mjs release --dry-run  # xem trước
-node scripts/version.mjs release            # bump, ghi changelog, commit, tag
-git push && git push --tags
+node scripts/version.mjs release --no-tag   # bump, ghi changelog, commit (trên nhánh release/vX.Y.Z)
+node scripts/version.mjs tag                # CI: gắn tag sau khi PR release merge
 ```
 
 **Tự động** (cấu hình trong `versions.json`): `"automation": { "mode": "changelog", "confirmRelease": true }`.
@@ -168,4 +185,4 @@ git push && git push --tags
 
 Tắt cho một session trên máy mà không sửa repo: `CLAUDE_AUTO_VERSION=off`. Dự án mới: `node scripts/version.mjs init` tạo `versions.json` và changelog cho mỗi app/package.
 
-Không tự sửa số version. Mức bump suy ra từ changelog: `### Removed` hoặc `BREAKING` → major, `### Added` → minor, còn lại → patch (ở `0.x`, major hạ xuống minor). Sơ đồ: [docs/WORKFLOW.md](docs/WORKFLOW.md#phát-hành-version).
+Không tự sửa số version. Mức bump suy ra từ changelog: `### Removed` hoặc `BREAKING` → major, `### Added` → minor, còn lại → patch (ở `0.x`, major hạ xuống minor). Sơ đồ: [docs/workflows/phat-hanh.md](docs/workflows/phat-hanh.md).

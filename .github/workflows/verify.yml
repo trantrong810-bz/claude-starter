@@ -1,0 +1,34 @@
+# Kiểm tra mọi PR vào main. Job `verify` là status check bắt buộc (scripts/github-setup.sh).
+name: verify
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # tag và main cho version.mjs, turbo --filter
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Cài pnpm
+        if: hashFiles('package.json') != ''
+        uses: pnpm/action-setup@v4
+      - name: Cài dependency
+        if: hashFiles('package.json') != ''
+        run: pnpm install --frozen-lockfile
+      - name: verify
+        env:
+          VERIFY_BASE: origin/${{ github.base_ref || 'main' }}
+        # Repo kit không có package.json: chỉ phần nhanh (secret, ADR, todo, mục lục workflow, changelog).
+        run: |
+          if [ -f package.json ]; then
+            bash scripts/verify.sh
+          else
+            bash scripts/verify.sh --quick
+          fi

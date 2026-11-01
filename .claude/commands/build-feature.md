@@ -16,4 +16,4 @@ Tính năng: $ARGUMENTS
    - Ngược lại: tự làm trực tiếp. Subagent tốn ~10k token mỗi lần khởi động; không đáng cho vài dòng.
    - Sau đó: `pnpm verify` qua → commit `feat(<tên>): add web and mobile ui` → đánh dấu checklist.
 6. Cập nhật spec (checklist + Tiến độ). Chạy `pnpm verify` lần cuối, rồi gọi subagent `code-reviewer` với: phạm vi `git diff main...HEAD`, đường dẫn spec, và kết quả verify. Sửa vấn đề mức cao và trung, commit (`fix(<tên>): ...`).
-7. Báo tôi: tóm tắt 3–5 dòng + các vấn đề mức thấp chưa sửa. Hỏi tôi trước khi merge. Được duyệt: `git switch main && git merge --ff-only feat/$ARGUMENTS`; nếu không fast-forward được thì quay lại nhánh, `git rebase main`, `pnpm verify`, rồi merge lại. Sau merge: `git branch -d feat/$ARGUMENTS`. Sau khi merge: nếu `node scripts/version.mjs mode` là `full` thì làm theo `/release`; nếu không, nhắc tôi có thể chạy `/release`. Cuối cùng nhắc tôi chạy `/retro $ARGUMENTS`.
+7. Báo tôi: tóm tắt 3–5 dòng + các vấn đề mức thấp chưa sửa. Rồi làm theo `/ship`: push, mở PR, hỏi tôi trước khi bật auto-merge, chờ CI, dọn nhánh, rồi release/retro.

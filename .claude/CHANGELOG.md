@@ -5,8 +5,17 @@ Ghi thay đổi vào mục `Unreleased` cùng commit (subagent `versioner` tự 
 
 ## [Unreleased]
 
+### Fixed
+
+- `commit-guard.sh`: bỏ đoạn lặp thừa có dấu nháy lạc sau `exit 0`.
+
 ### Added
 
+- `/ship`: push nhánh, mở PR, hỏi người, bật auto-merge rebase, chờ CI, dọn nhánh.
+- `/todo`, `/resume`; `/handoff` lưu cả todo auto, plan và code dở (`wip.mjs save`) rồi push.
+- Hook `statusline.mjs` (usage 5h/7d/context) và `usage-guard.mjs`: usage ≥ 90% chỉ cho `/handoff`, lưu xong thì dừng; ngưỡng `CLAUDE_WIP_THRESHOLD`.
+- `settings.json`: `plansDirectory: docs/plans`, `autoMemoryEnabled: false` — mọi trạng thái nằm trong repo.
+- SessionStart báo todo đang làm và snapshot `wip/*`; commit-guard tự sync todo khi chưa bật `.githooks`.
 - Hook `prompt-log.mjs`: ghi mọi prompt (đã che secret) vào `history/prompts/`, kèm model, effort, subagent và commit của từng lượt; tắt bằng `CLAUDE_PROMPT_LOG=off`.
 - Command `/why`: tra cứu theo thứ tự ADR → spec → git → log prompt, trích nguồn và model.
 - Hook `version-guard.sh` (PreToolUse): chặn `git commit` khi phần bị đổi chưa có changelog, theo `automation.mode`.
@@ -17,6 +26,12 @@ Ghi thay đổi vào mục `Unreleased` cùng commit (subagent `versioner` tự 
 
 ### Changed
 
+- **BREAKING:** commit trên `main` bị chặn (commit-guard cho Claude, `.githooks/pre-commit` cho người); mọi thay đổi vào `main` qua PR bằng `/ship`. `/build-feature` và `/release` dùng `/ship` thay cho merge `--ff-only` local; `/release` làm trên nhánh `release/vX.Y.Z`, không tự tag.
+- `commit-guard.sh`: nhận nhánh `release/vX.Y.Z`; chỉ xét cờ của chính lệnh `git commit` (không còn chặn nhầm `sed -n ... && git commit`).
+- `session-context.sh`: tách nhánh đã merge trên GitHub (gợi ý `pr.mjs cleanup`) và nhánh chưa merge.
+- `settings.json`: cho phép `git push -u origin`, `git fetch`, `git pull --ff-only`, `gh pr create/view/checks`, `gh run view`, `pr.mjs`; hỏi trước `gh pr merge`, `github-setup.sh`.
+- `/handoff` tạo nhánh trước khi commit nếu đang ở `main`; usage-guard cho phép `git switch -c`.
+- `CLAUDE.md`, `/retro`: sơ đồ quy trình nằm ở `docs/workflows/`; quy trình mới chép `_template.md` rồi chạy `workflow.mjs index`.
 - `format.sh`: format thêm `.mjs`, `.cjs`, `.yml`, `.yaml` (cùng danh sách với `.githooks/pre-commit`).
 - `verify-on-stop.sh`: khi không đổi code vẫn chạy `verify --quick` (quét secret, kiểm tra ADR).
 - `/plan-feature` và `/retro` tạo ADR cho quyết định có tranh cãi; `CLAUDE.md` có quy tắc ADR và `/why`.
