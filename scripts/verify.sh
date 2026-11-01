@@ -17,6 +17,9 @@ fi
 if [ -f scripts/adr.mjs ] && [ -d docs/decisions ]; then
   node scripts/adr.mjs check || fail=1
 fi
+if [ -f scripts/todo.mjs ] && [ -d docs/todo ]; then
+  node scripts/todo.mjs check || fail=1
+fi
 if [ -f scripts/version.mjs ] && [ -f versions.json ]; then
   node scripts/version.mjs check --auto >/dev/null 2>&1 || node scripts/version.mjs check --auto || fail=1
 fi

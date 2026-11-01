@@ -7,6 +7,9 @@ Ghi thay đổi vào mục `Unreleased` cùng commit (subagent `versioner` tự 
 
 ### Added
 
+- `todo.mjs`: `sync` (viết tay → auto, sinh `TODO.md`), `check` (chạy trong verify), `brief`.
+- `wip.mjs`: `save`, `status`, `restore`, `drop` snapshot code dở ở ref `wip/<nhánh>`.
+- `verify.sh` chạy `todo.mjs check`; `.githooks/pre-commit` tự sync todo khi commit file viết tay.
 - `adr.mjs`: `new`, `index`, `check` cho ADR trong `docs/decisions/`.
 - `version.mjs` (chuyển từ `tools/`): `init` tạo cấu hình cho dự án mới, `mode`, `check --json` cho `versioner`, `check --auto` tôn trọng chế độ tắt; dự án chưa có tag so với commit đầu.
 - `commit-msg.mjs`: kiểm tra commit message theo `docs/GIT.md` (file, `--message`, `--command` cho hook).
