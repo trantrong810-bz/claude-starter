@@ -7,6 +7,7 @@ Thay đổi không thuộc phần nào (ví dụ `versions.json`) ghi vào mục
 
 ### Added
 
+- `.github/workflows/`: `verify` chạy `scripts/verify.sh` cho mọi PR (status check bắt buộc); `release-tag` gắn tag `vX.Y.Z` sau khi PR release merge.
 - `history/prompts/`: lịch sử prompt (commit lên git, ngoài versioning), điền lại cuộc trò chuyện dựng kit trên claude.ai.
 - `versions.json`: danh sách `ignore`; công cụ version bỏ qua các đường dẫn này. `.gitignore` gốc.
 - `.gitattributes`: LF cho mọi file text.

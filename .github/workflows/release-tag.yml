@@ -1,0 +1,28 @@
+# Gắn tag vX.Y.Z sau khi PR release (/release) merge vào main.
+# GitHub rebase-merge đổi mã commit, nên tag chỉ gắn được sau merge (docs/GIT.md).
+name: release-tag
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  tag:
+    if: startsWith(github.event.head_commit.message, 'release:')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Gắn tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          tag=$(node scripts/version.mjs tag)
+          git push origin "$tag"
