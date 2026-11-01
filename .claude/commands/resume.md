@@ -1,13 +1,13 @@
 ---
-description: Làm tiếp trên máy hoặc tài khoản Claude khác — kéo todo, áp code dở từ wip/<nhánh>, báo bước kế tiếp
-argument-hint: "[nhánh]"
+description: Continue on another machine or Claude account — pull todo, apply unfinished code from wip/<branch>, report the next step
+argument-hint: "[branch]"
 ---
 
-Nhánh (tuỳ chọn): $ARGUMENTS
+Branch (optional): $ARGUMENTS
 
-1. `git pull --ff-only` trên nhánh hiện tại (lỗi thì báo, không tự sửa).
-2. `node scripts/wip.mjs status` — snapshot code dở trên remote.
-3. Đọc `TODO.md`, rồi `## Đang làm` trong các `docs/todo/<phần>.auto.md` có WIP. Chọn việc: chỉ một → lấy luôn; nhiều → hỏi tôi (liệt kê phần, tiêu đề, nhánh, có snapshot không).
-4. Việc có snapshot: `node scripts/wip.mjs restore <nhánh>`. Script dừng nếu working tree bẩn hoặc snapshot cũ — báo nguyên văn và hỏi tôi, không tự xoá thay đổi.
-5. Việc có spec → đọc spec. Đọc các file nêu ở "Tiếp theo".
-6. Báo 3 dòng: đang ở đâu (nhánh, phần), bước kế tiếp cụ thể, lệnh kiểm tra (`pnpm verify` hoặc test liên quan). Không bắt đầu sửa code trước khi tôi xác nhận.
+1. `git pull --ff-only` on the current branch (if it fails, report it; do not fix it yourself).
+2. `node scripts/wip.mjs status` — unfinished-work snapshots on the remote.
+3. Read `TODO.md`, then `## In progress` in the `docs/todo/<part>.auto.md` files with WIP. Pick the work: only one → take it; several → ask me (list part, title, branch, whether it has a snapshot).
+4. Work with a snapshot: `node scripts/wip.mjs restore <branch>`. The script stops if the working tree is dirty or the snapshot is stale — report its message verbatim and ask me; never discard changes yourself.
+5. Work with a spec → read the spec. Read the files named under "Next".
+6. Report 3 lines: where we are (branch, part), the concrete next step, the check command (`pnpm verify` or the relevant test). Do not start editing code before I confirm.

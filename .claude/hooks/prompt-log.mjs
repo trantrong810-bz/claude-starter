@@ -1,17 +1,18 @@
 #!/usr/bin/env node
-// Ghi lịch sử prompt vào history/prompts/YYYY-MM.jsonl (được commit, nằm ngoài versioning).
-// Không ghi câu trả lời của Claude — chỉ prompt, model/effort xử lý, và commit tạo ra.
+// Log prompt history to history/prompts/YYYY-MM.jsonl (committed, outside versioning).
+// Claude's answers are not logged — only the prompt, the model/effort that handled it, and the commits it made.
 //
-// Dùng làm hook (đọc JSON từ stdin):
-//   node .claude/hooks/prompt-log.mjs session-start    SessionStart: nhớ model nếu có
-//   node .claude/hooks/prompt-log.mjs model-switch     PostModelSwitch: cập nhật model
-//   node .claude/hooks/prompt-log.mjs prompt           UserPromptSubmit: ghi prompt
-//   node .claude/hooks/prompt-log.mjs subagent         SubagentStop: nhớ subagent đã chạy
-//   node .claude/hooks/prompt-log.mjs stop             Stop: ghi model, effort, subagent, commit
-// Dùng tay:
-//   node .claude/hooks/prompt-log.mjs scan [thư-mục]   quét secret còn sót (exit 1 nếu có)
+// As a hook (reads JSON from stdin):
+//   node .claude/hooks/prompt-log.mjs session-start    SessionStart: remember the model if given
+//   node .claude/hooks/prompt-log.mjs model-switch     PostModelSwitch: update the model
+//   node .claude/hooks/prompt-log.mjs prompt           UserPromptSubmit: log the prompt
+//   node .claude/hooks/prompt-log.mjs subagent         SubagentStop: remember which subagent ran
+//   node .claude/hooks/prompt-log.mjs stop             Stop: log model, effort, subagents, commits
+// By hand:
+//   node .claude/hooks/prompt-log.mjs scan [dir]       scan for leftover secrets (exit 1 if any)
 //
-// Tắt: CLAUDE_PROMPT_LOG=off. Hook không bao giờ chặn Claude: mọi lỗi đều bị nuốt, exit 0.
+// Off: CLAUDE_PROMPT_LOG=off. The hook never blocks Claude: every error is swallowed, exit 0.
+// Prompts are stored verbatim in the user's language (ADR 0020R exception).
 
 import { execSync } from "node:child_process";
 import {
@@ -29,7 +30,7 @@ const MAX_PROMPT = 4000;
 const STATE_DIR = ".claude/state";
 const LOG_DIR = "history/prompts";
 
-// Chuỗi trông giống secret. Dùng chung cho lúc ghi (che) và lúc quét (chặn).
+// Strings that look like secrets. Shared by logging (redact) and scanning (block).
 export const SECRET_PATTERNS = [
   /sk-ant-[A-Za-z0-9_-]{20,}/g,
   /sk-[A-Za-z0-9_-]{20,}/g,
@@ -95,7 +96,7 @@ const localTime = () => {
   return `${d.toLocaleString("sv-SE").replace(" ", "T")}${sign}${hh}:${mm}`;
 };
 
-// Model của câu trả lời cuối, đọc từ đuôi transcript (định dạng nội bộ — đọc phòng thủ).
+// Model of the last answer, read from the end of the transcript (internal format — read defensively).
 function modelFromTranscript(path) {
   try {
     if (!path || !existsSync(path)) return null;
@@ -106,16 +107,16 @@ function modelFromTranscript(path) {
         const m = j?.message?.model ?? j?.model;
         if ((j?.type === "assistant" || j?.message?.role === "assistant") && typeof m === "string") return m;
       } catch {
-        /* dòng hỏng: bỏ qua */
+        /* broken line: skip */
       }
     }
   } catch {
-    /* không đọc được */
+    /* unreadable */
   }
   return null;
 }
 
-// Model khai báo trong file subagent (frontmatter "model:"), hoặc "inherit".
+// Model declared in the subagent file (frontmatter "model:"), or "inherit".
 function declaredAgentModel(agentType) {
   try {
     const f = join(".claude/agents", `${agentType}.md`);
@@ -179,10 +180,10 @@ const handlers = {
       model,
       effort: input.effort?.level ?? "unknown",
       subagents: turn.subagents ?? [],
-      ket_qua: commits,
+      commits,
     });
-    // Giữ s.turn tới prompt kế tiếp: nếu Stop hook khác chặn và Claude làm tiếp, lần Stop sau
-    // ghi lại một dòng đầy đủ hơn cho cùng id. Người đọc lấy dòng "model" cuối cùng của mỗi id.
+    // Keep s.turn until the next prompt: if another Stop hook blocks and Claude continues, the next Stop
+    // logs a fuller line for the same id. Readers take the last "model" line of each id.
     if (model !== "unknown") s.model = model;
     saveState(input.session_id, s);
   },
@@ -212,7 +213,7 @@ function scan(dir) {
   walk(dir);
   if (hits.length) {
     console.error(
-      `Có chuỗi giống secret trong log (sửa thành [REDACTED] trước khi commit):\n${hits.map((h) => "- " + h).join("\n")}`,
+      `Secret-like strings in the log (replace them with [REDACTED] before committing):\n${hits.map((h) => "- " + h).join("\n")}`,
     );
     process.exit(1);
   }
@@ -222,7 +223,7 @@ if (process.env.CLAUDE_PROJECT_DIR) {
   try {
     process.chdir(process.env.CLAUDE_PROJECT_DIR);
   } catch {
-    /* giữ thư mục hiện tại */
+    /* keep the current directory */
   }
 }
 
@@ -236,7 +237,7 @@ if (mode === "scan") {
     try {
       handlers[mode](JSON.parse(data || "{}"));
     } catch {
-      /* hook không được làm hỏng phiên làm việc */
+      /* the hook must never break the session */
     }
     process.exit(0);
   });

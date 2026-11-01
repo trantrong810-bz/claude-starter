@@ -1,15 +1,15 @@
 ---
-description: Phát hành version mới — điền changelog còn thiếu, xem trước, (hỏi), bump từng phần trên nhánh release/, mở PR; CI gắn tag sau merge.
-argument-hint: "[--yes để bỏ bước hỏi]"
+description: Release a new version — fill missing changelogs, preview, (ask), bump each part on a release/ branch, open a PR; CI tags after merge.
+argument-hint: "[--yes to skip the question]"
 ---
 
-1. `node scripts/version.mjs mode`: báo chế độ hiện tại cho tôi trong một dòng.
-2. `git switch main && git pull --ff-only`. `git status --porcelain` phải rỗng (bỏ qua `history/`); còn gì thì dừng và hỏi tôi.
-3. `node scripts/version.mjs check`. Thiếu changelog thì làm như sau rồi quay lại bước 2:
-   - gọi subagent `versioner`;
-   - commit các CHANGELOG.md trên nhánh `docs/changelog-<ngày>` (`docs(changelog): fill unreleased for <phần>`);
+1. `node scripts/version.mjs mode`: tell me the current mode in one line.
+2. `git switch main && git pull --ff-only`. `git status --porcelain` must be empty (ignoring `history/`); otherwise stop and ask me.
+3. `node scripts/version.mjs check`. If a changelog is missing, do the following, then go back to step 2:
+   - call the `versioner` subagent;
+   - commit the CHANGELOG.md files on a `docs/changelog-<date>` branch (`docs(changelog): fill unreleased for <part>`);
    - `/ship`.
-4. `node scripts/version.mjs release --dry-run`: cho tôi xem bảng version mới, kèm mọi mục `BREAKING` trong các mục Unreleased.
-5. Hỏi tôi trước khi phát hành, TRỪ KHI: `$ARGUMENTS` có `--yes`, hoặc `versions.json` có `"confirmRelease": false`.
-6. `git switch -c release/v<X.Y.Z>` (version dự án từ dry-run), rồi `node scripts/version.mjs release --no-tag`.
-7. Làm theo `/ship`. Hỏi merge như mọi PR, trừ khi bước 5 đã được bỏ qua bằng `--yes`. Sau khi merge, Action `release-tag` gắn tag `vX.Y.Z` lên commit release trên `main`. Không tự tạo tag.
+4. `node scripts/version.mjs release --dry-run`: show me the table of new versions, plus every `BREAKING` entry in the Unreleased sections.
+5. Ask me before releasing, UNLESS: `$ARGUMENTS` contains `--yes`, or `versions.json` has `"confirmRelease": false`.
+6. `git switch -c release/v<X.Y.Z>` (the project version from the dry run), then `node scripts/version.mjs release --no-tag`.
+7. Follow `/ship`. Ask about the merge as for any PR, unless step 5 was skipped with `--yes`. After the merge, the `release-tag` Action tags the release commit on `main` with `vX.Y.Z`. Never create the tag yourself.

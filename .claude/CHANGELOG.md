@@ -1,59 +1,60 @@
 # Changelog
 
-Định dạng theo [Keep a Changelog](https://keepachangelog.com/vi/1.1.0/); version theo [SemVer](https://semver.org/lang/vi/).
-Ghi thay đổi vào mục `Unreleased` cùng commit (subagent `versioner` tự điền khi bật tự động); `node scripts/version.mjs release` chuyển nó thành version mới.
+Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow [SemVer](https://semver.org/).
+Record changes under `Unreleased` in the same commit (the `versioner` subagent fills it when automation is on); `node scripts/version.mjs release` turns it into a new version.
 
 ## [Unreleased]
 
 ### Fixed
 
-- `commit-guard.sh`: bỏ đoạn lặp thừa có dấu nháy lạc sau `exit 0`.
+- `commit-guard.sh`: removes a stray duplicated block with a lost quote after `exit 0`.
 
 ### Added
 
-- `/ship`: push nhánh, mở PR, hỏi người, bật auto-merge rebase, chờ CI, dọn nhánh.
-- `/todo`, `/resume`; `/handoff` lưu cả todo auto, plan và code dở (`wip.mjs save`) rồi push.
-- Hook `statusline.mjs` (usage 5h/7d/context) và `usage-guard.mjs`: usage ≥ 90% chỉ cho `/handoff`, lưu xong thì dừng; ngưỡng `CLAUDE_WIP_THRESHOLD`.
-- `settings.json`: `plansDirectory: docs/plans`, `autoMemoryEnabled: false` — mọi trạng thái nằm trong repo.
-- SessionStart báo todo đang làm và snapshot `wip/*`; commit-guard tự sync todo khi chưa bật `.githooks`.
-- Hook `prompt-log.mjs`: ghi mọi prompt (đã che secret) vào `history/prompts/`, kèm model, effort, subagent và commit của từng lượt; tắt bằng `CLAUDE_PROMPT_LOG=off`.
-- Command `/why`: tra cứu theo thứ tự ADR → spec → git → log prompt, trích nguồn và model.
-- Hook `version-guard.sh` (PreToolUse): chặn `git commit` khi phần bị đổi chưa có changelog, theo `automation.mode`.
-- Subagent `versioner` (Haiku): đọc diff, điền `Unreleased` theo Added/Changed/Fixed/Removed và đánh dấu `**BREAKING:**`.
-- Command `/release`: điền changelog thiếu, xem trước, hỏi rồi phát hành; không tự push.
-- Hook `commit-guard.sh` (PreToolUse): chặn `git commit` sai `docs/GIT.md` — message, tên nhánh, cờ `.allow-red` trên main, `--no-verify`, `--amend` commit đã push.
-- `session-context.sh`: báo nhánh, số file chưa commit, nhánh chưa merge, git hook chưa bật, tag thiếu cho version hiện tại.
+- `/ship`: pushes the branch, opens a PR, asks the user, enables rebase auto-merge, waits for CI, cleans up the branch.
+- `/todo`, `/resume`; `/handoff` also saves the auto todo, plans and unfinished code (`wip.mjs save`) and pushes.
+- Hooks `statusline.mjs` (5h/7d/context usage) and `usage-guard.mjs`: at usage ≥ 90% only `/handoff` is allowed, then it stops; threshold `CLAUDE_WIP_THRESHOLD`.
+- `settings.json`: `plansDirectory: docs/plans`, `autoMemoryEnabled: false` — all state lives in the repo.
+- SessionStart reports todo in progress and `wip/*` snapshots; commit-guard syncs todo when `.githooks` is not enabled.
+- Hook `prompt-log.mjs`: logs every prompt (secrets redacted) to `history/prompts/`, with the model, effort, subagents and commits of each turn; off with `CLAUDE_PROMPT_LOG=off`.
+- Command `/why`: looks things up in the order ADR → spec → git → prompt log, citing sources and models.
+- Hook `version-guard.sh` (PreToolUse): blocks `git commit` when a changed part has no changelog entry, per `automation.mode`.
+- Subagent `versioner` (Haiku): reads the diff, fills `Unreleased` under Added/Changed/Fixed/Removed and marks `**BREAKING:**`.
+- Command `/release`: fills missing changelogs, previews, asks, then releases; never pushes on its own.
+- Hook `commit-guard.sh` (PreToolUse): blocks `git commit` that breaks `docs/GIT.md` — message, branch name, `.allow-red` flag on main, `--no-verify`, `--amend` of a pushed commit.
+- `session-context.sh`: reports the branch, uncommitted files, unmerged branches, git hooks not enabled, missing tag for the current version.
 
 ### Changed
 
+- **BREAKING:** commands, subagents and hooks are written in English and print English (ADR 0020R). The prompt log field `ket_qua` is now `commits`; `/why` reads both. Commands refer to the English todo sections (`In progress`, `To do`, `Recently done`, `From manual`) and ADR keys (`status`, `superseded-by`, `source`).
 - `CLAUDE.md` is written in English and adds the language rule: everything in the repo is English except hand-written todo files (ADR 0020R).
-- **BREAKING:** commit trên `main` bị chặn (commit-guard cho Claude, `.githooks/pre-commit` cho người); mọi thay đổi vào `main` qua PR bằng `/ship`. `/build-feature` và `/release` dùng `/ship` thay cho merge `--ff-only` local; `/release` làm trên nhánh `release/vX.Y.Z`, không tự tag.
-- `commit-guard.sh`: nhận nhánh `release/vX.Y.Z`; chỉ xét cờ của chính lệnh `git commit` (không còn chặn nhầm `sed -n ... && git commit`).
-- `session-context.sh`: tách nhánh đã merge trên GitHub (gợi ý `pr.mjs cleanup`) và nhánh chưa merge.
-- `settings.json`: cho phép `git push -u origin`, `git fetch`, `git pull --ff-only`, `gh pr create/view/checks`, `gh run view`, `pr.mjs`; hỏi trước `gh pr merge`, `github-setup.sh`.
-- `/handoff` tạo nhánh trước khi commit nếu đang ở `main`; usage-guard cho phép `git switch -c`.
-- `CLAUDE.md`, `/retro`: sơ đồ quy trình nằm ở `docs/workflows/`; quy trình mới chép `_template.md` rồi chạy `workflow.mjs index`.
-- `format.sh`: format thêm `.mjs`, `.cjs`, `.yml`, `.yaml` (cùng danh sách với `.githooks/pre-commit`).
-- `verify-on-stop.sh`: khi không đổi code vẫn chạy `verify --quick` (quét secret, kiểm tra ADR).
-- `/plan-feature` và `/retro` tạo ADR cho quyết định có tranh cãi; `CLAUDE.md` có quy tắc ADR và `/why`.
-- `/build-feature`: commit thiếu changelog thì gọi `versioner`; sau merge tự `/release` khi `mode` là `full`.
-- `CLAUDE.md`: quy tắc changelog theo chế độ tự động.
-- `CLAUDE.md`: nạp `@docs/GIT.md` vào mọi session.
-- `settings.json`: đăng ký `commit-guard.sh`; `deny` thêm `git clean`, `branch -D`, `tag -d`, `commit --no-verify`, `git config`; `ask` cho `git push`, `rebase`, `tag`.
-- `/plan-feature`, `/build-feature`, `/release`: message theo Conventional Commits; merge `--ff-only`, rebase khi main đi tiếp, xóa nhánh sau merge; phát hành chỉ từ main.
-- `code-reviewer`: kiểm tra lịch sử commit `main..HEAD` theo `docs/GIT.md`.
-- `CLAUDE.md`: mục Môi trường — Windows 11, VSCode, Git Bash, nháy kép trong `execSync`, LF/CRLF, `git update-index --chmod=+x`.
+- **BREAKING:** commits on `main` are blocked (commit-guard for Claude, `.githooks/pre-commit` for people); every change reaches `main` through a PR via `/ship`. `/build-feature` and `/release` use `/ship` instead of a local `--ff-only` merge; `/release` works on a `release/vX.Y.Z` branch and does not tag.
+- `commit-guard.sh`: accepts `release/vX.Y.Z` branches; only looks at the flags of the `git commit` command itself (no longer misfires on `sed -n ... && git commit`).
+- `session-context.sh`: separates branches merged on GitHub (suggesting `pr.mjs cleanup`) from unmerged ones.
+- `settings.json`: allows `git push -u origin`, `git fetch`, `git pull --ff-only`, `gh pr create/view/checks`, `gh run view`, `pr.mjs`; asks before `gh pr merge` and `github-setup.sh`.
+- `/handoff` creates a branch before committing when on `main`; usage-guard allows `git switch -c`.
+- `CLAUDE.md`, `/retro`: workflow diagrams live in `docs/workflows/`; a new workflow copies `_template.md` and runs `workflow.mjs index`.
+- `format.sh`: also formats `.mjs`, `.cjs`, `.yml`, `.yaml` (same list as `.githooks/pre-commit`).
+- `verify-on-stop.sh`: still runs `verify --quick` (secret scan, ADR check) when no code changed.
+- `/plan-feature` and `/retro` create ADRs for contested decisions; `CLAUDE.md` has the ADR and `/why` rules.
+- `/build-feature`: a commit missing its changelog calls `versioner`; after merge runs `/release` when `mode` is `full`.
+- `CLAUDE.md`: changelog rule per automation mode.
+- `CLAUDE.md`: loads `@docs/GIT.md` into every session.
+- `settings.json`: registers `commit-guard.sh`; `deny` adds `git clean`, `branch -D`, `tag -d`, `commit --no-verify`, `git config`; `ask` for `git push`, `rebase`, `tag`.
+- `/plan-feature`, `/build-feature`, `/release`: Conventional Commits messages; `--ff-only` merges, rebase when main moves on, delete the branch after merge; release only from main.
+- `code-reviewer`: checks the `main..HEAD` commit history against `docs/GIT.md`.
+- `CLAUDE.md`: Environment section — Windows 11, VSCode, Git Bash, double quotes in `execSync`, LF/CRLF, `git update-index --chmod=+x`.
 
 ## [0.1.0] - 2026-11-01
 
 ### Added
 
-- `settings.json`: allow lệnh an toàn (verify, test, git add/commit/switch), deny `.env`, migration cũ, `rm -rf`, force push.
-- Hook `format.sh` (PostToolUse): Prettier sau mỗi lần sửa file.
-- Hook `verify-on-stop.sh` (Stop): chặn kết thúc khi `verify` lỗi; chống lặp vô hạn; bỏ qua khi không đổi code.
-- Hook `session-context.sh` (SessionStart): báo spec đang dở và cảnh báo cờ `.allow-red`.
-- Command `/plan-feature` (pha 1, Opus): nhánh `feat/`, contract, stub, test backend đỏ.
-- Command `/build-feature` (pha 2, Sonnet): backend, client trong shared, UI; subagent chỉ khi UI lớn; review rồi hỏi trước khi merge.
-- Command `/handoff` và `/retro`.
-- Subagent `app-builder` (một app, chỉ UI) và `code-reviewer` (diff `main...HEAD`, kèm spec và kết quả verify).
-- `CLAUDE.md` mẫu: phân loại task, client API trong shared, đồng bộ sơ đồ quy trình, ghi changelog.
+- `settings.json`: allows safe commands (verify, test, git add/commit/switch); denies `.env`, old migrations, `rm -rf`, force push.
+- Hook `format.sh` (PostToolUse): Prettier after every file edit.
+- Hook `verify-on-stop.sh` (Stop): blocks finishing while `verify` fails; guards against endless loops; skipped when no code changed.
+- Hook `session-context.sh` (SessionStart): reports unfinished specs and warns about the `.allow-red` flag.
+- Command `/plan-feature` (phase 1, Opus): `feat/` branch, contract, stubs, red backend tests.
+- Command `/build-feature` (phase 2, Sonnet): backend, client in shared, UI; subagents only for large UI; review, then ask before merging.
+- Commands `/handoff` and `/retro`.
+- Subagents `app-builder` (one app, UI only) and `code-reviewer` (diff `main...HEAD`, with the spec and verify result).
+- Sample `CLAUDE.md`: task classification, API client in shared, keeping workflow diagrams in sync, changelog entries.

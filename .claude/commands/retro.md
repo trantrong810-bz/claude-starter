@@ -1,20 +1,20 @@
 ---
-description: Cuối tính năng lớn — biến lỗi đã gặp thành cải tiến cấu hình (CLAUDE.md, lint rule, hook, command)
-argument-hint: <tên-tính-năng>
+description: End of a large feature — turn the mistakes hit into config improvements (CLAUDE.md, lint rule, hook, command)
+argument-hint: <feature-name>
 ---
 
-Đọc `docs/specs/$ARGUMENTS.md` (mục Ghi chú) và `git log` của tính năng. Tìm:
+Read `docs/specs/$ARGUMENTS.md` (the Notes section) and the feature's `git log`. Look for:
 
-- Lỗi Claude mắc phải và phải sửa lại.
-- Chỗ tôi phải can thiệp hoặc nhắc lại.
-- Bước lặp đi lặp lại có thể tự động hóa.
+- Mistakes Claude made that had to be redone.
+- Places where I had to step in or repeat myself.
+- Repeated steps that could be automated.
 
-Với mỗi vấn đề, đề xuất ĐÚNG MỘT cách khắc phục rẻ nhất, theo thứ tự ưu tiên:
+For each issue, propose EXACTLY ONE cheapest fix, in this order of preference:
 
-1. Lint rule hoặc hook (máy ép buộc — tốt nhất).
-2. Một dòng trong CLAUDE.md gốc hoặc CLAUDE.md của app (chỉ khi không ép bằng máy được).
-3. Command hoặc skill mới (chỉ khi một prompt đã lặp ≥3 lần).
+1. A lint rule or hook (machine-enforced — best).
+2. One line in the root CLAUDE.md or an app's CLAUDE.md (only when it cannot be machine-enforced).
+3. A new command or skill (only when a prompt has repeated ≥3 times).
 
-Trình bày dạng bảng ngắn: vấn đề → đề xuất → file sẽ sửa. Tối đa 5 dòng; bỏ qua sự cố một lần.
-Không sửa gì cho đến khi tôi chọn. Cũng đề xuất xóa dòng CLAUDE.md nào đã thừa (vì đã có lint/hook thay thế).
-Nếu đề xuất được chọn làm thay đổi quy trình (command, hook, subagent, phân loại task), cập nhật sơ đồ trong `docs/workflows/` cùng commit (quy trình mới: chép `_template.md`, rồi `node scripts/workflow.mjs index`). Mọi thay đổi được áp dụng đều ghi vào `Unreleased` của changelog phần tương ứng. Đề xuất được chọn mà có phương án khác hợp lý → một ADR; nếu nó đảo ngược ADR cũ, đặt ADR cũ `trang-thai: bi-thay-the` và `thay-the-boi` trỏ tới ADR mới.
+Present a short table: issue → proposal → file to change. At most 5 rows; skip one-off incidents.
+Change nothing until I choose. Also propose removing CLAUDE.md lines that became redundant (replaced by a lint rule/hook).
+If a chosen proposal changes the workflow (command, hook, subagent, task classification), update the diagram in `docs/workflows/` in the same commit (new workflow: copy `_template.md`, then `node scripts/workflow.mjs index`). Every applied change goes into `Unreleased` of the matching part's changelog. A chosen proposal with another reasonable option → an ADR; if it reverses an old ADR, set the old one to `status: superseded` with `superseded-by` pointing to the new ADR.

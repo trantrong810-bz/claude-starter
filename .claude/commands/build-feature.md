@@ -1,19 +1,19 @@
 ---
-description: Pha 2 (chạy bằng Sonnet) — backend xanh, client trong shared, rồi UI web + mobile. Commit sau mỗi lớp, trên nhánh feat/.
-argument-hint: <tên-tính-năng>
+description: Phase 2 (run with Sonnet) — green backend, client in shared, then web + mobile UI. Commit after each layer, on the feat/ branch.
+argument-hint: <feature-name>
 ---
 
-Tính năng: $ARGUMENTS
+Feature: $ARGUMENTS
 
-1. Đọc `docs/specs/$ARGUMENTS.md`. Đó là nguồn sự thật; không lập lại plan. Nếu spec mâu thuẫn với code hiện tại, dừng và hỏi. Đảm bảo đang ở nhánh `feat/$ARGUMENTS`.
-2. Xóa `.claude/.allow-red` (từ giờ verify chạy cả test).
-3. Backend: thay stub, làm test pha 1 xanh. Không sửa test để cho qua — nếu test sai, dừng và hỏi.
-   `pnpm verify` qua → commit `feat(<tên>): implement backend` (thiếu changelog thì hook chặn: gọi subagent `versioner` rồi commit lại; message sai quy ước thì sửa theo `docs/GIT.md`) → đánh dấu checklist. (Áp dụng cho mọi commit bên dưới.)
-4. Client trong `packages/shared`: hàm gọi API theo contract, parse response bằng schema (không ép kiểu `as`), encode mọi tham số đưa vào URL. Viết test với `fetch` giả.
-   `pnpm verify` qua → commit `feat(<tên>): add api client in shared` → đánh dấu checklist.
-5. UI web và mobile — chỉ gọi client từ `@app/shared`, không viết lại logic gọi API:
-   - Nếu Plan ghi cả hai app đều có phần UI đáng kể (màn hình/component mới, nhiều file): giao song song cho 2 subagent `app-builder`.
-   - Ngược lại: tự làm trực tiếp. Subagent tốn ~10k token mỗi lần khởi động; không đáng cho vài dòng.
-   - Sau đó: `pnpm verify` qua → commit `feat(<tên>): add web and mobile ui` → đánh dấu checklist.
-6. Cập nhật spec (checklist + Tiến độ). Chạy `pnpm verify` lần cuối, rồi gọi subagent `code-reviewer` với: phạm vi `git diff main...HEAD`, đường dẫn spec, và kết quả verify. Sửa vấn đề mức cao và trung, commit (`fix(<tên>): ...`).
-7. Báo tôi: tóm tắt 3–5 dòng + các vấn đề mức thấp chưa sửa. Rồi làm theo `/ship`: push, mở PR, hỏi tôi trước khi bật auto-merge, chờ CI, dọn nhánh, rồi release/retro.
+1. Read `docs/specs/$ARGUMENTS.md`. It is the source of truth; do not re-plan. If the spec contradicts the current code, stop and ask. Make sure you are on the `feat/$ARGUMENTS` branch.
+2. Delete `.claude/.allow-red` (from now on verify runs the tests too).
+3. Backend: replace the stubs and make the phase 1 tests green. Do not edit tests to make them pass — if a test is wrong, stop and ask.
+   `pnpm verify` passes → commit `feat(<name>): implement backend` (if the changelog is missing the hook blocks: call the `versioner` subagent and commit again; if the message breaks the conventions, fix it per `docs/GIT.md`) → tick the checklist. (This applies to every commit below.)
+4. Client in `packages/shared`: API functions per the contract, parse responses with the schema (no `as` casts), encode every parameter that goes into a URL. Write tests with a fake `fetch`.
+   `pnpm verify` passes → commit `feat(<name>): add api client in shared` → tick the checklist.
+5. Web and mobile UI — call the client from `@app/shared` only, never rewrite API-calling logic:
+   - If the Plan says both apps have significant UI (new screens/components, many files): hand them to 2 `app-builder` subagents in parallel.
+   - Otherwise: do it directly. A subagent costs ~10k tokens to start; not worth it for a few lines.
+   - Then: `pnpm verify` passes → commit `feat(<name>): add web and mobile ui` → tick the checklist.
+6. Update the spec (checklist + Progress). Run `pnpm verify` one last time, then call the `code-reviewer` subagent with: the range `git diff main...HEAD`, the spec path, and the verify result. Fix high and medium issues and commit (`fix(<name>): ...`).
+7. Report to me: a 3–5 line summary + the low-severity issues left unfixed. Then follow `/ship`: push, open a PR, ask me before enabling auto-merge, wait for CI, clean up the branch, then release/retro.
