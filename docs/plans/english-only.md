@@ -27,8 +27,8 @@ Work on branch `chore/english-only`, one commit per layer, and track progress in
 Translate comments and every output message, and rename the parsed identifiers:
 
 - `scripts/todo.mjs`:
-  - Section names: `Đang làm` → `In progress`, `Việc cần làm` → `To do`, `Xong gần đây` → `Recently done`, `Từ viết tay` → `From manual`.
-  - Markers `từ:` → `from:` and `nhánh:` → `branch:`, plus the mirror comment.
+  - Section names (Vietnamese at the time) become `In progress`, `To do`, `Recently done`, `From manual`.
+  - Item markers become `from:` and `branch:`, plus the mirror comment.
   - Skeletons and the `TODO.md` overview table.
 - `scripts/adr.mjs`:
   - Frontmatter keys: `so` → `number`, `pham-vi` → `scope`, `trang-thai` → `status`, `ngay` → `date`, `thay-the-boi` → `superseded-by`.
@@ -37,7 +37,7 @@ Translate comments and every output message, and rename the parsed identifiers:
   - Generated `docs/decisions/README.md` headings.
 - Translate the rest of the scripts: `scripts/version.mjs`, `scripts/workflow.mjs`, `scripts/wip.mjs`, `scripts/pr.mjs`, `scripts/commit-msg.mjs`, `scripts/verify.sh`, `scripts/github-setup.sh`, `scripts/try-example.sh`. Check each one for markers it parses, such as changelog headings or workflow index markers.
 - New `scripts/lang.mjs check`:
-  - It fails on Vietnamese-only letters (accented Latin in the U+00C0–U+1EF9 range plus `đĐ`, written as `\u` escapes so the script passes its own check).
+  - It fails on Vietnamese-only letters (accented Latin in the U+00C0–U+1EF9 range, built from code points so the script passes its own check).
   - It scans tracked files, except hand-written `docs/todo/<part>.md` (not `.auto.md`), the mirror block in `docs/todo/*.auto.md` (between the mirror markers), `history/`, and `.claude/state/`.
   - Wire it into the quick part of `scripts/verify.sh`. CI and pre-commit inherit it from there.
   - Also add a check in `scripts/commit-msg.mjs` that rejects accented Vietnamese in commit messages.
@@ -79,5 +79,5 @@ Translate comments and every output message, and rename the parsed identifiers:
 - A test file with an accented line under `docs/` fails the check, and the same line in `docs/todo/root.md` passes.
 - `bash scripts/verify.sh --quick` prints the OK line. This runs the ADR, todo, workflow, changelog and lang checks. `pnpm verify` isn't on PATH locally, so CI is the full gate.
 - `node scripts/adr.mjs new test --broad` creates an English ADR (then delete it). `node scripts/todo.mjs sync` produces no diff after the migration.
-- Grepping for old slugs (`doi-may`, `pham-vi`, `--rong`, `Đang làm`, …) returns nothing outside `history/`.
+- Grepping for the old slugs (`pham-vi`, `--rong`, the old workflow file names) returns nothing outside `history/` and the historical plans, which quote them on purpose.
 - Open a PR with `/ship`, wait for CI `verify` to pass, then merge.

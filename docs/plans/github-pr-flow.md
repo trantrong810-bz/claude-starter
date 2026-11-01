@@ -1,150 +1,152 @@
-# Git flow qua GitHub: Claude push, mở PR, GitHub tự merge khi CI xanh
+# Git flow through GitHub: Claude pushes, opens a PR, GitHub merges when CI is green
+
+> Historical plan (ADR 0019R), translated to English by ADR 0020R. File names, front matter keys and frontmatter values are quoted as they were at the time; ADR 0020R renamed them.
 
 ## Context
 
-Hiện tại `docs/GIT.md` quy định: Claude không tự push, merge `--ff-only` ở máy local, và người duyệt merge trong chat (ADR 0007R, 0014R). Người dùng muốn **push lên GitHub và để GitHub tự merge**. Ba điểm đã chốt:
+Today `docs/GIT.md` says: Claude never pushes, merges `--ff-only` locally, and the user approves merges in chat (ADR 0007R, 0014R). The user wants to **push to GitHub and let GitHub merge**. Three points are settled:
 
-- **Duyệt:** Claude push và mở PR, gửi link, **hỏi trong chat**. Bạn đồng ý thì Claude bật auto-merge, và GitHub merge khi CI xanh. GitHub không cho tác giả tự approve PR của mình, nên không dùng "required review".
-- **Mọi thay đổi qua PR:** `main` được bảo vệ (cấm push thẳng, bắt buộc CI xanh, lịch sử thẳng). Task nhỏ cũng tạo nhánh ngắn.
-- **Phát hành qua PR:** `/release` chạy trên nhánh `release/vX.Y.Z`, commit nhưng không tag. Sau khi merge, GitHub Action gắn tag lên đúng commit trên `main`.
+- **Approval:** Claude pushes and opens a PR, sends the link and **asks in chat**. When you agree, Claude enables auto-merge and GitHub merges when CI is green. GitHub does not let authors approve their own PRs, so "required review" is not used.
+- **Every change through a PR:** `main` is protected (no direct pushes, green CI required, linear history). Small tasks also get a short branch.
+- **Releases through a PR:** `/release` runs on a `release/vX.Y.Z` branch and commits without tagging. After the merge, a GitHub Action tags the right commit on `main`.
 
-Merge dùng **rebase** (giữ commit theo lớp, lịch sử thẳng). Merge commit và squash bị tắt.
+Merges use **rebase** (keeps the layer commits, linear history). Merge commits and squash are disabled.
 
-## Bước 0: hoàn tất việc trước
+## Step 0: finish the previous work
 
-Nhánh `docs/split-workflows` chưa merge (đã báo ở lượt trước). Merge local theo luồng cũ: `git switch main && git merge --ff-only docs/split-workflows && git branch -d docs/split-workflows`. Push `main` lên origin trước khi bật bảo vệ. Sau đó tạo nhánh `feat/github-pr-flow`.
+The `docs/split-workflows` branch is not merged yet (reported last turn). Merge it locally the old way: `git switch main && git merge --ff-only docs/split-workflows && git branch -d docs/split-workflows`. Push `main` to origin before turning on protection. Then create the `feat/github-pr-flow` branch.
 
-**Bạn cần tự làm** (đăng nhập tương tác, Claude không làm được):
+**You need to do this yourself** (interactive login, Claude cannot):
 
 ```powershell
 winget install GitHub.cli
-gh auth login          # GitHub.com, HTTPS, scope có repo + workflow
+gh auth login          # GitHub.com, HTTPS, scopes including repo + workflow
 ```
 
-File plan này trùng tên với plan tách workflow, đã commit ở `8535b27`. Khi bắt đầu làm: chép nội dung sang `docs/plans/github-pr-flow.md`, rồi `git restore docs/plans/t-ch-c-c-workflow-floofy-biscuit.md` để file cũ giữ nguyên.
+This plan file has the same name as the workflow-split plan, committed in `8535b27`. When starting: copy the content to `docs/plans/github-pr-flow.md`, then `git restore` the old plan file so it stays unchanged.
 
-## 1. CI: `.github/workflows/verify.yml` (mới)
+## 1. CI: `.github/workflows/verify.yml` (new)
 
-- Chạy khi có `pull_request` và khi `push` vào `main`. Job tên `verify`, đây là status check bắt buộc.
-- Bước: `actions/checkout@v4` với `fetch-depth: 0` (để có tag và `main` cho `version.mjs` và `turbo`), `actions/setup-node@v4` (Node 22).
-- Có `package.json` (dự án thật): `pnpm/action-setup`, `pnpm install --frozen-lockfile`, rồi `VERIFY_BASE=origin/${{ github.base_ref || 'main' }} bash scripts/verify.sh`.
-- Không có (repo kit): `bash scripts/verify.sh --quick`.
+- Runs on `pull_request` and on `push` to `main`. The job is named `verify`; it is the required status check.
+- Steps: `actions/checkout@v4` with `fetch-depth: 0` (tags and `main` for `version.mjs` and `turbo`), `actions/setup-node@v4` (Node 22).
+- With a `package.json` (a real project): `pnpm/action-setup`, `pnpm install --frozen-lockfile`, then `VERIFY_BASE=origin/${{ github.base_ref || 'main' }} bash scripts/verify.sh`.
+- Without one (the kit repo): `bash scripts/verify.sh --quick`.
 
-[scripts/verify.sh](scripts/verify.sh): đổi `--filter='...[HEAD]'` thành `--filter="...[${VERIFY_BASE:-HEAD}]"`. Ở máy local hành vi giữ nguyên; trong CI thì so với nhánh đích.
+[scripts/verify.sh](scripts/verify.sh): change `--filter='...[HEAD]'` to `--filter="...[${VERIFY_BASE:-HEAD}]"`. Local behaviour is unchanged; in CI it compares against the target branch.
 
-## 2. CI gắn tag: `.github/workflows/release-tag.yml` (mới)
+## 2. CI tagging: `.github/workflows/release-tag.yml` (new)
 
-- Chạy khi `push` vào `main`, quyền `contents: write`.
-- Nếu subject của HEAD là `release: vX.Y.Z` và tag chưa có: chạy `node scripts/version.mjs tag` rồi `git push origin vX.Y.Z` (đặt user git là `github-actions[bot]`).
+- Runs on `push` to `main`, with `contents: write`.
+- If HEAD's subject is `release: vX.Y.Z` and the tag does not exist: run `node scripts/version.mjs tag`, then `git push origin vX.Y.Z` (git user `github-actions[bot]`).
 
 [scripts/version.mjs](scripts/version.mjs):
 
-- `release --no-tag`: commit nhưng không tag. Câu báo cuối đổi thành "mở PR: /ship".
-- Lệnh mới `tag`: kiểm subject HEAD khớp `release: v<project.version>` trong `versions.json`, tag chưa có, rồi tạo annotated tag. Sai điều kiện thì báo rõ và `exit 1`.
-- Cập nhật chú thích đầu file.
+- `release --no-tag`: commit without tagging. The final message becomes "open a PR: /ship".
+- New `tag` command: check that HEAD's subject matches `release: v<project.version>` from `versions.json` and that the tag does not exist, then create an annotated tag. Otherwise report clearly and `exit 1`.
+- Update the header comment.
 
-## 3. Thiết lập repo GitHub: `scripts/github-setup.sh` (mới, chạy lại nhiều lần vẫn an toàn)
+## 3. GitHub repo setup: `scripts/github-setup.sh` (new, safe to rerun)
 
-Dùng `gh api` để:
+Uses `gh api` to:
 
 - Repo: `allow_auto_merge=true`, `allow_rebase_merge=true`, `allow_merge_commit=false`, `allow_squash_merge=false`, `delete_branch_on_merge=true`.
-- Ruleset `main` (tạo mới hoặc cập nhật theo tên): bắt buộc PR (0 approval), bắt buộc status check `verify`, `required_linear_history`, chặn force push và xoá nhánh. Không có bypass.
-- Kiểm trước: `gh auth status`. Repo private trên gói Free không có ruleset/auto-merge, API trả 403; khi đó báo rõ "cần public hoặc GitHub Pro" rồi dừng, không đổi nửa chừng.
+- `main` ruleset (created or updated by name): PR required (0 approvals), required status check `verify`, `required_linear_history`, no force push or deletion. No bypass.
+- Check first: `gh auth status`. Private repos on the Free plan have no rulesets/auto-merge and the API returns 403; then report "needs a public repo or GitHub Pro" and stop without changing anything halfway.
 
-Claude chạy script này một lần (bước 9), sau khi bạn duyệt. Ghi vào SETUP.md cho dự án dùng kit.
+Claude runs this script once (step 9), after your approval. Document it in SETUP.md for projects using the kit.
 
-## 4. Luồng của Claude: command `/ship` (mới, `.claude/commands/ship.md`)
+## 4. Claude's flow: the `/ship` command (new, `.claude/commands/ship.md`)
 
-1. Đang ở nhánh khác `main`, working tree sạch (`history/` được bỏ qua), `pnpm verify` qua.
-2. `git fetch origin`. Nếu `main` đã đi tiếp thì `git rebase origin/main` rồi `pnpm verify` lại (rebase vẫn là `ask`).
-3. `git push -u origin <nhánh>`.
+1. On a branch other than `main`, clean working tree (`history/` ignored), `pnpm verify` passes.
+2. `git fetch origin`. If `main` moved on, `git rebase origin/main` then `pnpm verify` again (rebase stays `ask`).
+3. `git push -u origin <branch>`.
 4. `gh pr create --base main`:
-   - title: header của commit chính, hoặc `<type>(<scope>): <tóm tắt>` khi có nhiều commit;
-   - body: tóm tắt 3–5 dòng, danh sách commit, `Refs:` spec/ADR, kết quả verify, dòng attribution.
-   - PR đã tồn tại thì chỉ push.
-5. Gửi link và tóm tắt, rồi **hỏi bạn**. Không đồng ý thì dừng; PR để mở.
-6. Đồng ý: `gh pr merge --auto --rebase`, sau đó `gh pr checks --watch`.
-   - CI đỏ: đọc log (`gh run view --log-failed`), sửa, commit, push, lặp lại bước 6. Auto-merge vẫn đang bật.
-   - Đã merge: `git switch main && git pull --ff-only`, rồi `node scripts/pr.mjs cleanup <nhánh>`.
-7. Sau merge: `version.mjs mode` là `full` thì làm `/release`, không thì nhắc có thể `/release`. Nhánh `feat/` thì nhắc `/retro`.
+   - title: the main commit's header, or `<type>(<scope>): <summary>` with several commits;
+   - body: a 3–5 line summary, the commit list, `Refs:` spec/ADR, the verify result, the attribution line;
+   - if the PR already exists, only push.
+5. Send the link and summary, then **ask you**. If you say no, stop; the PR stays open.
+6. If you agree: `gh pr merge --auto --rebase`, then `gh pr checks --watch`.
+   - CI red: read the log (`gh run view --log-failed`), fix, commit, push, repeat step 6. Auto-merge stays on.
+   - Merged: `git switch main && git pull --ff-only`, then `node scripts/pr.mjs cleanup <branch>`.
+7. After the merge: if `version.mjs mode` is `full`, run `/release`; otherwise mention that `/release` is available. For `feat/` branches, remind about `/retro`.
 
-## 5. Dọn nhánh sau rebase-merge: `scripts/pr.mjs` (mới)
+## 5. Cleaning up after rebase-merge: `scripts/pr.mjs` (new)
 
-Rebase-merge tạo mã commit mới, nên `git branch -d` từ chối xoá nhánh.
+Rebase-merge creates new commit hashes, so `git branch -d` refuses to delete the branch.
 
-- `cleanup <nhánh>`: nếu `git cherry main <nhánh>` không còn dòng `+` (mọi patch đã có trên `main`) thì xoá ref local bằng `git update-ref -d` và `git fetch --prune`. Còn patch chưa có thì báo danh sách và không xoá.
-- `stale`: liệt kê các nhánh local mà mọi patch đã có trên `main`.
+- `cleanup <branch>`: if `git cherry main <branch>` has no `+` lines left (every patch is on `main`), delete the local ref with `git update-ref -d` and `git fetch --prune`. If patches are missing, list them and do not delete.
+- `stale`: list local branches whose patches are all on `main`.
 
-`git branch -D` vẫn bị cấm; việc xoá chỉ đi qua kiểm tra này.
+`git branch -D` stays forbidden; deletion only goes through this check.
 
-## 6. Hook và quyền
+## 6. Hooks and permissions
 
 - [.claude/hooks/commit-guard.sh](.claude/hooks/commit-guard.sh):
-  - chặn commit khi đang ở `main` ("main được bảo vệ: tạo nhánh `<type>/<tên>` rồi commit");
-  - regex tên nhánh nhận thêm `release/v[0-9]+\.[0-9]+\.[0-9]+`.
-- [.claude/hooks/session-context.sh](.claude/hooks/session-context.sh): dòng "Nhánh chưa merge vào main" dùng `pr.mjs stale` để tách hai loại: nhánh đã merge trên GitHub (gợi ý `pr.mjs cleanup`) và nhánh thật sự chưa merge.
+  - block commits on `main` ("main is protected: create a `<type>/<name>` branch, then commit");
+  - the branch-name regex also accepts `release/v[0-9]+\.[0-9]+\.[0-9]+`.
+- [.claude/hooks/session-context.sh](.claude/hooks/session-context.sh): the "branches not merged into main" line uses `pr.mjs stale` to separate branches merged on GitHub (suggesting `pr.mjs cleanup`) from branches really not merged.
 - [.claude/settings.json](.claude/settings.json):
   - `allow`: `git push -u origin:*`, `git fetch:*`, `git pull --ff-only`, `gh pr create:*`, `gh pr view:*`, `gh pr checks:*`, `gh run view:*`, `node scripts/pr.mjs:*`;
-  - `ask`: `gh pr merge:*`, `bash scripts/github-setup.sh`. Thêm một lớp duyệt ở mức công cụ, cùng với câu hỏi trong chat;
-  - giữ `git push` trong `ask` cho trường hợp khác. `deny` giữ nguyên (force push, `branch -D`, ...).
-- `.githooks/pre-commit`: chặn commit trên `main` cho người, kể cả khi GitHub đã chặn push. Lý do: tránh commit nằm kẹt ở `main` local.
+  - `ask`: `gh pr merge:*`, `bash scripts/github-setup.sh`. A tool-level approval layer on top of the question in chat;
+  - keep `git push` in `ask` for other cases. `deny` is unchanged (force push, `branch -D`, ...).
+- `.githooks/pre-commit`: block commits on `main` for people too, even though GitHub already blocks the push. Reason: avoid commits stuck on a local `main`.
 
-## 7. Command hiện có
+## 7. Existing commands
 
-- [build-feature.md:19](.claude/commands/build-feature.md#L19): thay đoạn merge local bằng "chạy `/ship`".
-- [release.md](.claude/commands/release.md), làm lại:
-  1. mode, check, dry-run, hỏi (giữ nguyên);
-  2. `git switch -c release/v<X.Y.Z>` từ `main` mới nhất;
+- [build-feature.md:19](.claude/commands/build-feature.md#L19): replace the local merge with "run `/ship`".
+- [release.md](.claude/commands/release.md), reworked:
+  1. mode, check, dry-run, ask (unchanged);
+  2. `git switch -c release/v<X.Y.Z>` from the latest `main`;
   3. `version.mjs release --no-tag`;
   4. `/ship`.
 
-  Tag do CI gắn. Mô tả command đổi "Không push" thành "Push qua PR".
+  CI creates the tag. The command description changes "no push" to "push through a PR".
 
-- `plan-feature.md`: giữ nguyên tạo nhánh `feat/`. Push chỉ khi `/handoff` hoặc `/ship`.
-- CLAUDE.md, quy tắc phân loại task: "nhỏ → nhánh ngắn rồi `/ship`", "vừa → plan ngắn trong chat → nhánh → `/ship`".
+- `plan-feature.md`: still creates the `feat/` branch. Push only in `/handoff` or `/ship`.
+- CLAUDE.md, task classification rule: "small → short branch then `/ship`", "medium → short plan in chat → branch → `/ship`".
 
-## 8. Tài liệu
+## 8. Docs
 
 - [docs/GIT.md](docs/GIT.md):
-  - viết lại mục Nhánh: `main` chỉ nhận qua PR, thêm `release/vX.Y.Z`;
-  - Merge: PR, rebase-merge, auto-merge sau khi người đồng ý trong chat, dọn bằng `pr.mjs`;
-  - Tag: CI gắn;
-  - Push: Claude push nhánh của mình trong `/ship` và `/handoff`, không bao giờ push `main`;
-  - Cài trên máy mới: `gh auth login`.
-- `docs/workflows/git.md` (mới, `thu-tu: 3`): sơ đồ Mermaid vòng đời git của Claude, từ task đến nhánh, commit (qua commit-guard), `/ship`, PR, CI, người đồng ý, auto-merge, pull, cleanup, rồi release/retro. Các workflow sau đó lùi thứ tự một bậc.
-- Sửa sơ đồ:
-  - `tong-quan.md`: nút MERGE/FF thành `/ship`; đường task nhỏ và vừa đi qua nhánh;
-  - `lop-bao-ve.md`: commit-guard chặn trên main, CI trên GitHub;
-  - `phat-hanh.md`: nhánh release, PR, CI gắn tag.
-- Chạy `node scripts/workflow.mjs index`.
-- SETUP.md (mục Cài đặt, bước git): `gh auth login`, chép `.github/`, chạy `bash scripts/github-setup.sh`. README: một dòng về luồng PR.
-- **ADR 0019R** `git-flow-qua-github-pr`: các phương án (merge local / PR có duyệt trong chat / tự động hoàn toàn; release qua PR hay CI tự phát hành). ADR 0007R chuyển `bi-thay-the` với `thay-the-boi: 0019`. Ghi rõ 0019R điều chỉnh phần push/merge/tag của 0014R. Chạy `adr.mjs index`.
+  - rewrite Branches: `main` only accepts PRs, add `release/vX.Y.Z`;
+  - Merge: PR, rebase-merge, auto-merge after the user agrees in chat, cleanup with `pr.mjs`;
+  - Tags: created by CI;
+  - Push: Claude pushes its own branch in `/ship` and `/handoff`, never `main`;
+  - New machine setup: `gh auth login`.
+- `docs/workflows/git.md` (new, `thu-tu: 3`): a Mermaid diagram of Claude's git lifecycle, from task to branch, commit (through commit-guard), `/ship`, PR, CI, user approval, auto-merge, pull, cleanup, then release/retro. Later workflows move down one position.
+- Diagram updates:
+  - `tong-quan.md`: the MERGE/FF node becomes `/ship`; the small and medium paths go through a branch;
+  - `lop-bao-ve.md`: commit-guard blocks on main, CI on GitHub;
+  - `phat-hanh.md`: release branch, PR, CI tagging.
+- Run `node scripts/workflow.mjs index`.
+- SETUP.md (Setup, git step): `gh auth login`, copy `.github/`, run `bash scripts/github-setup.sh`. README: one line about the PR flow.
+- **ADR 0019R** `git-flow-qua-github-pr`: the options (local merge / PR with approval in chat / fully automatic; release through a PR or CI releasing on its own). ADR 0007R becomes `bi-thay-the` with `thay-the-boi: 0019`. State that 0019R amends the push/merge/tag part of 0014R. Run `adr.mjs index`.
 - Changelog `Unreleased`:
   - root: `.github/`;
   - scripts: `pr.mjs`, `github-setup.sh`, `version.mjs tag`/`--no-tag`, `VERIFY_BASE`;
-  - claude: `/ship`, hook, quyền, `**BREAKING:**` commit trên main bị chặn;
+  - claude: `/ship`, hooks, permissions, `**BREAKING:**` commits on main are blocked;
   - docs.
 
-## 9. Thứ tự làm và commit trên `feat/github-pr-flow`
+## 9. Order of work and commits on `feat/github-pr-flow`
 
 1. `feat(scripts): add pr cleanup, github setup and release tag support`: pr.mjs, github-setup.sh, version.mjs, verify.sh.
 2. `ci: add verify and release tag workflows`
-3. `feat(claude)!: ship changes through github pull requests`: `/ship`, hook, settings, command, CLAUDE.md, githooks.
+3. `feat(claude)!: ship changes through github pull requests`: `/ship`, hooks, settings, commands, CLAUDE.md, githooks.
 4. `docs: describe github pr flow`: GIT.md, workflows, SETUP, README, ADR.
-5. `/ship` lần đầu, để chính PR này thử luồng mới: push, mở PR, CI chạy. Sau đó **hỏi bạn** rồi chạy `bash scripts/github-setup.sh`, và **hỏi bạn** lần nữa trước khi bật auto-merge.
+5. The first `/ship`, so this PR tests the new flow: push, open the PR, CI runs. Then **ask you** before running `bash scripts/github-setup.sh`, and **ask you** again before enabling auto-merge.
 
 ## Verification
 
 - Local:
-  - `bash scripts/verify.sh --quick` in OK;
-  - commit thử trên `main` bị commit-guard chặn;
-  - `node scripts/version.mjs release --dry-run` chạy được;
-  - `node scripts/version.mjs tag` khi HEAD không phải commit release thì báo lỗi;
-  - `node scripts/pr.mjs stale` liệt kê đúng.
-- GitHub, trên chính PR này:
-  - job `verify` xanh;
-  - sau `github-setup.sh`, `gh api repos/{owner}/{repo}/rulesets` thấy ruleset `main`;
-  - `git push origin main` bị từ chối;
-  - auto-merge rebase merge PR;
-  - `pr.mjs cleanup feat/github-pr-flow` xoá được nhánh local.
-- Release, chỉ khi bạn muốn thử ngay: `/release` tạo PR `release/v...`; sau merge, Action `release-tag` tạo tag `v...` trên commit release.
+  - `bash scripts/verify.sh --quick` prints OK;
+  - a test commit on `main` is blocked by commit-guard;
+  - `node scripts/version.mjs release --dry-run` runs;
+  - `node scripts/version.mjs tag` fails when HEAD is not a release commit;
+  - `node scripts/pr.mjs stale` lists the right branches.
+- GitHub, on this very PR:
+  - the `verify` job is green;
+  - after `github-setup.sh`, `gh api repos/{owner}/{repo}/rulesets` shows the `main` ruleset;
+  - `git push origin main` is rejected;
+  - auto-merge rebase-merges the PR;
+  - `pr.mjs cleanup feat/github-pr-flow` deletes the local branch.
+- Release, only if you want to try it now: `/release` creates a `release/v...` PR; after the merge, the `release-tag` Action creates the `v...` tag on the release commit.

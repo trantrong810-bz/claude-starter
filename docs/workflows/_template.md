@@ -1,22 +1,22 @@
 ---
-order: 0 # số thứ tự trong mục lục docs/WORKFLOW.md, không trùng
-title: <Tên quy trình>
-description: <Một câu: quy trình này dùng khi nào, gồm những bước chính nào.>
+order: 0 # position in the docs/WORKFLOW.md index, unique
+title: <Workflow name>
+description: <One sentence: when this workflow is used and its main steps.>
 ---
 
-# <Tên quy trình>
+# <Workflow name>
 
-<Bối cảnh 1–2 câu: khi nào dùng, liên quan command/hook/subagent nào.>
+<1–2 sentences of context: when it is used, which command/hook/subagent it involves.>
 
 ```mermaid
 flowchart TD
-    START(["Bắt đầu"]) --> STEP["Bước"]
-    STEP --> OK{"Bạn duyệt"}
-    OK -->|"OK"| DONE(["Xong"])
-    OK -->|"Sửa"| STEP
+    START(["Start"]) --> STEP["Step"]
+    STEP --> OK{"You approve"}
+    OK -->|"OK"| DONE(["Done"])
+    OK -->|"Change"| STEP
 
     classDef human fill:#fff4d6,stroke:#c98a00,color:#000
     class OK human
 ```
 
-<Ghi chú ngắn sau sơ đồ nếu cần.>
+<Short notes after the diagram if needed.>

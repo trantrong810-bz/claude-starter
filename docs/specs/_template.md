@@ -1,34 +1,34 @@
-# <Tên tính năng>
+# <Feature name>
 
-## Mục tiêu
+## Goal
 
-<Người dùng làm được gì sau khi xong.>
+<What the user can do once this is done.>
 
 ## Contract
 
-<Endpoint, request/response schema trong packages/shared. Chốt ở pha 1, không đổi ở pha 2 trừ khi được duyệt.>
+<Endpoints, request/response schemas in packages/shared. Settled in phase 1; not changed in phase 2 unless approved.>
 
-Quyết định có thể tranh cãi: <mỗi cái 1 dòng, kèm phương án bị loại — sau khi duyệt, mỗi cái thành một ADR>
+Contested decisions: <one line each, with the rejected option — once approved, each becomes an ADR>
 
 ## Plan
 
-<Thay đổi ở backend / client / web / mobile. Ghi rõ mỗi app có UI đáng kể hay chỉ gọi client.>
+<Changes in backend / client / web / mobile. State whether each app has significant UI or only calls the client.>
 
 ## Checklist
 
-- [ ] Pha 1: plan + contract được duyệt
-- [ ] Pha 1: nhánh feat/, shared schema + stub + test backend (đỏ) — commit
-- [ ] Pha 2: backend xanh — commit
-- [ ] Pha 2: client trong shared + test — commit
-- [ ] Pha 2: UI web + mobile — commit
-- [ ] Pha 2: code-reviewer, sửa vấn đề cao/trung
-- [ ] Merge vào main (được duyệt)
+- [ ] Phase 1: plan + contract approved
+- [ ] Phase 1: feat/ branch, shared schema + stubs + backend tests (red) — commit
+- [ ] Phase 2: backend green — commit
+- [ ] Phase 2: client in shared + tests — commit
+- [ ] Phase 2: web + mobile UI — commit
+- [ ] Phase 2: code-reviewer, fix high/medium issues
+- [ ] Merge into main (approved)
 - [ ] /retro
 
-## Tiến độ
+## Progress
 
-<Đang dở ở đâu, bước kế tiếp.>
+<Where it stopped, the next step.>
 
-## Ghi chú
+## Notes
 
-<Quyết định đã chốt, bẫy đã gặp, file quan trọng.>
+<Settled decisions, traps hit, key files.>
