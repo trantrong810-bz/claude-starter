@@ -1,4 +1,8 @@
 {
+  "automation": {
+    "mode": "changelog",
+    "confirmRelease": true
+  },
   "ignore": ["history/", ".claude/state/"],
   "project": {
     "version": "0.1.0",

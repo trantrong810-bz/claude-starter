@@ -1,7 +1,7 @@
 # Changelog
 
 Định dạng theo [Keep a Changelog](https://keepachangelog.com/vi/1.1.0/); version theo [SemVer](https://semver.org/lang/vi/).
-Ghi thay đổi vào mục `Unreleased` cùng commit; `node tools/version.mjs release` sẽ tự chuyển nó thành version mới.
+Ghi thay đổi vào mục `Unreleased` cùng commit (subagent `versioner` tự điền khi bật tự động); `node scripts/version.mjs release` chuyển nó thành version mới.
 
 ## [Unreleased]
 
@@ -9,11 +9,16 @@ Ghi thay đổi vào mục `Unreleased` cùng commit; `node tools/version.mjs re
 
 - Hook `prompt-log.mjs`: ghi mọi prompt (đã che secret) vào `history/prompts/`, kèm model, effort, subagent và commit của từng lượt; tắt bằng `CLAUDE_PROMPT_LOG=off`.
 - Command `/why`: tra cứu theo thứ tự ADR → spec → git → log prompt, trích nguồn và model.
+- Hook `version-guard.sh` (PreToolUse): chặn `git commit` khi phần bị đổi chưa có changelog, theo `automation.mode`.
+- Subagent `versioner` (Haiku): đọc diff, điền `Unreleased` theo Added/Changed/Fixed/Removed và đánh dấu `**BREAKING:**`.
+- Command `/release`: điền changelog thiếu, xem trước, hỏi rồi phát hành; không tự push.
 
 ### Changed
 
 - `verify-on-stop.sh`: khi không đổi code vẫn chạy `verify --quick` (quét secret, kiểm tra ADR).
 - `/plan-feature` và `/retro` tạo ADR cho quyết định có tranh cãi; `CLAUDE.md` có quy tắc ADR và `/why`.
+- `/build-feature`: commit thiếu changelog thì gọi `versioner`; sau merge tự `/release` khi `mode` là `full`.
+- `CLAUDE.md`: quy tắc changelog theo chế độ tự động.
 
 ## [0.1.0] - 2026-11-01
 

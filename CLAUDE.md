@@ -29,7 +29,7 @@
 - Đổi command, hook, subagent hoặc quy tắc phân loại task trong `.claude/` → cập nhật sơ đồ Mermaid trong `docs/WORKFLOW.md` ở cùng commit.
 - Quyết định có tranh cãi (có ≥2 phương án hợp lý) → tạo ADR: `node scripts/adr.mjs new <slug> [--rong] --model <model của bạn>`, điền nội dung, chạy `node scripts/adr.mjs index`. `--rong` khi ảnh hưởng ≥2 phần, đổi quy trình/contract dùng chung, hoặc khó đảo ngược.
 - Tra cứu quyết định và lịch sử prompt: `/why <câu hỏi>`. Không đọc `history/` trừ khi cần tra cứu.
-- Sửa file trong thư mục có `CHANGELOG.md` → thêm một dòng vào mục `Unreleased` của changelog gần nhất (Added / Changed / Fixed / Removed), cùng commit. Không tự sửa số version.
+- Changelog: mỗi phần (khai báo trong `versions.json`) có `CHANGELOG.md`; thay đổi ghi vào mục `Unreleased`, cùng commit. Khi bật tự động (`automation.mode` khác `off`), commit thiếu changelog bị hook chặn → gọi subagent `versioner` rồi commit lại. Không tự sửa số version; phát hành bằng `/release`.
 
 ## Tài liệu (đọc khi cần, đừng đọc hết)
 

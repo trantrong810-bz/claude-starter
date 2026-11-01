@@ -2,7 +2,8 @@
 # Kiểm tra trước khi coi là xong. Output gọn: "VERIFY OK" hoặc chỉ các dòng lỗi => ít token.
 #
 #   bash scripts/verify.sh           nhanh + typecheck/lint/test các package bị ảnh hưởng
-#   bash scripts/verify.sh --quick   chỉ phần nhanh (<1s): quét secret trong history/, kiểm tra ADR
+#   bash scripts/verify.sh --quick   chỉ phần nhanh (<1s): quét secret trong history/, kiểm tra ADR,
+#                                    changelog thiếu (khi bật tự động versioning)
 #
 # Khi có cờ .claude/.allow-red (pha 1: test viết trước, đỏ có chủ đích):
 # vẫn chạy typecheck + lint, chỉ bỏ qua test.
@@ -15,6 +16,9 @@ if [ -f .claude/hooks/prompt-log.mjs ] && [ -d history ]; then
 fi
 if [ -f scripts/adr.mjs ] && [ -d docs/decisions ]; then
   node scripts/adr.mjs check || fail=1
+fi
+if [ -f scripts/version.mjs ] && [ -f versions.json ]; then
+  node scripts/version.mjs check --auto >/dev/null 2>&1 || node scripts/version.mjs check --auto || fail=1
 fi
 
 if [ "$1" = "--quick" ]; then

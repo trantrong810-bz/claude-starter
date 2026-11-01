@@ -27,19 +27,22 @@ SETUP.md                         # hướng dẫn cài đặt chi tiết
   commands/handoff.md            # /handoff — ghi tiến độ trước /clear
   commands/retro.md              # /retro — biến lỗi thành lint/hook/CLAUDE.md
   commands/why.md                # /why — tra cứu quyết định và lịch sử prompt
+  commands/release.md            # /release — điền changelog thiếu, xem trước, phát hành
+  agents/versioner.md            # subagent điền changelog từ diff (Haiku)
+  hooks/version-guard.sh         # chặn git commit thiếu changelog
   hooks/prompt-log.mjs           # ghi prompt + model xử lý vào history/
   agents/app-builder.md          # subagent làm một app (web hoặc mobile)
   agents/code-reviewer.md        # subagent review diff (Sonnet)
 scripts/verify.sh                # typecheck + lint + test phần bị ảnh hưởng
 scripts/try-example.sh           # dựng demo chạy được từ example/
 scripts/adr.mjs                  # tạo, đánh mục lục, kiểm tra ADR
+scripts/version.mjs              # init / list / mode / check / release
 example/                         # monorepo mẫu tối giản
 docs/specs/_template.md          # mẫu spec cho mỗi tính năng
 docs/WORKFLOW.md                 # sơ đồ Mermaid: quy trình, lớp bảo vệ, tra cứu, phát hành
 docs/decisions/                  # ADR — mọi quyết định có tranh cãi; R = ảnh hưởng rộng
 history/prompts/                 # log prompt (commit, ngoài versioning)
 versions.json                    # bảng phần → đường dẫn, version
-tools/version.mjs                # list / check / release (chỉ dùng trong repo kit)
 CHANGELOG.md                     # changelog toàn dự án; mỗi phần có CHANGELOG.md riêng
 ```
 
@@ -136,11 +139,23 @@ Mỗi phần có version SemVer và `CHANGELOG.md` riêng; toàn dự án có ve
 File khớp nhiều đường dẫn thuộc về đường dẫn dài nhất, nên mỗi thay đổi chỉ tính cho một phần.
 
 ```bash
-node tools/version.mjs list               # version hiện tại
-node tools/version.mjs check              # phần nào đổi file mà chưa ghi changelog
-node tools/version.mjs release --dry-run  # xem trước
-node tools/version.mjs release            # bump, ghi changelog, commit, tag
+node scripts/version.mjs init               # dự án mới: tạo versions.json + CHANGELOG.md
+node scripts/version.mjs list               # version hiện tại
+node scripts/version.mjs mode               # chế độ tự động đang áp dụng
+node scripts/version.mjs check              # phần nào đổi file mà chưa ghi changelog
+node scripts/version.mjs release --dry-run  # xem trước
+node scripts/version.mjs release            # bump, ghi changelog, commit, tag
 git push && git push --tags
 ```
 
-Khi làm việc chỉ ghi vào mục `Unreleased`; không tự sửa số version. Mức bump suy ra từ changelog: `### Removed` hoặc `BREAKING` → major, `### Added` → minor, còn lại → patch (ở `0.x`, major hạ xuống minor). Sơ đồ: [docs/WORKFLOW.md](docs/WORKFLOW.md#phát-hành-version).
+**Tự động** (cấu hình trong `versions.json`): `"automation": { "mode": "changelog", "confirmRelease": true }`.
+
+| mode                   | Hành vi                                                                                                 |
+| ---------------------- | ------------------------------------------------------------------------------------------------------- |
+| `off`                  | Không tự động, không chặn commit; `check` chỉ chạy lúc phát hành.                                       |
+| `changelog` (mặc định) | Hook chặn `git commit` thiếu changelog; subagent `versioner` (Haiku) đọc diff và tự điền `Unreleased`.  |
+| `full`                 | Như `changelog`, thêm tự chạy `/release` sau khi merge vào main (hỏi trước nếu `confirmRelease: true`). |
+
+Tắt cho một session trên máy mà không sửa repo: `CLAUDE_AUTO_VERSION=off`. Dự án mới: `node scripts/version.mjs init` tạo `versions.json` và changelog cho mỗi app/package.
+
+Không tự sửa số version. Mức bump suy ra từ changelog: `### Removed` hoặc `BREAKING` → major, `### Added` → minor, còn lại → patch (ở `0.x`, major hạ xuống minor). Sơ đồ: [docs/WORKFLOW.md](docs/WORKFLOW.md#phát-hành-version).

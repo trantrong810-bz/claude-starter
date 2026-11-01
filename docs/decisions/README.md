@@ -20,6 +20,8 @@
 | 0009 | [Version và changelog riêng cho từng phần; mức bump suy ra từ changelog; chỉ tag version dự án](0009R-version-theo-tung-phan.md) | Chấp nhận  | 2026-11-01 | claude-opus-5-5 |
 | 0010 | [Log prompt commit lên git, nằm ngoài versioning, ghi model xử lý, không ghi câu trả lời](0010R-log-prompt-trong-git.md)         | Chấp nhận  | 2026-11-01 | claude-opus-5-5 |
 | 0011 | [Mọi quyết định có tranh cãi đều có ADR; quyết định ảnh hưởng rộng được đánh dấu R](0011R-adr-cho-quyet-dinh-tranh-cai.md)       | Chấp nhận  | 2026-11-01 | claude-opus-5-5 |
+| 0012 | [Công cụ version đi theo kit, dự án mới tạo cấu hình bằng `init`](0012R-cong-cu-version-di-theo-kit.md)                          | Chấp nhận  | 2026-11-01 | claude-opus-5-5 |
+| 0013 | [Tự động versioning bằng hook chặn commit và subagent `versioner` (Haiku), có chế độ tắt](0013R-tu-dong-versioning.md)           | Chấp nhận  | 2026-11-01 | claude-opus-5-5 |
 
 ## Cấp tính năng
 

@@ -17,7 +17,9 @@
       "Bash(rm .claude/.allow-red)",
       "Bash(rm -f .claude/.allow-red)",
       "Bash(docker compose ps)",
-      "Bash(docker compose logs:*)"
+      "Bash(docker compose logs:*)",
+      "Bash(node scripts/version.mjs:*)",
+      "Bash(node scripts/adr.mjs:*)"
     ],
     "deny": [
       "Read(./.env)",
@@ -35,37 +37,80 @@
     "SessionStart": [
       {
         "hooks": [
-          { "type": "command", "command": "bash .claude/hooks/session-context.sh" },
-          { "type": "command", "command": "node .claude/hooks/prompt-log.mjs session-start" }
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/session-context.sh"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/prompt-log.mjs session-start"
+          }
         ]
       }
     ],
     "UserPromptSubmit": [
       {
-        "hooks": [{ "type": "command", "command": "node .claude/hooks/prompt-log.mjs prompt" }]
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/prompt-log.mjs prompt"
+          }
+        ]
       }
     ],
     "PostModelSwitch": [
       {
-        "hooks": [{ "type": "command", "command": "node .claude/hooks/prompt-log.mjs model-switch" }]
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/prompt-log.mjs model-switch"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/version-guard.sh"
+          }
+        ]
       }
     ],
     "PostToolUse": [
       {
         "matcher": "Edit|Write|MultiEdit",
-        "hooks": [{ "type": "command", "command": "bash .claude/hooks/format.sh" }]
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/format.sh"
+          }
+        ]
       }
     ],
     "SubagentStop": [
       {
-        "hooks": [{ "type": "command", "command": "node .claude/hooks/prompt-log.mjs subagent" }]
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/prompt-log.mjs subagent"
+          }
+        ]
       }
     ],
     "Stop": [
       {
         "hooks": [
-          { "type": "command", "command": "bash .claude/hooks/verify-on-stop.sh" },
-          { "type": "command", "command": "node .claude/hooks/prompt-log.mjs stop" }
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/verify-on-stop.sh"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/prompt-log.mjs stop"
+          }
         ]
       }
     ]

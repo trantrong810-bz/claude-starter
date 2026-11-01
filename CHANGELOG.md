@@ -1,14 +1,22 @@
 # Changelog — claude-starter
 
 Version toàn dự án. Mỗi bản phát hành liệt kê version của từng phần; chi tiết nằm trong changelog của phần đó.
-Thay đổi không thuộc phần nào (ví dụ `tools/`, `versions.json`) ghi vào mục `Unreleased` bên dưới.
+Thay đổi không thuộc phần nào (ví dụ `versions.json`) ghi vào mục `Unreleased` bên dưới.
 
 ## [Unreleased]
 
 ### Added
 
 - `history/prompts/`: lịch sử prompt (commit lên git, ngoài versioning), điền lại cuộc trò chuyện dựng kit trên claude.ai.
-- `versions.json`: danh sách `ignore`; `tools/version.mjs` bỏ qua các đường dẫn này. `.gitignore` gốc.
+- `versions.json`: danh sách `ignore`; công cụ version bỏ qua các đường dẫn này. `.gitignore` gốc.
+
+### Removed
+
+- **BREAKING:** `tools/version.mjs` chuyển thành `scripts/version.mjs`; lệnh cũ không còn.
+
+### Changed
+
+- `versions.json`: thêm `automation` (`mode: changelog`, `confirmRelease: true`) cho chính repo kit.
 
 ## [0.1.0] - 2026-11-01
 

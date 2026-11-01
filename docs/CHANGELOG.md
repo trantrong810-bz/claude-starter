@@ -1,7 +1,7 @@
 # Changelog
 
 Định dạng theo [Keep a Changelog](https://keepachangelog.com/vi/1.1.0/); version theo [SemVer](https://semver.org/lang/vi/).
-Ghi thay đổi vào mục `Unreleased` cùng commit; `node tools/version.mjs release` sẽ tự chuyển nó thành version mới.
+Ghi thay đổi vào mục `Unreleased` cùng commit (subagent `versioner` tự điền khi bật tự động); `node scripts/version.mjs release` chuyển nó thành version mới.
 
 ## [Unreleased]
 
@@ -10,10 +10,13 @@ Ghi thay đổi vào mục `Unreleased` cùng commit; `node tools/version.mjs re
 - `docs/decisions/`: mẫu ADR, mục lục tự sinh và 11 ADR cho các quyết định đã đưa ra khi dựng kit.
 - `WORKFLOW.md`: sơ đồ tra cứu lịch sử; điểm tạo ADR và hook ghi log trong các sơ đồ cũ.
 - README, SETUP: mục lịch sử prompt và quyết định.
+- ADR 0012R (công cụ version đi theo kit) và 0013R (tự động versioning, chế độ tắt).
 
 ### Changed
 
 - Mẫu spec: dòng "Quyết định có thể tranh cãi" trong Contract.
+- `WORKFLOW.md`: hook chặn commit trong sơ đồ bảo vệ; sơ đồ phát hành theo `automation.mode`.
+- README, SETUP: cấu hình tự động versioning và `version.mjs init`.
 
 ## [0.1.0] - 2026-11-01
 
