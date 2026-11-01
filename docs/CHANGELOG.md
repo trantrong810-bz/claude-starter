@@ -7,6 +7,7 @@ Ghi thay đổi vào mục `Unreleased` cùng commit (subagent `versioner` tự 
 
 ### Added
 
+- ADR 0020R: everything in the repo is English except hand-written todo files; spec `docs/specs/english-only.md`.
 - `GIT.md`: mục "Snapshot WIP", ngoại lệ verify cho commit chỉ gồm todo/spec/plan, `/handoff` được push.
 - `WORKFLOW.md`: sơ đồ "Đổi máy hoặc tài khoản", usage-guard trong lớp bảo vệ.
 - README, SETUP: todo hai lớp, đổi máy/tài khoản; ADR 0017R; `docs/plans/todo-wip.md`.

@@ -26,6 +26,7 @@ Ghi thay đổi vào mục `Unreleased` cùng commit (subagent `versioner` tự 
 
 ### Changed
 
+- `CLAUDE.md` is written in English and adds the language rule: everything in the repo is English except hand-written todo files (ADR 0020R).
 - **BREAKING:** commit trên `main` bị chặn (commit-guard cho Claude, `.githooks/pre-commit` cho người); mọi thay đổi vào `main` qua PR bằng `/ship`. `/build-feature` và `/release` dùng `/ship` thay cho merge `--ff-only` local; `/release` làm trên nhánh `release/vX.Y.Z`, không tự tag.
 - `commit-guard.sh`: nhận nhánh `release/vX.Y.Z`; chỉ xét cờ của chính lệnh `git commit` (không còn chặn nhầm `sed -n ... && git commit`).
 - `session-context.sh`: tách nhánh đã merge trên GitHub (gợi ý `pr.mjs cleanup`) và nhánh chưa merge.
