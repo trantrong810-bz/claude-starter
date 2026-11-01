@@ -41,7 +41,8 @@ if [ -f .claude/.allow-red ]; then
 fi
 
 log=$(mktemp)
-pnpm turbo run $tasks --filter='...[HEAD]' --continue --output-logs=errors-only >"$log" 2>&1
+# VERIFY_BASE: mốc so sánh để chọn package bị ảnh hưởng (CI đặt origin/main; máy local: thay đổi chưa commit).
+pnpm turbo run $tasks --filter="...[${VERIFY_BASE:-HEAD}]" --continue --output-logs=errors-only >"$log" 2>&1
 code=$?
 
 if [ $code -ne 0 ]; then

@@ -7,6 +7,9 @@ Ghi thay đổi vào mục `Unreleased` cùng commit (subagent `versioner` tự 
 
 ### Added
 
+- `pr.mjs`: `stale`, `cleanup <nhánh>` dọn nhánh local sau khi GitHub rebase-merge (so theo patch, chỉ xoá khi mọi commit đã có trên main).
+- `github-setup.sh`: ruleset `main` (chỉ qua PR, CI `verify` xanh, lịch sử thẳng, chỉ rebase), bật auto-merge; chạy lại được.
+- `version.mjs`: `release --no-tag` (phát hành qua PR), `tag` gắn tag cho commit `release: vX.Y.Z` (CI chạy sau merge).
 - `workflow.mjs`: `index` sinh mục lục `docs/WORKFLOW.md` từ front-matter `docs/workflows/*.md`, `check` chạy trong verify.
 - `todo.mjs`: `sync` (viết tay → auto, sinh `TODO.md`), `check` (chạy trong verify), `brief`.
 - `wip.mjs`: `save`, `status`, `restore`, `drop` snapshot code dở ở ref `wip/<nhánh>`.
@@ -17,6 +20,7 @@ Ghi thay đổi vào mục `Unreleased` cùng commit (subagent `versioner` tự 
 
 ### Changed
 
+- `verify.sh`: biến `VERIFY_BASE` chọn mốc so sánh package bị ảnh hưởng (CI đặt `origin/main`; mặc định `HEAD`).
 - `verify.sh`: thêm phần nhanh (quét secret trong `history/`, kiểm tra ADR) và cờ `--quick`.
 - `try-example.sh`: không chép ADR của kit sang dự án demo.
 - `verify.sh --quick`: kiểm tra thêm changelog thiếu khi bật tự động.
