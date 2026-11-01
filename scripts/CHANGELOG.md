@@ -7,6 +7,7 @@ Ghi thay đổi vào mục `Unreleased` cùng commit (subagent `versioner` tự 
 
 ### Added
 
+- `workflow.mjs`: `index` sinh mục lục `docs/WORKFLOW.md` từ front-matter `docs/workflows/*.md`, `check` chạy trong verify.
 - `todo.mjs`: `sync` (viết tay → auto, sinh `TODO.md`), `check` (chạy trong verify), `brief`.
 - `wip.mjs`: `save`, `status`, `restore`, `drop` snapshot code dở ở ref `wip/<nhánh>`.
 - `verify.sh` chạy `todo.mjs check`; `.githooks/pre-commit` tự sync todo khi commit file viết tay.

@@ -25,6 +25,7 @@ Ghi thay đổi vào mục `Unreleased` cùng commit (subagent `versioner` tự 
 
 ### Changed
 
+- `CLAUDE.md`, `/retro`: sơ đồ quy trình nằm ở `docs/workflows/`; quy trình mới chép `_template.md` rồi chạy `workflow.mjs index`.
 - `format.sh`: format thêm `.mjs`, `.cjs`, `.yml`, `.yaml` (cùng danh sách với `.githooks/pre-commit`).
 - `verify-on-stop.sh`: khi không đổi code vẫn chạy `verify --quick` (quét secret, kiểm tra ADR).
 - `/plan-feature` và `/retro` tạo ADR cho quyết định có tranh cãi; `CLAUDE.md` có quy tắc ADR và `/why`.

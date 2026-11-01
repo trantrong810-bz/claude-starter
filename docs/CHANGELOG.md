@@ -22,6 +22,7 @@ Ghi thay đổi vào mục `Unreleased` cùng commit (subagent `versioner` tự 
 
 ### Changed
 
+- `WORKFLOW.md` thành mục lục tự sinh; mỗi sơ đồ quy trình một file trong `docs/workflows/` (kèm `_template.md`); ADR 0018. README trỏ thẳng tới file con.
 - Mẫu spec: dòng "Quyết định có thể tranh cãi" trong Contract.
 - `WORKFLOW.md`: hook chặn commit trong sơ đồ bảo vệ; sơ đồ phát hành theo `automation.mode`.
 - README, SETUP: cấu hình tự động versioning và `version.mjs init`.
