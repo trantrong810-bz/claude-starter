@@ -4,12 +4,12 @@
 
 | Phần     | Viết tay                         | Tự động                                    | WIP   | Todo tay | Todo auto | P1    | Đang làm |
 | -------- | -------------------------------- | ------------------------------------------ | ----- | -------- | --------- | ----- | -------- |
-| root     | [root.md](docs/todo/root.md)     | [root.auto.md](docs/todo/root.auto.md)     | 0     | 0        | 0         | 0     | —        |
+| root     | [root.md](docs/todo/root.md)     | [root.auto.md](docs/todo/root.auto.md)     | 0     | 1        | 0         | 0     | —        |
 | shared   | [shared.md](docs/todo/shared.md) | [shared.auto.md](docs/todo/shared.auto.md) | 0     | 0        | 0         | 0     | —        |
 | be       | [be.md](docs/todo/be.md)         | [be.auto.md](docs/todo/be.auto.md)         | 0     | 0        | 0         | 0     | —        |
 | fe       | [fe.md](docs/todo/fe.md)         | [fe.auto.md](docs/todo/fe.auto.md)         | 0     | 0        | 0         | 0     | —        |
 | mobile   | [mobile.md](docs/todo/mobile.md) | [mobile.auto.md](docs/todo/mobile.auto.md) | 0     | 0        | 0         | 0     | —        |
-| **Tổng** |                                  |                                            | **0** | **0**    | **0**     | **0** |          |
+| **Tổng** |                                  |                                            | **0** | **1**    | **0**     | **0** |          |
 
 ## Cách dùng
 
