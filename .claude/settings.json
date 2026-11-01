@@ -1,4 +1,10 @@
 {
+  "plansDirectory": "docs/plans",
+  "autoMemoryEnabled": false,
+  "statusLine": {
+    "type": "command",
+    "command": "node .claude/hooks/statusline.mjs"
+  },
   "permissions": {
     "allow": [
       "Bash(pnpm verify)",
@@ -19,7 +25,9 @@
       "Bash(docker compose ps)",
       "Bash(docker compose logs:*)",
       "Bash(node scripts/version.mjs:*)",
-      "Bash(node scripts/adr.mjs:*)"
+      "Bash(node scripts/adr.mjs:*)",
+      "Bash(node scripts/wip.mjs:*)",
+      "Bash(node scripts/todo.mjs:*)"
     ],
     "deny": [
       "Read(./.env)",
@@ -31,17 +39,13 @@
       "Bash(git push --force:*)",
       "Bash(git push -f:*)",
       "Bash(git reset --hard:*)",
-      "Bash(git clean:*)", 
-      "Bash(git branch -D:*)", 
-      "Bash(git tag -d:*)", 
-      "Bash(git commit --no-verify:*)", 
+      "Bash(git clean:*)",
+      "Bash(git branch -D:*)",
+      "Bash(git tag -d:*)",
+      "Bash(git commit --no-verify:*)",
       "Bash(git config:*)"
     ],
-    "ask": [
-      "Bash(git push:*)",
-      "Bash(git rebase:*)",
-      "Bash(git tag:*)"
-    ]
+    "ask": ["Bash(git push:*)", "Bash(git rebase:*)", "Bash(git tag:*)"]
   },
   "hooks": {
     "SessionStart": [
@@ -80,6 +84,14 @@
     ],
     "PreToolUse": [
       {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/usage-guard.mjs pre"
+          }
+        ]
+      },
+      {
         "matcher": "Bash",
         "hooks": [
           {
@@ -117,6 +129,10 @@
     "Stop": [
       {
         "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/usage-guard.mjs stop"
+          },
           {
             "type": "command",
             "command": "bash .claude/hooks/verify-on-stop.sh"

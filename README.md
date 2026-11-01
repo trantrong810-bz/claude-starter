@@ -29,7 +29,11 @@ SETUP.md                         # hướng dẫn cài đặt chi tiết
   hooks/verify-on-stop.sh        # chặn kết thúc khi verify đỏ
   commands/plan-feature.md       # /plan-feature — pha 1: plan, contract, test đỏ
   commands/build-feature.md      # /build-feature — pha 2: test xanh, web+mobile song song
-  commands/handoff.md            # /handoff — ghi tiến độ trước /clear
+  commands/handoff.md            # /handoff — lưu todo, spec, code dở + push (đổi máy/tài khoản)
+  commands/resume.md             # /resume — làm tiếp trên máy/tài khoản khác
+  commands/todo.md               # /todo — todo theo phần, hai lớp
+  hooks/statusline.mjs           # usage 5h/7d/context → .claude/state/usage.json
+  hooks/usage-guard.mjs          # usage ≥ 90%: chỉ cho /handoff rồi dừng
   commands/retro.md              # /retro — biến lỗi thành lint/hook/CLAUDE.md
   commands/why.md                # /why — tra cứu quyết định và lịch sử prompt
   commands/release.md            # /release — điền changelog thiếu, xem trước, phát hành
@@ -44,6 +48,11 @@ scripts/try-example.sh           # dựng demo chạy được từ example/
 scripts/adr.mjs                  # tạo, đánh mục lục, kiểm tra ADR
 scripts/version.mjs              # init / list / mode / check / release
 scripts/commit-msg.mjs           # kiểm tra commit message (Conventional Commits)
+scripts/todo.mjs                 # đồng bộ todo viết tay → auto, sinh TODO.md
+scripts/wip.mjs                  # snapshot code dở lên wip/<nhánh>, restore ở máy khác
+TODO.md                          # tổng quan todo mọi phần (tự sinh)
+docs/todo/                       # <phần>.md viết tay + <phần>.auto.md Claude ghi
+docs/plans/                      # file plan của plan mode
 .githooks/                       # commit-msg + pre-commit (Prettier file đã stage) cho người
 .gitattributes                   # LF cho mọi file text
 docs/GIT.md                      # quy ước git — nạp vào mọi session
@@ -122,6 +131,12 @@ Vì sao như vậy:
 ### Cải tiến dần — tự động qua `/retro`
 
 Sau mỗi task lớn, `/retro` đề xuất cách khắc phục rẻ nhất cho từng lỗi đã gặp, theo thứ tự: lint rule/hook → một dòng CLAUDE.md → command mới. Nó cũng đề xuất xóa dòng CLAUDE.md đã thừa, để file luôn ngắn.
+
+## Todo và làm tiếp ở máy khác
+
+Mỗi phần (root, shared, be, fe, mobile) có hai file: `docs/todo/<phần>.md` bạn viết tay, `docs/todo/<phần>.auto.md` Claude ghi (đang làm, việc phát sinh, đã xong). `TODO.md` ở gốc là bảng tổng quan tự sinh, trỏ tới cả hai. Commit file viết tay → hook tự cập nhật file auto và `TODO.md` vào cùng commit.
+
+Đổi máy hoặc tài khoản: `/handoff` (todo + spec + code dở lên `wip/<nhánh>`, push) → máy mới `git pull`, `/resume`. Khi usage 5h/7d chạm 90%, hook ép làm `/handoff` rồi dừng. Chi tiết: [SETUP.md](SETUP.md#vòng-làm-việc), sơ đồ: [docs/WORKFLOW.md](docs/WORKFLOW.md#đổi-máy-hoặc-tài-khoản).
 
 ## Lịch sử prompt và quyết định
 

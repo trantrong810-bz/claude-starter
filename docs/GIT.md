@@ -47,6 +47,8 @@ Ví dụ: `feat(todos): add contract, stub and failing tests` · `fix(shared): e
 - Không commit: `.env*` (trừ `.env.example`), secret, token, build output, `node_modules/`, `.claude/state/`, `.claude/.allow-red`, `CLAUDE.local.md`.
 - `history/prompts/` do hook ghi; đi kèm commit bất kỳ, không cần commit riêng.
 - Không dùng `--no-verify`. Hook chặn thì sửa nguyên nhân.
+- Ngoại lệ verify: commit **chỉ** gồm `TODO.md`, `docs/todo/`, `docs/specs/`, `docs/plans/` (ví dụ `/handoff` giữa chừng) được phép khi verify đỏ — code dở đi theo snapshot WIP, không vào commit.
+- Commit có file todo viết tay (`docs/todo/<phần>.md`) → hook tự chạy `todo.mjs sync` và stage file auto + `TODO.md` vào cùng commit.
 
 ## Nhánh
 
@@ -79,9 +81,17 @@ Ví dụ: `feat(todos): add contract, stub and failing tests` · `fix(shared): e
 - Tag dạng `vX.Y.Z` (annotated), **chỉ** tạo bởi `node scripts/version.mjs release` (`/release`). Không tạo, sửa, xoá tag bằng tay.
 - `version.mjs` so thay đổi với tag gần nhất; thiếu tag → `check` báo thiếu changelog cho cả lịch sử.
 
+## Snapshot WIP
+
+Code đang sửa dở mang sang máy/tài khoản khác bằng `node scripts/wip.mjs` (gọi qua `/handoff`, `/resume`), không bằng commit "WIP".
+
+- Ref `refs/heads/wip/<nhánh>` trên remote: một commit rời, cha = HEAD của nhánh, chứa toàn bộ working tree trừ `history/`. Chỉ `wip.mjs` tạo (force-update), áp và xoá.
+- Không checkout, không merge, không tạo nhánh từ `wip/*`. `restore` áp thay đổi vào working tree (chưa stage) rồi xoá ref trên remote.
+- `restore` từ chối khi working tree bẩn hoặc snapshot cũ (nhánh đã có commit sau khi chụp) — hỏi người, không tự bỏ thay đổi.
+
 ## Push và remote
 
-- Claude **không tự push**; chỉ push khi người yêu cầu trong lượt đó. Người push: `git push && git push origin vX.Y.Z`.
+- Claude **không tự push**; chỉ push khi người yêu cầu trong lượt đó. Gọi `/handoff` là yêu cầu push (nhánh hiện tại + `wip/<nhánh>`). Người push: `git push && git push origin vX.Y.Z`.
 - Cấm: `push --force`, `reset --hard` (`deny` trong `settings.json`); `clean`, `branch -D`, `tag -d`, `git config` (không dùng; muốn ép thì thêm vào `deny`, xem SETUP.md).
 - Muốn bỏ thay đổi chưa commit: hỏi người trước — `restore`/`checkout -- <file>` không lấy lại được.
 

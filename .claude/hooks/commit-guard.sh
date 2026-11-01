@@ -41,12 +41,11 @@ if [ -n "$errors" ]; then
   { echo "Commit bị chặn (docs/GIT.md):"; printf '%s' "$errors"; } >&2
   exit 2
 fi
-exit 0
 
-'
-
-if [ -n "$errors" ]; then
-  { echo "Commit bị chặn (docs/GIT.md):"; printf '%s' "$errors"; } >&2
-  exit 2
+# Máy chưa bật .githooks: tự đồng bộ todo như pre-commit. File viết tay có thể được `git add` ngay trong lệnh này.
+if [ "$(git config core.hooksPath)" != ".githooks" ] && \
+   { git diff --cached --name-only | grep -qE '^docs/todo/[a-z]+\.md$' || \
+     printf '%s' "$cmd" | grep -q 'docs/todo'; }; then
+  node scripts/todo.mjs sync >/dev/null && git add -- TODO.md docs/todo/
 fi
 exit 0

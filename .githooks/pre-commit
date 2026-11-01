@@ -24,6 +24,11 @@ if [ -f .claude/.allow-red ] && [ "$branch" = "main" ]; then
   fail=1
 fi
 
+# Commit có file todo viết tay → đồng bộ file auto + TODO.md vào cùng commit (scripts/todo.mjs).
+if [ $fail -eq 0 ] && printf '%s\n' "$staged" | grep -qE '^docs/todo/[a-z]+\.md$'; then
+  node scripts/todo.mjs sync >/dev/null && git add -- TODO.md docs/todo/ || fail=1
+fi
+
 # Prettier cho file đã stage (sửa tay ngoài VSCode, quên format), rồi stage lại.
 # Chỉ chạy khi dự án cài Prettier; cùng danh sách đuôi với .claude/hooks/format.sh.
 if [ $fail -eq 0 ] && [ -e node_modules/.bin/prettier ]; then

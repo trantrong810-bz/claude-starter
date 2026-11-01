@@ -3,7 +3,13 @@
     "mode": "changelog",
     "confirmRelease": true
   },
-  "ignore": ["history/", ".claude/state/"],
+  "ignore": [
+    "history/",
+    ".claude/state/",
+    "TODO.md",
+    "docs/todo/",
+    "docs/plans/"
+  ],
   "project": {
     "version": "0.1.0",
     "changelog": "CHANGELOG.md"

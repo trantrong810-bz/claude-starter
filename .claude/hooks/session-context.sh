@@ -20,6 +20,9 @@ if [ -n "$out" ]; then
   printf '%s' "$out"
 fi
 
+# Todo hai lớp (TODO.md, docs/todo/): tổng số + việc đang làm
+[ -f scripts/todo.mjs ] && node scripts/todo.mjs brief
+
 # Trạng thái git (quy ước: docs/GIT.md, đã nạp qua CLAUDE.md)
 if git rev-parse --git-dir >/dev/null 2>&1; then
   branch=$(git branch --show-current)
@@ -29,6 +32,9 @@ if git rev-parse --git-dir >/dev/null 2>&1; then
   echo "$git_out."
   unmerged=$(git branch --format='%(refname:short)' --no-merged main 2>/dev/null | tr '\n' ' ')
   [ -n "$unmerged" ] && [ "$branch" = "main" ] && echo "- Nhánh chưa merge vào main: $unmerged"
+  # Snapshot code dở (scripts/wip.mjs) — chỉ xem ref đã fetch, không gọi mạng để hook nhanh.
+  wips=$(git for-each-ref --format='%(refname:lstrip=4)' refs/remotes/origin/wip/ 2>/dev/null | tr '\n' ' ')
+  [ -n "$wips" ] && echo "- Có snapshot code dở: $wips— chạy /resume để áp vào."
   [ "$(git config core.hooksPath)" = ".githooks" ] || [ ! -d .githooks ] || \
     echo "- Git hook chưa bật cho người: nhắc người dùng chạy git config core.hooksPath .githooks"
   if [ -f versions.json ]; then

@@ -5,8 +5,16 @@ Ghi thay đổi vào mục `Unreleased` cùng commit (subagent `versioner` tự 
 
 ## [Unreleased]
 
+### Fixed
+
+- `commit-guard.sh`: bỏ đoạn lặp thừa có dấu nháy lạc sau `exit 0`.
+
 ### Added
 
+- `/todo`, `/resume`; `/handoff` lưu cả todo auto, plan và code dở (`wip.mjs save`) rồi push.
+- Hook `statusline.mjs` (usage 5h/7d/context) và `usage-guard.mjs`: usage ≥ 90% chỉ cho `/handoff`, lưu xong thì dừng; ngưỡng `CLAUDE_WIP_THRESHOLD`.
+- `settings.json`: `plansDirectory: docs/plans`, `autoMemoryEnabled: false` — mọi trạng thái nằm trong repo.
+- SessionStart báo todo đang làm và snapshot `wip/*`; commit-guard tự sync todo khi chưa bật `.githooks`.
 - Hook `prompt-log.mjs`: ghi mọi prompt (đã che secret) vào `history/prompts/`, kèm model, effort, subagent và commit của từng lượt; tắt bằng `CLAUDE_PROMPT_LOG=off`.
 - Command `/why`: tra cứu theo thứ tự ADR → spec → git → log prompt, trích nguồn và model.
 - Hook `version-guard.sh` (PreToolUse): chặn `git commit` khi phần bị đổi chưa có changelog, theo `automation.mode`.
