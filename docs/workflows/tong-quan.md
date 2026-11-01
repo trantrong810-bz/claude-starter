@@ -1,7 +1,7 @@
 ---
-thu-tu: 1
-tieu-de: Tổng quan
-mo-ta: Phân loại task; task lớn qua pha 1 (Opus) và pha 2 (Sonnet), merge, retro.
+order: 1
+title: Tổng quan
+description: Phân loại task; task lớn qua pha 1 (Opus) và pha 2 (Sonnet), merge, retro.
 ---
 
 # Tổng quan

@@ -1,7 +1,7 @@
 ---
-thu-tu: 0 # số thứ tự trong mục lục docs/WORKFLOW.md, không trùng
-tieu-de: <Tên quy trình>
-mo-ta: <Một câu: quy trình này dùng khi nào, gồm những bước chính nào.>
+order: 0 # số thứ tự trong mục lục docs/WORKFLOW.md, không trùng
+title: <Tên quy trình>
+description: <Một câu: quy trình này dùng khi nào, gồm những bước chính nào.>
 ---
 
 # <Tên quy trình>

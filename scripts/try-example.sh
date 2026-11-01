@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-# Tạo một monorepo demo chạy được ngay: example/ + toàn bộ cấu hình Claude Code.
-# Dùng: bash scripts/try-example.sh [thư-mục-đích]   (mặc định ../claude-starter-demo)
+# Create a ready-to-run demo monorepo: example/ + the full Claude Code setup.
+# Usage: bash scripts/try-example.sh [target-dir]   (default ../claude-starter-demo)
 set -euo pipefail
 
 root="$(cd "$(dirname "$0")/.." && pwd)"
 dest="${1:-$root/../claude-starter-demo}"
 
 if [ -e "$dest" ]; then
-  echo "Thư mục đã tồn tại: $dest — chọn đường dẫn khác." >&2
+  echo "Directory already exists: $dest — pick another path." >&2
   exit 1
 fi
 
@@ -15,7 +15,7 @@ mkdir -p "$dest"
 cp -r "$root/example/." "$dest/"
 cp -r "$root/.claude" "$root/.githooks" "$root/.vscode" "$root/scripts" "$root/docs" "$root/CLAUDE.md" "$root/.gitattributes" "$dest/"
 rm -f "$dest/scripts/try-example.sh"
-# ADR của kit là lịch sử của kit, không phải của dự án mới: chỉ giữ mẫu và mục lục trống.
+# The kit's ADRs are the kit's history, not the new project's: keep only the template and an empty index.
 find "$dest/docs/decisions" -name "0*.md" -delete 2>/dev/null
 chmod +x "$dest/.claude/hooks/"*.sh "$dest/scripts/"*.sh "$dest/.githooks/"*
 
@@ -29,5 +29,5 @@ node scripts/version.mjs init >/dev/null
 git add -A
 git -c user.name="demo" -c user.email="demo@example.com" commit -qm "chore: initial demo"
 
-echo "Demo sẵn sàng tại: $dest"
-echo "Thử: cd \"$dest\" && pnpm verify && claude"
+echo "Demo ready at: $dest"
+echo "Try: cd \"$dest\" && pnpm verify && claude"

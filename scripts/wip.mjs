@@ -1,14 +1,14 @@
 #!/usr/bin/env node
-// Snapshot code đang sửa dở lên remote, để làm tiếp ở máy hoặc tài khoản Claude khác. Không phụ thuộc thư viện ngoài.
+// Snapshot unfinished work to the remote so it can continue on another machine or Claude account. No external dependencies.
 //
-//   node scripts/wip.mjs save               chụp working tree (cả file mới, trừ history/) → push nhánh + wip/<nhánh>
-//   node scripts/wip.mjs status             fetch và liệt kê snapshot trên remote
-//   node scripts/wip.mjs restore [nhánh]    áp snapshot vào working tree (phải sạch), rồi xoá snapshot trên remote
-//   node scripts/wip.mjs drop <nhánh>       xoá snapshot trên remote
+//   node scripts/wip.mjs save               snapshot the working tree (new files too, except history/) → push branch + wip/<branch>
+//   node scripts/wip.mjs status             fetch and list the snapshots on the remote
+//   node scripts/wip.mjs restore [branch]   apply a snapshot to the (clean) working tree, then delete it on the remote
+//   node scripts/wip.mjs drop <branch>      delete a snapshot on the remote
 //
-// Snapshot là một commit rời (cha = HEAD của nhánh) ở ref refs/heads/wip/<nhánh>: không đổi working tree,
-// index hay lịch sử nhánh thật, không bao giờ được checkout hay merge. Quy ước: docs/GIT.md mục "Snapshot WIP".
-// history/ bị loại vì hook ghi prompt sửa nó ở mọi máy — đưa vào sẽ luôn xung đột khi restore.
+// A snapshot is a detached commit (parent = the branch HEAD) at refs/heads/wip/<branch>: it never touches the
+// working tree, index or real branch history, and is never checked out or merged. Rules: docs/GIT.md "WIP snapshots".
+// history/ is excluded because the prompt-log hook edits it on every machine — including it always conflicts on restore.
 
 import { execSync } from "node:child_process";
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
@@ -24,7 +24,7 @@ try {
       .trim(),
   );
 } catch {
-  console.error("Không ở trong repo git.");
+  console.error("Not inside a git repo.");
   process.exit(1);
 }
 
@@ -55,7 +55,7 @@ const fail = (msg) => {
 
 const currentBranch = () =>
   git("branch --show-current") ||
-  fail("HEAD đang detached: chuyển sang một nhánh trước.");
+  fail("HEAD is detached: switch to a branch first.");
 const dirty = () => git(`status --porcelain -- . ${EXCLUDE}`) !== "";
 const wipRef = (branch) => `refs/heads/wip/${branch}`;
 const trackRef = (branch) => `refs/remotes/${REMOTE}/wip/${branch}`;
@@ -79,7 +79,7 @@ function fetchSnapshots() {
     : [];
 }
 
-// Ghi dấu cho hook usage-guard: đã lưu WIP trong cửa sổ usage hiện tại.
+// Mark for the usage-guard hook: WIP was saved in the current usage window.
 function markHandoff() {
   let resetsAt = null;
   try {
@@ -97,16 +97,16 @@ function markHandoff() {
 function save() {
   const branch = currentBranch();
   if (!dirty()) {
-    // Không còn gì dở: snapshot cũ (nếu có) đã lỗi thời.
+    // Nothing unfinished: an old snapshot (if any) is stale.
     const stale = tryGit(`ls-remote --heads ${REMOTE} "wip/${branch}"`);
     git(`push -u ${REMOTE} "${branch}"${stale ? ` ":${wipRef(branch)}"` : ""}`);
     markHandoff();
     console.log(
-      `Working tree sạch: đã push ${branch}${stale ? ", xoá snapshot cũ" : ""}. Máy khác: git pull rồi /resume.`,
+      `Working tree clean: pushed ${branch}${stale ? ", deleted the old snapshot" : ""}. Other machine: git pull then /resume.`,
     );
     return;
   }
-  // Index tạm: chụp mọi file (tôn trọng .gitignore) mà không đụng index thật.
+  // Temporary index: capture every file (respecting .gitignore) without touching the real index.
   const index = join(tmpdir(), `wip-index-${process.pid}`);
   const env = { ...process.env, GIT_INDEX_FILE: index };
   let sha;
@@ -126,17 +126,17 @@ function save() {
     .split("\n")
     .filter(Boolean).length;
   console.log(
-    `Đã lưu ${files} file dở vào wip/${branch} (${sha.slice(0, 7)}) và push. Máy khác: git pull rồi /resume.`,
+    `Saved ${files} unfinished file(s) to wip/${branch} (${sha.slice(0, 7)}) and pushed. Other machine: git pull then /resume.`,
   );
 }
 
 function status() {
   const snaps = fetchSnapshots();
-  if (!snaps.length) return console.log("Không có snapshot WIP trên remote.");
+  if (!snaps.length) return console.log("No WIP snapshots on the remote.");
   for (const s of snaps) {
     const parent = tryGit(`rev-parse ${s.sha}~1`);
     const tip = tryGit(`rev-parse "refs/remotes/${REMOTE}/${s.branch}"`);
-    const note = parent === tip ? "" : " — CŨ: nhánh đã có commit sau snapshot";
+    const note = parent === tip ? "" : " — STALE: the branch has commits after the snapshot";
     console.log(
       `- ${s.branch}: ${s.subject.replace(/^wip: \S+ @ /, "")} (${s.sha.slice(0, 7)})${note}`,
     );
@@ -145,7 +145,7 @@ function status() {
 
 function restore(name) {
   const snaps = fetchSnapshots();
-  if (!snaps.length) return console.log("Không có snapshot WIP trên remote.");
+  if (!snaps.length) return console.log("No WIP snapshots on the remote.");
   const here = tryGit("branch --show-current");
   const snap =
     snaps.find((s) => s.branch === name) ??
@@ -153,11 +153,11 @@ function restore(name) {
       (snaps.length === 1 ? snaps[0] : snaps.find((s) => s.branch === here)));
   if (!snap)
     fail(
-      `Chọn nhánh: node scripts/wip.mjs restore <nhánh>. Có: ${snaps.map((s) => s.branch).join(", ")}`,
+      `Pick a branch: node scripts/wip.mjs restore <branch>. Available: ${snaps.map((s) => s.branch).join(", ")}`,
     );
   if (dirty())
     fail(
-      "Working tree còn thay đổi chưa commit: commit hoặc hỏi người dùng trước khi restore (không tự xoá).",
+      "The working tree has uncommitted changes: commit or ask the user before restoring (never discard them).",
     );
 
   if (here !== snap.branch) git(`switch "${snap.branch}"`);
@@ -167,8 +167,8 @@ function restore(name) {
   const parent = git(`rev-parse ${snap.sha}~1`);
   if (git("rev-parse HEAD") !== parent) {
     fail(
-      `Snapshot wip/${snap.branch} chụp từ ${parent.slice(0, 7)}, nhánh đang ở ${git("rev-parse --short HEAD")}: ` +
-        `snapshot cũ hoặc nhánh lệch. Xem: git diff HEAD ${snap.sha.slice(0, 7)} — bỏ: node scripts/wip.mjs drop ${snap.branch}`,
+      `Snapshot wip/${snap.branch} was taken from ${parent.slice(0, 7)}, the branch is at ${git("rev-parse --short HEAD")}: ` +
+        `stale snapshot or diverged branch. Inspect: git diff HEAD ${snap.sha.slice(0, 7)} — discard: node scripts/wip.mjs drop ${snap.branch}`,
     );
   }
   const patch = execSync(`git diff --binary HEAD ${snap.sha}`, {
@@ -180,15 +180,15 @@ function restore(name) {
   });
   drop(snap.branch, true);
   console.log(
-    `Đã áp ${snap.subject} vào ${snap.branch} (chưa stage) và xoá snapshot trên remote.`,
+    `Applied ${snap.subject} to ${snap.branch} (unstaged) and deleted the snapshot on the remote.`,
   );
 }
 
 function drop(branch, quiet = false) {
-  if (!branch) fail("Dùng: node scripts/wip.mjs drop <nhánh>");
+  if (!branch) fail("Usage: node scripts/wip.mjs drop <branch>");
   tryGit(`push ${REMOTE} ":${wipRef(branch)}"`);
   tryGit(`update-ref -d ${trackRef(branch)}`);
-  if (!quiet) console.log(`Đã xoá snapshot wip/${branch}.`);
+  if (!quiet) console.log(`Deleted snapshot wip/${branch}.`);
 }
 
 const [cmd, arg] = process.argv.slice(2);
@@ -198,5 +198,5 @@ else if (cmd === "restore") restore(arg);
 else if (cmd === "drop") drop(arg);
 else
   fail(
-    "Dùng: node scripts/wip.mjs save | status | restore [nhánh] | drop <nhánh>",
+    "Usage: node scripts/wip.mjs save | status | restore [branch] | drop <branch>",
   );

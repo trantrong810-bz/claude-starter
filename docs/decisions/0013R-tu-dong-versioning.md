@@ -1,11 +1,11 @@
 ---
-so: 0013
-pham-vi: rong # rong | tinh-nang
-trang-thai: chap-nhan # de-xuat | chap-nhan | bi-thay-the
-thay-the-boi: # số ADR mới, chỉ khi bi-thay-the
-ngay: 2026-11-01
+number: 0013
+scope: broad # broad | feature
+status: accepted # proposed | accepted | superseded
+superseded-by: # number of the new ADR, only when superseded
+date: 2026-11-01
 model: claude-opus-5-5
-nguon: ca-20261101-23, ca-20261101-24
+source: ca-20261101-23, ca-20261101-24
 ---
 
 # Tự động versioning bằng hook chặn commit và subagent `versioner` (Haiku), có chế độ tắt

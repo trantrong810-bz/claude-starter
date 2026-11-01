@@ -1,11 +1,11 @@
 ---
-so: 0019
-pham-vi: rong # rong | tinh-nang
-trang-thai: chap-nhan # de-xuat | chap-nhan | bi-thay-the
-thay-the-boi: # số ADR mới, chỉ khi bi-thay-the
-ngay: 2026-11-01
+number: 0019
+scope: broad # broad | feature
+status: accepted # proposed | accepted | superseded
+superseded-by: # number of the new ADR, only when superseded
+date: 2026-11-01
 model: claude-opus-5-5
-nguon: yêu cầu "định nghĩa git flow để claude làm việc" và "cần push lên github và merge tự động qua github"; plan docs/plans/github-pr-flow.md; thay 0007R, điều chỉnh 0014R
+source: yêu cầu "định nghĩa git flow để claude làm việc" và "cần push lên github và merge tự động qua github"; plan docs/plans/github-pr-flow.md; thay 0007R, điều chỉnh 0014R
 ---
 
 # Mọi thay đổi vào main qua PR trên GitHub; người đồng ý trong chat, GitHub rebase-merge khi CI xanh

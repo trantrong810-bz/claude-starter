@@ -1,11 +1,11 @@
 ---
-so: 0016
-pham-vi: rong # rong | tinh-nang
-trang-thai: chap-nhan # de-xuat | chap-nhan | bi-thay-the
-thay-the-boi: # số ADR mới, chỉ khi bi-thay-the
-ngay: 2026-11-01
+number: 0016
+scope: broad # broad | feature
+status: accepted # proposed | accepted | superseded
+superseded-by: # number of the new ADR, only when superseded
+date: 2026-11-01
 model: claude-opus-5-5
-nguon: yêu cầu "công cụ tự động format khi thay đổi các file trong dự án bằng tay"; ADR 0014R, 0015R
+source: yêu cầu "công cụ tự động format khi thay đổi các file trong dự án bằng tay"; ADR 0014R, 0015R
 ---
 
 # Git pre-commit tự chạy Prettier trên file đã stage rồi stage lại

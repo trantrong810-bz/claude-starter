@@ -23,6 +23,7 @@ Ghi thay đổi vào mục `Unreleased` cùng commit (subagent `versioner` tự 
 
 ### Changed
 
+- **BREAKING:** the ADR frontmatter, workflow front matter and todo auto sections use the English keys and section names introduced in `scripts/` (ADR 0020R). Existing files are migrated.
 - `GIT.md`: `main` chỉ nhận qua PR (`/ship`, rebase-merge, auto-merge sau khi người đồng ý), nhánh `release/vX.Y.Z`, tag do CI gắn, dọn nhánh bằng `pr.mjs`; ADR 0019R thay 0007R. README, SETUP: luồng PR và thiết lập GitHub.
 - `workflows/git.md`: sơ đồ git flow qua GitHub PR; tổng quan, lớp bảo vệ, phát hành cập nhật theo `/ship`, CI và tag do Action gắn.
 - `WORKFLOW.md` thành mục lục tự sinh; mỗi sơ đồ quy trình một file trong `docs/workflows/` (kèm `_template.md`); ADR 0018. README trỏ thẳng tới file con.

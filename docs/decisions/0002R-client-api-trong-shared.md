@@ -1,11 +1,11 @@
 ---
-so: 0002
-pham-vi: rong
-trang-thai: chap-nhan
-thay-the-boi:
-ngay: 2026-11-01
+number: 0002
+scope: broad # broad | feature
+status: accepted # proposed | accepted | superseded
+superseded-by: # number of the new ADR, only when superseded
+date: 2026-11-01
 model: claude-opus-5-5
-nguon: ca-20261101-04, ca-20261101-15, commit 1bbadf3
+source: ca-20261101-04, ca-20261101-15, commit 1bbadf3
 ---
 
 # Client gọi API đặt trong packages/shared, các app chỉ chứa UI

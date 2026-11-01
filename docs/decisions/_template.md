@@ -1,11 +1,11 @@
 ---
-so: 0000
-pham-vi: tinh-nang # rong | tinh-nang
-trang-thai: chap-nhan # de-xuat | chap-nhan | bi-thay-the
-thay-the-boi: # số ADR mới, chỉ khi bi-thay-the
-ngay: YYYY-MM-DD
-model: # model đã đưa ra quyết định, ví dụ claude-opus-5-5
-nguon: # id prompt trong history/, mã commit, spec liên quan
+number: 0000
+scope: feature # broad | feature
+status: accepted # proposed | accepted | superseded
+superseded-by: # number of the new ADR, only when superseded
+date: YYYY-MM-DD
+model: # the model that made the decision, e.g. claude-opus-5-5
+source: # prompt id in history/, commit hash, related spec
 ---
 
 # <Tiêu đề: quyết định là gì, viết như một mệnh đề>

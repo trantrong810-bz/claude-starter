@@ -1,24 +1,24 @@
 #!/usr/bin/env bash
-# Thiết lập repo GitHub cho luồng PR (docs/GIT.md): main chỉ nhận qua PR, CI `verify` phải xanh,
-# lịch sử thẳng, merge bằng rebase, auto-merge. Chạy lại nhiều lần được (cập nhật ruleset theo tên).
+# Set up the GitHub repo for the PR flow (docs/GIT.md): main only accepts PRs, CI `verify` must be green,
+# linear history, rebase merges, auto-merge. Safe to rerun (updates the ruleset by name).
 #
 #   bash scripts/github-setup.sh
 #
-# Cần: gh CLI đã đăng nhập (gh auth login). Repo private trên gói Free không có ruleset/auto-merge.
+# Needs: gh CLI logged in (gh auth login). Private repos on the Free plan have no rulesets/auto-merge.
 set -euo pipefail
 
 RULESET="main"
-CHECK="verify" # tên job trong .github/workflows/verify.yml
+CHECK="verify" # job name in .github/workflows/verify.yml
 
-command -v gh >/dev/null || { echo "Chưa có gh CLI: winget install GitHub.cli, rồi gh auth login." >&2; exit 1; }
-gh auth status >/dev/null 2>&1 || { echo "gh chưa đăng nhập: chạy gh auth login." >&2; exit 1; }
+command -v gh >/dev/null || { echo "gh CLI not found: winget install GitHub.cli, then gh auth login." >&2; exit 1; }
+gh auth status >/dev/null 2>&1 || { echo "gh is not logged in: run gh auth login." >&2; exit 1; }
 
 repo=$(gh repo view --json nameWithOwner -q .nameWithOwner)
 
-# Kiểm tra trước khi đổi gì: repo private gói Free trả 403 cho rulesets.
+# Check before changing anything: private repos on the Free plan return 403 for rulesets.
 if ! existing=$(gh api "repos/$repo/rulesets" --jq ".[] | select(.name == \"$RULESET\") | .id" 2>&1); then
-  echo "Không đọc được ruleset của $repo: $existing" >&2
-  echo "Ruleset và auto-merge cần repo public, hoặc GitHub Pro/Team cho repo private. Chưa đổi gì." >&2
+  echo "Cannot read the rulesets of $repo: $existing" >&2
+  echo "Rulesets and auto-merge need a public repo, or GitHub Pro/Team for a private one. Nothing changed." >&2
   exit 1
 fi
 
@@ -58,10 +58,10 @@ EOF
 
 if [ -n "$existing" ]; then
   printf '%s' "$body" | gh api -X PUT "repos/$repo/rulesets/$existing" --input - >/dev/null
-  echo "Đã cập nhật ruleset \"$RULESET\" (id $existing)."
+  echo "Updated ruleset \"$RULESET\" (id $existing)."
 else
   printf '%s' "$body" | gh api -X POST "repos/$repo/rulesets" --input - >/dev/null
-  echo "Đã tạo ruleset \"$RULESET\"."
+  echo "Created ruleset \"$RULESET\"."
 fi
 
 gh api -X PATCH "repos/$repo" \
@@ -70,4 +70,4 @@ gh api -X PATCH "repos/$repo" \
   -F allow_merge_commit=false \
   -F allow_squash_merge=false \
   -F delete_branch_on_merge=true >/dev/null
-echo "Đã đặt $repo: chỉ rebase-merge, bật auto-merge, tự xoá nhánh sau merge."
+echo "Configured $repo: rebase-merge only, auto-merge on, branches deleted after merge."

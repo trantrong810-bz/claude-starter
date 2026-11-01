@@ -1,11 +1,11 @@
 ---
-so: 0009
-pham-vi: rong
-trang-thai: chap-nhan
-thay-the-boi:
-ngay: 2026-11-01
+number: 0009
+scope: broad # broad | feature
+status: accepted # proposed | accepted | superseded
+superseded-by: # number of the new ADR, only when superseded
+date: 2026-11-01
 model: claude-opus-5-5
-nguon: ca-20261101-16, ca-20261101-17, ca-20261101-18, commit f8379b7
+source: ca-20261101-16, ca-20261101-17, ca-20261101-18, commit f8379b7
 ---
 
 # Version và changelog riêng cho từng phần; mức bump suy ra từ changelog; chỉ tag version dự án

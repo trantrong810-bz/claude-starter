@@ -1,7 +1,7 @@
 ---
-thu-tu: 2
-tieu-de: Lớp bảo vệ chạy tự động
-mo-ta: Hook, permission và verify chạy ở mọi task mà không cần gọi.
+order: 2
+title: Lớp bảo vệ chạy tự động
+description: Hook, permission và verify chạy ở mọi task mà không cần gọi.
 ---
 
 # Lớp bảo vệ chạy tự động

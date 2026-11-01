@@ -1,7 +1,7 @@
 ---
-thu-tu: 6
-tieu-de: Khi nào đổi model
-mo-ta: Opus cho plan và contract, Sonnet cho code; chỉ đổi ngay sau /clear.
+order: 6
+title: Khi nào đổi model
+description: Opus cho plan và contract, Sonnet cho code; chỉ đổi ngay sau /clear.
 ---
 
 # Khi nào đổi model

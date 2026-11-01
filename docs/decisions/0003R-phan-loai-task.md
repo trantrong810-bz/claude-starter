@@ -1,11 +1,11 @@
 ---
-so: 0003
-pham-vi: rong
-trang-thai: chap-nhan
-thay-the-boi:
-ngay: 2026-11-01
+number: 0003
+scope: broad # broad | feature
+status: accepted # proposed | accepted | superseded
+superseded-by: # number of the new ADR, only when superseded
+date: 2026-11-01
 model: claude-opus-5-5
-nguon: ca-20261101-11, ca-20261101-12, commit 4f1b848
+source: ca-20261101-11, ca-20261101-12, commit 4f1b848
 ---
 
 # Phân loại task nhỏ / vừa / lớn trước khi làm

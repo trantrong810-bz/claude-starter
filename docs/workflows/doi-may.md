@@ -1,7 +1,7 @@
 ---
-thu-tu: 4
-tieu-de: Đổi máy hoặc tài khoản
-mo-ta: /handoff lưu todo, spec và code dở lên remote; /resume làm tiếp ở nơi mới.
+order: 4
+title: Đổi máy hoặc tài khoản
+description: /handoff lưu todo, spec và code dở lên remote; /resume làm tiếp ở nơi mới.
 ---
 
 # Đổi máy hoặc tài khoản

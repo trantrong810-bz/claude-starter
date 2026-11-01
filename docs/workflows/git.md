@@ -1,7 +1,7 @@
 ---
-thu-tu: 3
-tieu-de: Git flow qua GitHub
-mo-ta: Mọi thay đổi trên nhánh ngắn; /ship push, mở PR, bạn đồng ý, GitHub rebase-merge khi CI xanh.
+order: 3
+title: Git flow qua GitHub
+description: Mọi thay đổi trên nhánh ngắn; /ship push, mở PR, bạn đồng ý, GitHub rebase-merge khi CI xanh.
 ---
 
 # Git flow qua GitHub
