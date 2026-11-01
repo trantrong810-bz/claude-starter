@@ -1,17 +1,17 @@
 ---
-description: Lưu tiến độ (todo, spec, code dở) vào git và đẩy lên remote — trước /clear, đổi máy hoặc đổi tài khoản
+description: Save progress (todo, spec, unfinished code) to git and push it — before /clear, switching machine or switching account
 ---
 
-Mục tiêu: một session mới, ở máy hoặc tài khoản bất kỳ, chỉ cần `git pull` + `/resume` là làm tiếp được.
+Goal: a new session, on any machine or account, only needs `git pull` + `/resume` to continue.
 
-1. **Todo**: với mỗi phần bị ảnh hưởng, cập nhật `## Đang làm` trong `docs/todo/<phần>.auto.md` (format trong `/todo`):
-   - `Đang dở:` đã làm gì, dở ở đâu — cụ thể tới file/hàm.
-   - `Tiếp theo:` bước kế tiếp làm được ngay, kèm lệnh kiểm tra.
-   - Việc đã xong → chuyển sang `## Xong gần đây` (và đánh `[x]` ở file viết tay nếu có `từ:`). Việc phát sinh → `## Việc cần làm`.
-2. **Spec** (task lớn): đánh dấu checklist, mục "Tiến độ" và "Ghi chú" (quyết định đã chốt, bẫy đã gặp, file quan trọng).
-3. **Plan**: file plan chưa commit trong `docs/plans/` có tên ngẫu nhiên → đổi tên `<kebab-theo-nội-dung>.md`.
-4. Đang ở `main` thì tạo nhánh trước (`chore/handoff-<ngày>`, hoặc nhánh theo việc đang dở), vì `main` chỉ nhận thay đổi qua PR. `node scripts/todo.mjs sync`, rồi commit `chore(todo): handoff <nhánh>` gồm `TODO.md`, `docs/todo/`, spec, `docs/plans/` — chỉ những file đó, không kèm code dở (commit này không cần verify xanh).
-5. `node scripts/wip.mjs save` — chụp code dở lên `wip/<nhánh>` và push cả nhánh. Gọi `/handoff` nghĩa là tôi đồng ý push.
-6. Báo 2 dòng: đã lưu gì; "Máy/tài khoản khác: `git pull` rồi `/resume`". Nếu chỉ `/clear` ở máy này thì nhắc tôi chạy `/clear`.
+1. **Todo**: for each affected part, update `## In progress` in `docs/todo/<part>.auto.md` (format in `/todo`):
+   - `Stopped at:` what was done and where it stopped — down to the file/function.
+   - `Next:` the next step that can be done right away, with the command that checks it.
+   - Finished work → move to `## Recently done` (and tick `[x]` in the manual file if it has `from:`). New work → `## To do`.
+2. **Spec** (large tasks): tick the checklist, update "Progress" and "Notes" (settled decisions, traps hit, key files).
+3. **Plan**: an uncommitted plan file in `docs/plans/` with a random name → rename it to `<kebab-by-content>.md`.
+4. On `main`, create a branch first (`chore/handoff-<date>`, or the branch of the unfinished work), because `main` only accepts changes through PRs. `node scripts/todo.mjs sync`, then commit `chore(todo): handoff <branch>` with `TODO.md`, `docs/todo/`, the spec, `docs/plans/` — only those files, no unfinished code (this commit does not need a green verify).
+5. `node scripts/wip.mjs save` — snapshot unfinished code to `wip/<branch>` and push the branch too. Calling `/handoff` means I agree to the push.
+6. Report 2 lines: what was saved; "Other machine/account: `git pull` then `/resume`". If this is only a `/clear` on this machine, remind me to run `/clear`.
 
-Viết ngắn gọn, đủ để session mới chỉ đọc todo + spec là làm tiếp được.
+Keep it short, but enough for a new session to continue from the todo + spec alone. Write in English (ADR 0020R).

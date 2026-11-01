@@ -1,58 +1,58 @@
 #!/usr/bin/env bash
-# SessionStart hook: stdout được đưa vào context đầu session.
-# Mục tiêu: sau /clear, Claude biết ngay việc đang dở mà không phải đi tìm.
-# Giữ output ngắn — nó tốn token ở mọi session.
+# SessionStart hook: stdout goes into the context at the start of the session.
+# Goal: after /clear, Claude knows right away what is unfinished without searching.
+# Keep the output short — it costs tokens in every session.
 
 out=""
 
-# Spec còn checklist chưa xong
+# Specs with unchecked checklist items
 for f in docs/specs/*.md; do
   [ -f "$f" ] || continue
   case "$f" in */_template.md) continue ;; esac
   left=$(grep -c '^- \[ \]' "$f")
   [ "$left" -gt 0 ] || continue
   next=$(grep -m1 '^- \[ \]' "$f" | sed 's/^- \[ \] //')
-  out+="- $f: còn $left mục, tiếp theo: $next"$'\n'
+  out+="- $f: $left item(s) left, next: $next"$'\n'
 done
 
 if [ -n "$out" ]; then
-  echo "Tính năng đang dở (đọc spec trước khi làm tiếp):"
+  echo "Unfinished features (read the spec before continuing):"
   printf '%s' "$out"
 fi
 
-# Todo hai lớp (TODO.md, docs/todo/): tổng số + việc đang làm
+# Two-layer todo (TODO.md, docs/todo/): totals + work in progress
 [ -f scripts/todo.mjs ] && node scripts/todo.mjs brief
 
-# Trạng thái git (quy ước: docs/GIT.md, đã nạp qua CLAUDE.md)
+# Git state (conventions: docs/GIT.md, loaded through CLAUDE.md)
 if git rev-parse --git-dir >/dev/null 2>&1; then
   branch=$(git branch --show-current)
   dirty=$(git status --porcelain | grep -vc '^.. history/')
-  git_out="Git: nhánh ${branch:-(detached)}"
-  [ "$dirty" -gt 0 ] && git_out+=", $dirty file chưa commit"
+  git_out="Git: branch ${branch:-(detached)}"
+  [ "$dirty" -gt 0 ] && git_out+=", $dirty uncommitted file(s)"
   echo "$git_out."
-  # GitHub rebase-merge đổi mã commit: nhánh đã merge vẫn hiện "no-merged", nên tách bằng pr.mjs stale.
-  # (pr.mjs fetch remote; chỉ chạy khi đang ở main để hook nhanh.)
+  # GitHub rebase-merge changes commit hashes: merged branches still show as "no-merged", so pr.mjs stale tells them apart.
+  # (pr.mjs fetches the remote; only run it on main to keep the hook fast.)
   if [ "$branch" = "main" ]; then
     merged=$([ -f scripts/pr.mjs ] && node scripts/pr.mjs stale 2>/dev/null | tr '\n' ' ')
     unmerged=$(git branch --format='%(refname:short)' --no-merged main 2>/dev/null | grep -v '^wip/' | \
       grep -vxF -f <(printf '%s' "$merged" | tr ' ' '\n' | grep .) 2>/dev/null | tr '\n' ' ')
-    [ -n "$merged" ] && echo "- Nhánh đã merge trên GitHub, dọn: node scripts/pr.mjs cleanup <nhánh> — $merged"
-    [ -n "$unmerged" ] && echo "- Nhánh chưa merge vào main: $unmerged"
+    [ -n "$merged" ] && echo "- Branches merged on GitHub, clean up: node scripts/pr.mjs cleanup <branch> — $merged"
+    [ -n "$unmerged" ] && echo "- Branches not merged into main: $unmerged"
   fi
-  # Snapshot code dở (scripts/wip.mjs) — chỉ xem ref đã fetch, không gọi mạng để hook nhanh.
+  # Unfinished-work snapshots (scripts/wip.mjs) — fetched refs only, no network call, to keep the hook fast.
   wips=$(git for-each-ref --format='%(refname:lstrip=4)' refs/remotes/origin/wip/ 2>/dev/null | tr '\n' ' ')
-  [ -n "$wips" ] && echo "- Có snapshot code dở: $wips— chạy /resume để áp vào."
+  [ -n "$wips" ] && echo "- Unfinished-work snapshots: $wips— run /resume to apply."
   [ "$(git config core.hooksPath)" = ".githooks" ] || [ ! -d .githooks ] || \
-    echo "- Git hook chưa bật cho người: nhắc người dùng chạy git config core.hooksPath .githooks"
+    echo "- Git hooks are not enabled for the user: remind them to run git config core.hooksPath .githooks"
   if [ -f versions.json ]; then
     v=$(node -e 'try{process.stdout.write(require("./versions.json").project.version)}catch{}')
     [ -n "$v" ] && ! git rev-parse -q --verify "refs/tags/v$v" >/dev/null && \
-      echo "- Thiếu tag v$v cho version hiện tại: version.mjs check sẽ so với commit đầu."
+      echo "- Missing tag v$v for the current version: version.mjs check will compare against the first commit."
   fi
 fi
 
 if [ -f .claude/.allow-red ]; then
-  echo "Cờ .claude/.allow-red đang bật: verify bỏ qua test. Chỉ đúng trong pha 1 (/plan-feature); /build-feature phải xóa nó."
+  echo "The .claude/.allow-red flag is on: verify skips tests. Only valid in phase 1 (/plan-feature); /build-feature must delete it."
 fi
 
 exit 0

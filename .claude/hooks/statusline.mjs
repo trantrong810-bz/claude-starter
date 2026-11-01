@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-// statusLine: in usage 5h / 7 ngày / context, và ghi số đó vào .claude/state/usage.json cho usage-guard.mjs.
-// Hook không nhận được số usage, chỉ statusline nhận — nên statusline là cảm biến, usage-guard là cái phanh.
-// rate_limits chỉ có với gói Pro/Max/Ultra và sau phản hồi API đầu tiên; thiếu thì guard không kích hoạt.
+// statusLine: print 5h / 7-day / context usage and write those numbers to .claude/state/usage.json for usage-guard.mjs.
+// Hooks do not receive usage numbers, only the status line does — so the status line is the sensor, usage-guard the brake.
+// rate_limits exist only on Pro/Max/Ultra plans and after the first API response; without them the guard stays off.
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
@@ -20,7 +20,7 @@ process.stdin.on("end", () => {
   const fiveHour = pct(limits.five_hour);
   const sevenDay = pct(limits.seven_day);
   const context = pct(data.context_window);
-  // Cửa sổ đang cao hơn quyết định thời điểm hết chặn; usage-guard và wip.mjs so marker theo giá trị này.
+  // The higher window decides when the block lifts; usage-guard and wip.mjs compare their marker against this value.
   const top =
     (sevenDay ?? -1) > (fiveHour ?? -1) ? limits.seven_day : limits.five_hour;
 
@@ -51,7 +51,7 @@ process.stdin.on("end", () => {
     show("ctx", context),
   ].filter(Boolean);
   let line = parts.length ? parts.join(" · ") : "usage: n/a";
-  if (max >= threshold) line += " · ⛔ dừng: /handoff rồi đổi tài khoản";
-  else if (max >= threshold - 10) line += " · ⚠ gần ngưỡng";
+  if (max >= threshold) line += " · ⛔ stop: /handoff then switch account";
+  else if (max >= threshold - 10) line += " · ⚠ near the limit";
   process.stdout.write(line + "\n");
 });

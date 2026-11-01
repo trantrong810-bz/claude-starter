@@ -16,7 +16,7 @@ No app API change. Kit-level breaking renames:
 ## Checklist
 
 - [x] Commit 1: ADR 0020R + `CLAUDE.md` in English
-- [ ] Commit 2: scripts translated, identifiers renamed, `lang.mjs`, data migrated
+- [x] Commit 2: scripts translated, identifiers renamed, `lang.mjs`, data migrated
 - [ ] Commit 3: `.claude/` translated
 - [ ] Commit 4: docs translated, ADR/workflow files renamed
 - [ ] Commit 5: example, `.github`, `.githooks`, `.gitattributes`
@@ -25,7 +25,7 @@ No app API change. Kit-level breaking renames:
 
 ## Progress
 
-Commit 1 in progress.
+Commits 1–2 done. `lang.mjs` exists but is not yet wired into `verify.sh` (wire it in the last commit, once the repo is clean). Next: commit 3 (`.claude/`).
 
 ## Notes
 
