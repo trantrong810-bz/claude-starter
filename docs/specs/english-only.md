@@ -21,11 +21,11 @@ No app API change. Kit-level breaking renames:
 - [x] Commit 4: docs translated, ADR/workflow files renamed
 - [x] Commit 5: example, `.github`, `.githooks`, `.gitattributes`
 - [x] `lang.mjs check` clean, `verify.sh --quick` OK
-- [ ] `/ship`
+- [x] `/ship` (PR #4)
 
 ## Progress
 
-Commits 1–5 done; `lang.mjs` runs in `verify.sh`. Next: `/ship`.
+Done: shipped in PR #4.
 
 ## Notes
 
